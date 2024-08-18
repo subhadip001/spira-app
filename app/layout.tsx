@@ -31,7 +31,7 @@ export default function RootLayout({
         )}
       >
         <Header className="hidden" />
-        <Sidebar className="" />
+        {/* <Sidebar className="hidden" /> */}
         <div className="flex-grow">{children}</div>
       </body>
     </html>
