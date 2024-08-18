@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import Header from "./components/header";
+import Sidebar from "./components/sidebar";
 
 export const metadata: Metadata = {
   title: "Spira - Ai powered form builder",
@@ -24,11 +26,13 @@ export default function RootLayout({
       <head />
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen flex bg-background font-sans antialiased",
           fontSans.variable
         )}
       >
-        {children}
+        <Header className="hidden" />
+        <Sidebar className="" />
+        <div className="flex-grow">{children}</div>
       </body>
     </html>
   );
