@@ -16,9 +16,10 @@ const GenerateBox = () => {
       onSubmit={handleSubmit}
     >
       <input
-        className="w-full border-none outline-none px-3 py-1"
+        className="w-full border-none outline-none px-3 py-1 rounded"
         placeholder="Ask Spira what to build..."
         name="question"
+        autoComplete="off"
       />
       <div className="w-full flex">
         <Button
