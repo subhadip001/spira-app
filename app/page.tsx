@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import GenerateBox from "./components/generate-box";
+import IntroSection from "./components/intro-section";
 
 export default function Home() {
   return (
@@ -10,9 +11,7 @@ export default function Home() {
             <Badge>Prototype</Badge>
           </div>
           <div className="flex flex-col gap-5 font-bricolage_grotesque">
-            <h1 className="text-4xl text-center ">
-              Create forms for Market Research with Spira
-            </h1>
+            <IntroSection />
             <GenerateBox />
           </div>
         </div>
