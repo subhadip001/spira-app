@@ -24,8 +24,7 @@ export async function POST(req: Request) {
       },
     ],
   };
-  return {
+  return new Response(JSON.stringify(formSchema), {
     status: 200,
-    body: formSchema,
-  };
+  });
 }
