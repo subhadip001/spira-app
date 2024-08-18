@@ -1,36 +1,27 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import GenerateBox from "./components/generate-box";
 
 export default function Home() {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
   return (
     <main className="flex min-h-screen">
-      <div className="m-auto w-[60%] px-3 py-2 flex gap-5 flex-col h-[50vh]">
-        <div className="flex justify-center">
-          <Badge>Prototype</Badge>
-        </div>
-        <div className="flex flex-col gap-5">
-          <h1 className="text-4xl text-center">
-            Create forms for Market Research with Spira
-          </h1>
-          <div className="flex flex-col gap-3 border rounded-lg p-3">
-            <input
-              className="w-full border-none outline-none px-3 py-1"
-              placeholder="Ask Spira what to build..."
-            />
-            <div className="w-full flex">
-              <Button
-                className="rounded-full w-[50px] h-[50px] ml-auto"
-                variant="outline"
-              >
-                <div>
-                  <ArrowRight size={20} />
-                </div>
-              </Button>
-            </div>
+      <section className="flex w-full my-3 mr-3 bg-[#ffff] rounded-lg">
+        <div className="m-auto w-[60%] px-3 py-2 flex gap-5 flex-col h-[50vh]">
+          <div className="flex justify-center">
+            <Badge>Prototype</Badge>
+          </div>
+          <div className="flex flex-col gap-5">
+            <h1 className="text-4xl text-center">
+              Create forms for Market Research with Spira
+            </h1>
+            <GenerateBox />
           </div>
         </div>
-      </div>
+      </section>
     </main>
   );
 }
