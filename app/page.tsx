@@ -2,9 +2,6 @@ import { Badge } from "@/components/ui/badge";
 import GenerateBox from "./components/generate-box";
 
 export default function Home() {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  };
   return (
     <main className="flex min-h-screen">
       <section className="flex w-full my-3 mr-3 bg-[#ffff] rounded-lg">
