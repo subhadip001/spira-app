@@ -8,7 +8,6 @@ const GenerateBox = () => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const formData = Object.fromEntries(data.entries());
-
     console.log(formData);
   };
   return (

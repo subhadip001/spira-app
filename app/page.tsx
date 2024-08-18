@@ -1,6 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import GenerateBox from "./components/generate-box";
 
 export default function Home() {
@@ -14,8 +12,8 @@ export default function Home() {
           <div className="flex justify-center">
             <Badge>Prototype</Badge>
           </div>
-          <div className="flex flex-col gap-5">
-            <h1 className="text-4xl text-center">
+          <div className="flex flex-col gap-5 font-bricolage_grotesque">
+            <h1 className="text-4xl text-center ">
               Create forms for Market Research with Spira
             </h1>
             <GenerateBox />

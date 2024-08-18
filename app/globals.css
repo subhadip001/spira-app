@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -67,6 +69,10 @@
   box-sizing: border-box;
   scroll-behavior: smooth;
   overscroll-behavior: none;
+}
+
+.font-bricolage_grotesque {
+  font-family: 'Bricolage Grotesque', sans-serif;
 }
 
 @layer base {
