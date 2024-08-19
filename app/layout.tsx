@@ -30,7 +30,7 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <Header className="hidden" />
+        {/* <Header className="hidden" /> */}
         {/* <Sidebar className="hidden" /> */}
         <div className="flex-grow">{children}</div>
       </body>

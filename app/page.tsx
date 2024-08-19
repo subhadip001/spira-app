@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import GenerateBox from "./components/generate-box";
 import IntroSection from "./components/intro-section";
+import AppWrapper from "./components/app-wrapper";
 
 export default function Home() {
   return (
@@ -12,7 +13,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col gap-5 font-bricolage_grotesque">
             <IntroSection />
-            <GenerateBox />
+            <AppWrapper />
           </div>
         </div>
       </section>

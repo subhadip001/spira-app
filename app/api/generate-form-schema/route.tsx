@@ -1,30 +1,33 @@
-export async function POST(req: Request) {
-  const data = await req.json();
+import { createGroqChatCompletion } from "@/lib/ai-query";
+import { system_prompt } from "@/lib/utils";
 
-  const formSchema = {
-    title: "Create forms for Market Research with Spira",
-    fields: [
-      {
-        type: "text",
-        label: "Name",
-        name: "name",
-        required: true,
-      },
-      {
-        type: "email",
-        label: "Email",
-        name: "email",
-        required: true,
-      },
-      {
-        type: "number",
-        label: "Age",
-        name: "age",
-        required: true,
-      },
-    ],
-  };
-  return new Response(JSON.stringify(formSchema), {
-    status: 200,
-  });
+export async function POST(req: Request) {
+  const { question } = await req.json();
+
+  if (question === undefined || question === "") {
+    return new Response(JSON.stringify({ message: "Invalid request" }), {
+      status: 400,
+    });
+  }
+
+  try {
+    const chatCompletion = await createGroqChatCompletion(
+      system_prompt,
+      question
+    );
+
+    let fullResponse = "";
+    for await (const chunk of chatCompletion) {
+      const content = chunk.choices[0]?.delta?.content || "";
+      fullResponse += content;
+    }
+
+    return Response.json({ message: fullResponse }, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return Response.json(
+      { message: "Error processing request" },
+      { status: 500 }
+    );
+  }
 }
