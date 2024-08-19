@@ -18,7 +18,11 @@ const GenerateBox = () => {
   const formSchemaGenerateMutation = useMutation({
     mutationFn: generateFormSchema,
     onSuccess: (data) => {
-      console.log(data);
+      const message = data.message;
+      const jsonString = message.match(/```\n([\s\S]*?)\n```/)[1];
+      const formSchema = JSON.parse(jsonString);
+
+      console.log(formSchema);
       console.log("Form schema generated successfully");
     },
     onError: (error: Error) => {
