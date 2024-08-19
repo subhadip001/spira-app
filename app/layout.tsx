@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import Header from "./components/header";
-import Sidebar from "./components/sidebar";
 
 export const metadata: Metadata = {
   title: "Spira - Ai powered form builder",
@@ -30,9 +28,25 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        {/* <Header className="hidden" /> */}
-        {/* <Sidebar className="hidden" /> */}
-        <div className="flex-grow">{children}</div>
+        <div className="absolute w-full h-full overflow-hidden">
+          <video
+            src="https://w06x29rjhxvpmsmw.public.blob.vercel-storage.com/videos/bg-IfZJXb3k8lYIUWixRaliM7LTCj12v0.mp4"
+            autoPlay
+            loop
+            muted
+            style={{
+              position: "absolute",
+              width: "100%",
+              left: "50%",
+              top: "50%",
+              height: "100%",
+              objectFit: "cover",
+              transform: "translate(-50%, -50%)",
+              zIndex: "-1",
+            }}
+          />
+        </div>
+        <div className="flex-grow z-10">{children}</div>
       </body>
     </html>
   );
