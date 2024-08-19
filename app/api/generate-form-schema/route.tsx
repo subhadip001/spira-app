@@ -1,5 +1,5 @@
 import { createGroqChatCompletion } from "@/lib/ai-query";
-import { system_prompt } from "@/lib/utils";
+import { FORM_SCHEMA_GENERATOR_PROMPT } from "@/lib/utils";
 
 export async function POST(req: Request) {
   const { question } = await req.json();
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
   try {
     const chatCompletion = await createGroqChatCompletion(
-      system_prompt,
+      FORM_SCHEMA_GENERATOR_PROMPT,
       question
     );
 
