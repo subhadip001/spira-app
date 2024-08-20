@@ -4,15 +4,17 @@ import WordRotate from "@/components/magicui/word-rotate";
 
 const IntroSection = () => {
   return (
-    <>
-      <div className="flex gap-2 ">
-        <h1 className="text-4xl text-center ">Create forms with Spira for</h1>
-        <WordRotate
-          className="text-4xl text-center "
-          words={["Market Research", "User Feedback", "Hiring", "Quizzes"]}
-        />
+    <div className="">
+      <div className="flex flex-col">
+        <span className="text-4xl text-center">
+          Create forms with Spira for
+          <WordRotate
+            className="text-4xl text-center"
+            words={["Market Research", "User Feedback", "Hiring", "Quizzes"]}
+          />
+        </span>
       </div>
-    </>
+    </div>
   );
 };
 

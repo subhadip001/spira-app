@@ -1,7 +1,8 @@
 import { Badge } from "@/components/ui/badge";
-import GenerateBox from "./components/generate-box";
+import GenerateBox from "./components/prompt-box";
 import IntroSection from "./components/intro-section";
-import AppWrapper from "./components/app-wrapper";
+import AppWrapper from "./components/react-query-provider";
+import PromptBox from "./components/prompt-box";
 
 export default function Home() {
   return (
@@ -11,9 +12,9 @@ export default function Home() {
           <div className="flex justify-center">
             <Badge>Prototype</Badge>
           </div>
-          <div className="flex flex-col  gap-5 font-bricolage_grotesque">
+          <div className="flex flex-col gap-5 font-bricolage_grotesque">
             <IntroSection />
-            <AppWrapper />
+            <PromptBox />
           </div>
         </div>
       </section>

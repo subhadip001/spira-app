@@ -2,9 +2,9 @@ import { createGroqChatCompletion } from "@/lib/ai-query";
 import { FORM_SCHEMA_GENERATOR_PROMPT } from "@/lib/utils";
 
 export async function POST(req: Request) {
-  const { question } = await req.json();
+  const { prompt } = await req.json();
 
-  if (question === undefined || question === "") {
+  if (prompt === undefined || prompt === "") {
     return new Response(JSON.stringify({ message: "Invalid request" }), {
       status: 400,
     });
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   try {
     const chatCompletion = await createGroqChatCompletion(
       FORM_SCHEMA_GENERATOR_PROMPT,
-      question
+      prompt
     );
 
     let fullResponse = "";
@@ -21,6 +21,8 @@ export async function POST(req: Request) {
       const content = chunk.choices[0]?.delta?.content || "";
       fullResponse += content;
     }
+
+    console.log(fullResponse);
 
     return Response.json({ message: fullResponse }, { status: 200 });
   } catch (error) {

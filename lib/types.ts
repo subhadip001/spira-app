@@ -1,3 +1,3 @@
 export type TFormData = {
-  question: string;
+  prompt: string;
 };
