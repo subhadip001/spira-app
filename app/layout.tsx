@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-
+import ReactQueryProvider from "@/app/_components/react-query-provider";
 export const metadata: Metadata = {
   title: "Spira - Ai powered form builder",
   description:
@@ -20,34 +20,39 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+    >
       <head />
-      <body
-        className={cn(
-          "min-h-screen flex bg-[#F3F3ED] font-sans antialiased",
-          fontSans.variable
-        )}
-      >
-        <div className="absolute w-full h-full overflow-hidden">
-          <video
-            src="https://w06x29rjhxvpmsmw.public.blob.vercel-storage.com/videos/bg-IfZJXb3k8lYIUWixRaliM7LTCj12v0.mp4"
-            autoPlay
-            loop
-            muted
-            style={{
-              position: "absolute",
-              width: "100%",
-              left: "50%",
-              top: "50%",
-              height: "100%",
-              objectFit: "cover",
-              transform: "translate(-50%, -50%)",
-              zIndex: "-1",
-            }}
-          />
-        </div>
-        <div className="flex-grow z-10">{children}</div>
-      </body>
+      <ReactQueryProvider>
+        <body
+          className={cn(
+            "min-h-screen flex bg-[#F3F3ED] font-sans antialiased",
+            fontSans.variable
+          )}
+        >
+          <div className="absolute w-full h-full overflow-hidden">
+            <video
+              src="https://w06x29rjhxvpmsmw.public.blob.vercel-storage.com/videos/bg-IfZJXb3k8lYIUWixRaliM7LTCj12v0.mp4"
+              autoPlay
+              loop
+              muted
+              style={{
+                position: "absolute",
+                width: "100%",
+                left: "50%",
+                top: "50%",
+                height: "100%",
+                objectFit: "cover",
+                transform: "translate(-50%, -50%)",
+                zIndex: "-1",
+              }}
+            />
+          </div>
+          <div className="flex-grow z-10">{children}</div>
+        </body>
+      </ReactQueryProvider>
     </html>
   );
 }

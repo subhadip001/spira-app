@@ -1,10 +1,6 @@
-import ReactQueryProvider from "@/app/components/react-query-provider";
-import { TFormData } from "@/lib/types";
 import dynamic from "next/dynamic";
 import React from "react";
-const GenerateForm = dynamic(() => import("../../components/generate-form"), {
-  ssr: false,
-});
+import GenerateForm from "../../_components/generate-form";
 
 type TSearchParams = {
   q: string;
@@ -12,17 +8,16 @@ type TSearchParams = {
 
 export default function EditForm({
   searchParams,
+  params,
 }: {
   searchParams: TSearchParams;
+  params: { formId: string };
 }) {
-  console.log(searchParams);
   return (
-    <ReactQueryProvider>
-      <GenerateForm
-        formData={{
-          prompt: searchParams.q,
-        }}
-      />
-    </ReactQueryProvider>
+    <GenerateForm
+      formData={{
+        prompt: searchParams.q,
+      }}
+    />
   );
 }
