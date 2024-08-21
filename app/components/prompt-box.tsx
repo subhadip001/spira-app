@@ -16,7 +16,7 @@ const PromptBox = () => {
     const prompt = data.get("prompt") as string;
     const uuid = uuidv4();
     const encodedPrompt = encodeURIComponent(prompt);
-    router.push(`/edit/${uuid}?q=${encodedPrompt}`);
+    router.push(`/form/${uuid}?q=${encodedPrompt}`);
   };
 
   return (
