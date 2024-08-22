@@ -19,7 +19,7 @@ When generating a schema, follow these guidelines:
    }
 
 2. Field Objects: Each field in the \`fields\` array should be an object with the following mandatory attributes:
-   - \`type\`: The input type (e.g., "text", "email", "tel", "textarea", "select", "checkbox", "radio", "range", "file")
+   - \`type\`: The input type (e.g., "text", "email", "tel", "textarea", "select", "checkbox", "radio", "range")
    - \`label\`: A human-readable label for the field
    - \`name\`: A unique identifier for the field (use camelCase)
    - \`placeholder\`: A hint or example input for the field (where applicable)
@@ -39,7 +39,7 @@ When generating a schema, follow these guidelines:
    - Use "checkbox" for multiple-choice selections
    - Use "radio" for single-choice options displayed as radio buttons
    - Use "range" for numerical inputs within a specific range
-   - Use "file" for document or image uploads
+   - No need to include "file" type fields in the schema
 
 5. Validation: Consider adding validation rules where appropriate, such as minimum/maximum lengths for text inputs or specific patterns for formatted inputs like phone numbers.
 

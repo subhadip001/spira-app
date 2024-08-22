@@ -3,6 +3,7 @@ import { generateFormSchema } from "@/lib/queries";
 import { TFormData } from "@/lib/types";
 import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
+import { FormBuilder, useFormStore } from "@spiraai/spira-form";
 
 type TGenerateFormProps = {
   formData: TFormData;
@@ -32,7 +33,10 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({ formData }) => {
     },
   });
   return (
-    <div>{formSchema && <pre>{JSON.stringify(formSchema, null, 2)}</pre>}</div>
+    <div className="w-[80%] mx-auto">
+      {formSchema === null && <div>Loading...</div>}
+      {formSchema && <FormBuilder schema={formSchema} />}
+    </div>
   );
 };
 

@@ -12,8 +12,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0(@types/react@18.3.3)(react@18.3.1)
       '@spiraai/spira-form':
-        specifier: ^0.0.7
-        version: 0.0.7(@types/react-dom@18.3.0)(@types/react@18.3.3)(tailwindcss@3.4.10)(tslib@2.6.3)(typescript@5.5.4)
+        specifier: ^0.0.9
+        version: 0.0.9(@types/react-dom@18.3.0)(@types/react@18.3.3)(tailwindcss@3.4.10)(tslib@2.6.3)(typescript@5.5.4)
       '@tanstack/react-query':
         specifier: ^5.51.24
         version: 5.51.24(react@18.3.1)
@@ -583,8 +583,8 @@ packages:
   '@rushstack/eslint-patch@1.10.4':
     resolution: {integrity: sha512-WJgX9nzTqknM393q1QJDJmoW28kUfEnybeTfVNcNAPnIx210RXm2DiXiHzfNPJNIUUb1tJnz/l4QGtJ30PgWmA==}
 
-  '@spiraai/spira-form@0.0.7':
-    resolution: {integrity: sha512-UqXVr+z4y1oonzdiTbgsvKKuZ0D6jg/jAT9mII9pELhtUXMebVIWCYvxzZfJQgWERayUWYDKW+ypm6Q4oRlWZQ==, tarball: https://npm.pkg.github.com/download/@spiraai/spira-form/0.0.7/470280d0c19f792936d7a7286968fd629f774fb9}
+  '@spiraai/spira-form@0.0.9':
+    resolution: {integrity: sha512-zLAGUjbiqZUwu3Ia0SJe4UCs+1epQNj+Spd9fZvA4WOhVFV0DeF8IXCOBvHd04ErMn/dTZ+9wd9wgofhBwxnoQ==, tarball: https://npm.pkg.github.com/download/@spiraai/spira-form/0.0.9/5d89187755d3ded548f2fad1a06768c3c093383e}
     engines: {node: '>=20'}
 
   '@swc/counter@0.1.3':
@@ -2619,7 +2619,7 @@ snapshots:
 
   '@rushstack/eslint-patch@1.10.4': {}
 
-  '@spiraai/spira-form@0.0.7(@types/react-dom@18.3.0)(@types/react@18.3.3)(tailwindcss@3.4.10)(tslib@2.6.3)(typescript@5.5.4)':
+  '@spiraai/spira-form@0.0.9(@types/react-dom@18.3.0)(@types/react@18.3.3)(tailwindcss@3.4.10)(tslib@2.6.3)(typescript@5.5.4)':
     dependencies:
       '@hookform/resolvers': 3.9.0(react-hook-form@7.52.2(react@18.3.1))
       '@radix-ui/react-checkbox': 1.1.1(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3158,7 +3158,7 @@ snapshots:
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
       eslint-plugin-jsx-a11y: 6.9.0(eslint@8.57.0)
       eslint-plugin-react: 7.35.0(eslint@8.57.0)
       eslint-plugin-react-hooks: 4.6.2(eslint@8.57.0)
@@ -3182,7 +3182,7 @@ snapshots:
       enhanced-resolve: 5.17.1
       eslint: 8.57.0
       eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
       fast-glob: 3.3.2
       get-tsconfig: 4.7.6
       is-core-module: 2.15.0
@@ -3204,7 +3204,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0):
+  eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0):
     dependencies:
       array-includes: 3.1.8
       array.prototype.findlastindex: 1.2.5

@@ -12,10 +12,15 @@ export default function EditForm({
   params: { formId: string };
 }) {
   return (
-    <GenerateForm
-      formData={{
-        prompt: searchParams.q,
-      }}
-    />
+    <main className="bg-white">
+      <div>
+        <span>Edit Form</span>
+        <GenerateForm
+          formData={{
+            prompt: searchParams.q,
+          }}
+        />
+      </div>
+    </main>
   );
 }
