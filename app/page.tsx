@@ -1,7 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import GenerateBox from "./_components/prompt-box";
 import IntroSection from "./_components/intro-section";
-import AppWrapper from "./_components/react-query-provider";
 import PromptBox from "./_components/prompt-box";
 
 export default function Home() {
