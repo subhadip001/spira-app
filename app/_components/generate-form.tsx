@@ -10,9 +10,11 @@ type TGenerateFormProps = {
 
 const GenerateForm: React.FC<TGenerateFormProps> = ({ formData }) => {
   const [formSchema, setFormSchema] = useState(null);
+  
+  console.log("formData", formData);
   useEffect(() => {
     formSchemaGenerateMutation.mutate(formData);
-  }, [prompt]);
+  }, [formData]);
 
   const formSchemaGenerateMutation = useMutation({
     mutationFn: generateFormSchema,
