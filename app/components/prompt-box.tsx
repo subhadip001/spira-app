@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
+import { ReactTyped } from "react-typed";
 
 const PromptBox = () => {
   const router = useRouter();
@@ -28,12 +29,24 @@ const PromptBox = () => {
         className=" flex flex-col gap-3 rounded-lg p-3 z-50  "
         onSubmit={handleSubmit}
       >
-        <input
-          className="w-full border-none outline-none px-3 py-1 rounded"
-          placeholder="Ask Spira what to build..."
-          name="prompt"
-          autoComplete="off"
-        />
+        <ReactTyped
+          strings={[
+            "Form to collect my user feedback...",
+            "Create a survey about...",
+            "A form to hire a product designer...",
+            "Ask Spira to build form for ANYTHING",
+          ]}
+          typeSpeed={40}
+          backSpeed={50}
+          attr="placeholder"
+          // loop
+        >
+          <input
+            className="w-full border-none outline-none px-3 py-1 rounded"
+            name="prompt"
+            autoComplete="off"
+          />
+        </ReactTyped>
 
         <div className="w-full flex">
           <Button
