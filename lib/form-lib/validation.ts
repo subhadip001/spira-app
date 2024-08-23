@@ -1,5 +1,5 @@
-import { FormSchema } from "../types/FormSchema";
-import { TFormValues } from "../types/form";
+import { TFormValues } from "@/types/form";
+import { FormSchema } from "@/types/FormSchema";
 
 interface ValidationErrors {
   [key: string]: string;

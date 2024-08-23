@@ -1,12 +1,11 @@
 import React from "react";
-import { FormField } from "../types/FormSchema";
 import InputComponent from "./ui/InputComponent";
 import TextAreaComponent from "./ui/TextAreaComponent";
 import SelectComponent from "./ui/SelectComponent";
 import CheckboxField from "./ui/CheckboxComponent";
 import RadioField from "./ui/RadioField";
 import SliderField from "./ui/SliderField";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/types/FormSchema";
 
 interface FormFieldProps {
   field: FormField;
