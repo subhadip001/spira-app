@@ -64,6 +64,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
                       setFormData({ ...formData, [field.name]: value });
                     }}
                     accept={field.type === "file" ? field.accept : undefined}
+                    maxSize={field.type === "file" ? field.maxSize : undefined}
                   />
                 </FormControl>
                 <FormMessage> {formErrors[field.name]}</FormMessage>

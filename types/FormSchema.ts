@@ -14,6 +14,7 @@ export interface FormField {
   max?: number;
   step?: number;
   accept?: string;
+  maxSize?: string;
 }
 
 export interface FormSchema {

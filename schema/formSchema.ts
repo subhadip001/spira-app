@@ -1,4 +1,6 @@
-export const sampleFormSchema = {
+import { FormSchema } from "@/types/FormSchema";
+
+export const sampleFormSchema: FormSchema = {
   title: "Frontend Developer Job Application",
   description:
     "Please fill out the form to apply for the Frontend Developer position.",
@@ -128,13 +130,15 @@ export const sampleFormSchema = {
       name: "resume",
       required: false,
       accept: ".pdf,.doc,.docx",
+      maxSize: "5242880",
     },
     {
       type: "file",
-      label: "Cover Letter",
-      name: "coverLetter",
+      label: "Any File",
+      name: "Any File",
       required: false,
-      accept: ".pdf,.doc,.docx",
+      accept: ".pdf,.doc,.docx,.mp4",
+      maxSize: "5242880",
     },
   ],
 };

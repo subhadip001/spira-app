@@ -1,6 +1,6 @@
 import { fileSizeConverter } from "@/lib/form-lib/utils";
 import { cn } from "@/lib/utils";
-import { File, Upload, X } from "lucide-react";
+import { Check, File, TriangleAlert, Upload, X } from "lucide-react";
 import React, { ChangeEvent, useRef, useState } from "react";
 
 import { initializeApp } from "firebase/app";
@@ -20,8 +20,10 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app);
+const app = Object.values(firebaseConfig).every(Boolean)
+  ? initializeApp(firebaseConfig)
+  : null;
+const storage = app ? getStorage(app) : null;
 
 type FileInputProps = {
   id: string;
@@ -31,12 +33,14 @@ type FileInputProps = {
   onChange: (value: any) => void;
   className?: string;
   accept?: string;
-  handleFile: (file: File) => void;
+  maxSize: string;
 };
 
-const FileInput: React.FC<FileInputProps> = ({ handleFile, ...props }) => {
+const FileInput: React.FC<FileInputProps> = ({ maxSize, ...props }) => {
   const hiddenFileInput = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleClick = () => {
     if (file) {
@@ -44,32 +48,47 @@ const FileInput: React.FC<FileInputProps> = ({ handleFile, ...props }) => {
     }
     hiddenFileInput.current?.click();
   };
+
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    console.log("files", files);
     if (files && files.length > 0) {
       const fileUploaded = files[0];
       setFile(fileUploaded);
-      handleFile(fileUploaded);
-      uploadFile(fileUploaded)
-        .then(() => {
-          console.log("file uploaded:)");
-        })
-        .catch((error) => {
-          console.error("Error uploading file:", error);
-        });
+      uploadFile(fileUploaded);
     }
   };
 
   const removeFile = (e: React.MouseEvent) => {
     e.stopPropagation();
     setFile(null);
+    setUploadProgress(0);
+    setUploadError(null);
+    props.onChange(null);
     if (hiddenFileInput.current) {
       hiddenFileInput.current.value = "";
     }
   };
 
   const uploadFile = async (file: File) => {
+    if (!file) {
+      return;
+    }
+
+    if (file.size > parseInt(maxSize)) {
+      const errorMessage = `File size should not exceed ${fileSizeConverter(
+        parseInt(maxSize)
+      )}`;
+      setUploadError(errorMessage);
+      return;
+    }
+
+    if (!storage) {
+      setUploadError(
+        "Firebase storage is not initialized. Check your configuration."
+      );
+      return;
+    }
+
     const storageRef = ref(storage, `files/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -78,18 +97,11 @@ const FileInput: React.FC<FileInputProps> = ({ handleFile, ...props }) => {
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        switch (snapshot.state) {
-          case "paused":
-            console.log("Upload is paused");
-            break;
-          case "running":
-            console.log("Upload is running");
-            break;
-        }
+        setUploadProgress(progress);
       },
       (error) => {
         console.error("Error uploading file:", error);
+        setUploadError("Failed to upload file. Please try again.");
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -110,27 +122,51 @@ const FileInput: React.FC<FileInputProps> = ({ handleFile, ...props }) => {
       <div className="flex flex-col items-center px-3 py-4">
         <div className="w-full">
           {file ? (
-            <div className="flex items-center gap-8 justify-between">
-              <div className="flex items-center gap-2">
-                <div className="text-gray-500">
-                  <File size={18} />
+            <div className="flex flex-col gap-2 relative">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="text-gray-500">
+                    <File size={18} />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-500">{file.name}</span>
+                    <span className="text-blue-400 text-[0.7rem]">
+                      {fileSizeConverter(file.size)}
+                    </span>
+                  </div>
+                  <div className="flex items-center">
+                    {uploadProgress >= 100 && (
+                      <div className="text-gray-500 text-xs">
+                        <Check color="green" size={12} />
+                      </div>
+                    )}
+                    {uploadError && (
+                      <div className="text-gray-500 text-xs">
+                        <TriangleAlert color="red" size={12} />
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-gray-500 ">{file.name}</span>
-                  <span className="text-blue-400 text-[0.7rem]">
-                    {fileSizeConverter(file.size)}
-                  </span>
+                <div
+                  className="text-gray-400 cursor-pointer p-1"
+                  onClick={removeFile}
+                >
+                  <X size={15} />
                 </div>
               </div>
-              <div
-                className="text-gray-400 cursor-pointer p-1"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeFile(e);
-                }}
-              >
-                <X size={15} />
-              </div>
+              {uploadProgress > 0 && uploadProgress < 100 && (
+                <div className="w-full bg-gray-200 rounded-full h-1 absolute -bottom-2">
+                  <div
+                    className="bg-blue-400 h-1 rounded-full"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+              )}
+              {uploadError && (
+                <span className="text-red-500 text-[0.6rem] absolute -bottom-3">
+                  {uploadError}
+                </span>
+              )}
             </div>
           ) : (
             <div className="text-gray-500 flex items-center">
@@ -139,7 +175,7 @@ const FileInput: React.FC<FileInputProps> = ({ handleFile, ...props }) => {
                 <span>Click to choose a file &nbsp;</span>
               </div>
               <span className="text-gray-500 text-xs font-thin">
-                ({props.accept} )
+                ({props.accept})
               </span>
             </div>
           )}
