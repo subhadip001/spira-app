@@ -5,6 +5,8 @@ import { TFormData } from "@/lib/types";
 import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { FormBuilder } from "./form-components/FormBuilder";
+import { devopsForm } from "@/schema/testSchema";
+import { sampleFormSchema } from "@/schema/formSchema";
 
 type TGenerateFormProps = {
   formData: TFormData;
@@ -47,7 +49,7 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({ formData }) => {
         Generate Form
       </Button>
       {formSchemaGenerateMutation.isPending && <div>Loading...</div>}
-      {formSchema && <FormBuilder schema={formSchema} />}
+      {formSchema && <FormBuilder schema={formSchema} className="" />}
     </div>
   );
 };

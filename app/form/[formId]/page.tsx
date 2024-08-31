@@ -12,7 +12,7 @@ export default function EditForm({
   params: { formId: string };
 }) {
   return (
-    <main className="bg-white">
+    <main className="bg-white min-h-screen">
       <div>
         <span>Edit Form</span>
         <GenerateForm

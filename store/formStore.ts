@@ -1,5 +1,5 @@
 import { validateForm } from "@/lib/form-lib/validation";
-import { formSchema } from "@/schema/formSchema";
+import { sampleFormSchema } from "@/schema/formSchema";
 import { TFormDetails, TFormErrors, TFormValues } from "@/types/form";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
@@ -24,7 +24,7 @@ const useFormStore = create<FormStore>((set) => ({
       return {
         ...state,
         formData: data,
-        formErrors: validateForm(formSchema, data),
+        formErrors: validateForm(sampleFormSchema, data),
       };
     }),
 
@@ -34,7 +34,7 @@ const useFormStore = create<FormStore>((set) => ({
         ...state,
         formDetails: details,
         formData: data,
-        formErrors: validateForm(formSchema, data),
+        formErrors: validateForm(sampleFormSchema, data),
       };
     }),
 }));

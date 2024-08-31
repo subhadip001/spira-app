@@ -11,12 +11,14 @@ interface FormFieldProps {
   field: FormField;
   value: string;
   onChange: (value: string) => void;
+  accept?: string;
 }
 
 export const FormFieldComponent: React.FC<FormFieldProps> = ({
   field,
   value,
   onChange,
+  accept,
 }) => {
   switch (field.type) {
     case "text":
@@ -95,20 +97,12 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
         <div>
           <InputComponent
             type="file"
+            accept={accept}
             label={field.label}
             name={field.name}
             placeholder={field.placeholder}
             required={field.required}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                  onChange(e.target?.result as string);
-                };
-                reader.readAsDataURL(file);
-              }
-            }}
+            onChange={onChange}
           />
         </div>
       );

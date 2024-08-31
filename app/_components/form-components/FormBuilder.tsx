@@ -17,12 +17,12 @@ import { FormSchema } from "@/types/FormSchema";
 
 interface FormBuilderProps {
   schema: FormSchema;
-  classname?: string;
+  className?: string;
 }
 
 export const FormBuilder: React.FC<FormBuilderProps> = ({
   schema,
-  classname,
+  className,
 }) => {
   const formData = useFormStore((state) => state.formData);
   const setFormData = useFormStore((state) => state.setFormData);
@@ -44,7 +44,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn(classname, "")}
+        className={cn(className, "")}
       >
         <h1>{schema.title}</h1>
         <FormDescription>{schema.description}</FormDescription>
@@ -63,6 +63,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
                       controllerField.onChange(value);
                       setFormData({ ...formData, [field.name]: value });
                     }}
+                    accept={field.type === "file" ? field.accept : undefined}
                   />
                 </FormControl>
                 <FormMessage> {formErrors[field.name]}</FormMessage>
