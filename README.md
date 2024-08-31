@@ -1,29 +1,11 @@
-## Getting Started
+## Spira App
 
-First, run the development server:
+### APP Flow (v0)
 
-```bash
-pnpm dev
-# or
-bun dev
-```
+![image](https://github.com/user-attachments/assets/13974a81-1bde-4242-9fdf-a61fc05e1438)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-### TO DO FEATURES
+### TO DO FEATURES (LESS PRIORITY)
 
 - [ ] Add a dark mode
 - [ ] Input type and content Generation on the basis of field's title in edit mode
