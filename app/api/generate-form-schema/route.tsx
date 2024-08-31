@@ -1,4 +1,4 @@
-import { createGroqChatCompletion } from "@/lib/ai-query";
+import { createGeminiResponse, createGroqChatCompletion } from "@/lib/ai-query";
 import { FORM_SCHEMA_GENERATOR_PROMPT } from "@/lib/utils";
 
 export async function POST(req: Request) {
@@ -21,6 +21,11 @@ export async function POST(req: Request) {
       const content = chunk.choices[0]?.delta?.content || "";
       fullResponse += content;
     }
+
+    // const fullResponse = await createGeminiResponse(
+    //   FORM_SCHEMA_GENERATOR_PROMPT,
+    //   prompt
+    // );
 
     console.log(fullResponse);
 

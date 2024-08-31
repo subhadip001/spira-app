@@ -14,7 +14,8 @@ const PromptBox = () => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const formData = Object.fromEntries(data.entries()) as TFormData;
-    const prompt = data.get("prompt") as string;
+    const prompt = formData.prompt;
+    if (!prompt) return;
     const uuid = uuidv4();
     const encodedPrompt = encodeURIComponent(prompt);
     router.push(`/form/${uuid}?q=${encodedPrompt}`);
@@ -34,7 +35,7 @@ const PromptBox = () => {
             "Form to collect my user feedback...",
             "Create a survey about...",
             "A form to hire a product designer...",
-            "Ask Spira to build form for ANYTHING",
+            "Ask Spira to build form for anything...",
           ]}
           typeSpeed={40}
           backSpeed={50}
