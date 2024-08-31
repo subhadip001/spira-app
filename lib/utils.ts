@@ -179,6 +179,16 @@ When generating a schema, follow these guidelines and examples:
       "name": "resume",
       "accept": ".pdf,.doc,.docx",
       "required": true
+      "maxSize": "5242880"
+    }
+    k. File Upload (Of other types):
+    {
+      "type": "file",
+      "label": "Project screenshots or videos",
+      "name": "projectFiles",
+      "accept": ".jpg,.jpeg,.png,.mp4,.mov,.avi",
+      "required": true
+      "maxSize": "52428800"
     }
     etc.
 
@@ -189,6 +199,7 @@ NOTE: Above labels and values in the exampls are for reference. You should adjus
    - Use \`options\` for select, checkbox, and radio inputs to define choices.
    - Use \`min\`, \`max\`, and \`step\` for range inputs.
    - Use \`accept\` for file inputs to specify allowed file types.
+    - Use \`maxSize\` for file inputs to specify the maximum file size allowed.
 
 4. Validation: Set \`required\` to true for mandatory fields.
 

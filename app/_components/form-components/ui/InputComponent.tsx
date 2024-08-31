@@ -14,6 +14,7 @@ type InputComponentProps = {
   onChange: (value: any) => void;
   className?: string;
   accept?: string;
+  maxSize?: string;
 };
 
 const InputComponent: React.FC<InputComponentProps> = ({
@@ -26,6 +27,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
   onChange,
   className,
   accept,
+  maxSize,
 }) => {
   return (
     <div className={cn(className, "")}>
@@ -41,9 +43,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
           onChange={(e) => onChange(e)}
           className="hidden"
           accept={accept}
-          handleFile={(file) => {
-            console.log("file", file);
-          }}
+          maxSize={(maxSize as string) ?? "5242880"}
         />
       ) : (
         <Input

@@ -12,6 +12,7 @@ interface FormFieldProps {
   value: string;
   onChange: (value: string) => void;
   accept?: string;
+  maxSize?: string;
 }
 
 export const FormFieldComponent: React.FC<FormFieldProps> = ({
@@ -19,6 +20,7 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
   value,
   onChange,
   accept,
+  maxSize,
 }) => {
   switch (field.type) {
     case "text":
@@ -103,6 +105,7 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             placeholder={field.placeholder}
             required={field.required}
             onChange={onChange}
+            maxSize={maxSize}
           />
         </div>
       );
