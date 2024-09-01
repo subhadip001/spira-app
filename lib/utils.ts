@@ -260,3 +260,22 @@ When generating a schema, follow these guidelines:
 9. Output: Strictly Provide the generated schema in JSON format only for easy integration with form-building tools or APIs. Do not include any outher texts or comments in the output.
 
 When generating a schema, aim to create a comprehensive and user-friendly form that collects all necessary information while maintaining a good user experience. Be prepared to adjust the schema based on user feedback or additional requirements.`;
+
+export const quickStartQueries = [
+  {
+    id: 1,
+    query: "User feedback survey",
+  },
+  {
+    id: 2,
+    query: "A job application form",
+  },
+  {
+    id: 3,
+    query: "Form for e-bike market research",
+  },
+  {
+    id: 4,
+    query: "Make a quiz about India",
+  },
+];
