@@ -45,11 +45,10 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({ formData }) => {
   });
   return (
     <div className="w-[80%] mx-auto">
-      <Button onClick={() => formSchemaGenerateMutation.mutate(formData)}>
-        Generate Form
-      </Button>
       {formSchemaGenerateMutation.isPending && <div>Loading...</div>}
-      {formSchema && <FormBuilder schema={formSchema} className="" />}
+      {sampleFormSchema && (
+        <FormBuilder schema={sampleFormSchema} className="" />
+      )}
     </div>
   );
 };
