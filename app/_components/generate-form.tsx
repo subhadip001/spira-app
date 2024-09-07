@@ -7,7 +7,6 @@ import React, { useEffect, useState } from "react";
 import { FormBuilder } from "./form-components/FormBuilder";
 import { devopsForm } from "@/schema/testSchema";
 import { sampleFormSchema } from "@/schema/formSchema";
-import { Resizable } from "react-resizable";
 import HorizontalResizableComponent from "./resizable-component";
 
 type TGenerateFormProps = {
@@ -19,7 +18,7 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   formData,
   selectedViewport,
 }) => {
-  const [formSchema, setFormSchema] = useState(null);
+  const [formSchema, setFormSchema] = useState(devopsForm);
 
   // useEffect(() => {
   //   formSchemaGenerateMutation.mutate(formData);
@@ -59,9 +58,16 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
           : 400
       }
     >
-      <div className="mx-3 px-4 py-3 bg-white border-2 shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto">
+      <div className="mx-3 px-4 py-3 bg-white border shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto">
         {formSchemaGenerateMutation.isPending && <div>Loading...</div>}
-        {devopsForm && <FormBuilder schema={devopsForm} className="" />}
+        {devopsForm && (
+          <FormBuilder
+            initialSchema={devopsForm}
+            className=""
+            published={false}
+            editable={true}
+          />
+        )}
       </div>
     </HorizontalResizableComponent>
   );

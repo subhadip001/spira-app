@@ -37,7 +37,7 @@ const HistorySidebar = () => {
       }`}
     >
       <div className="p-4">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center flex-wrap">
           {openedHistory && <span className="">Versions</span>}
           <div
             onClick={() => setOpenedHistory((prev) => !prev)}
