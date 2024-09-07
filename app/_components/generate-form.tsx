@@ -7,15 +7,20 @@ import React, { useEffect, useState } from "react";
 import { FormBuilder } from "./form-components/FormBuilder";
 import { devopsForm } from "@/schema/testSchema";
 import { sampleFormSchema } from "@/schema/formSchema";
+import { Resizable } from "react-resizable";
+import HorizontalResizableComponent from "./resizable-component";
 
 type TGenerateFormProps = {
   formData: TFormData;
+  selectedViewport: "phone" | "tablet" | "desktop";
 };
 
-const GenerateForm: React.FC<TGenerateFormProps> = ({ formData }) => {
+const GenerateForm: React.FC<TGenerateFormProps> = ({
+  formData,
+  selectedViewport,
+}) => {
   const [formSchema, setFormSchema] = useState(null);
 
-  console.log("formData", formData);
   // useEffect(() => {
   //   formSchemaGenerateMutation.mutate(formData);
   // }, [formData]);
@@ -43,11 +48,22 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({ formData }) => {
       console.error("Error generating form schema", error);
     },
   });
+
   return (
-    <div className="px-3 py-2 bg-white border rounded-md">
-      {formSchemaGenerateMutation.isPending && <div>Loading...</div>}
-      {devopsForm && <FormBuilder schema={devopsForm} className="" />}
-    </div>
+    <HorizontalResizableComponent
+      initialWidth={
+        selectedViewport === "desktop"
+          ? 1300
+          : selectedViewport === "tablet"
+          ? 800
+          : 400
+      }
+    >
+      <div className="mx-3 px-4 py-3 bg-white border-2 shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto">
+        {formSchemaGenerateMutation.isPending && <div>Loading...</div>}
+        {devopsForm && <FormBuilder schema={devopsForm} className="" />}
+      </div>
+    </HorizontalResizableComponent>
   );
 };
 

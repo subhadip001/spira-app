@@ -14,11 +14,11 @@ const UserDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Button variant="outline" className="rounded-full h-10 w-10">
+        <div className="rounded-full h-10 w-10 flex items-center justify-center border">
           <div>
             <UserRound size={16} />
           </div>
-        </Button>
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="-translate-x-5">
         <DropdownMenuItem>Profile</DropdownMenuItem>

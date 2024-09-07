@@ -28,35 +28,32 @@ const HistorySidebar = () => {
     { version: 4, date: "2021-10-13" },
   ];
 
+  //w-[calc-size(auto)]
+
   return (
     <aside
-      className={`bg-white transition-all duration-300 ${
-        openedHistory ? "w-[15%]" : "w-[calc-size(auto)]"
+      className={`bg-white flex-shrink-0 transition-all duration-300 ${
+        openedHistory ? "min-w-[15vw] max-w-[15vw]" : "w-[calc-size(auto)]"
       }`}
     >
       <div className="p-4">
         <div className="flex justify-between items-center">
           {openedHistory && <span className="">Versions</span>}
-          <button
+          <div
             onClick={() => setOpenedHistory((prev) => !prev)}
-            className="hover:bg-gray-200 p-1 rounded border cursor-pointer transition-colors"
-            aria-label={openedHistory ? "Close sidebar" : "Open sidebar"}
+            className="hover:bg-gray-200 p-2 rounded border cursor-pointer transition-colors"
           >
-            {openedHistory ? (
-              <ChevronsLeft className="h-4 w-4" />
-            ) : (
-              <ChevronsRight className="h-4 w-4" />
-            )}
-          </button>
+            {openedHistory ? <ChevronsLeft /> : <ChevronsRight />}
+          </div>
         </div>
       </div>
-      {openedHistory && (
-        <section className="p-4">
-          <ul className="mt-2 space-y-2">
+      <section className="p-4">
+        {openedHistory ? (
+          <div className="flex flex-col space-y-2">
             {formVersions.map((formVersion) => (
-              <li
+              <div
                 key={formVersion.version}
-                className="py-2 hover:bg-gray-100 rounded transition-colors"
+                className="py-2 hover:bg-gray-200 rounded transition-colors cursor-pointer border"
               >
                 <div className="flex justify-between items-center px-2">
                   <div className="flex items-center space-x-2">
@@ -69,11 +66,24 @@ const HistorySidebar = () => {
                     {formVersion.date}
                   </div>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
-        </section>
-      )}
+          </div>
+        ) : (
+          <div className="flex flex-col space-y-2">
+            {formVersions.map((formVersion) => (
+              <div
+                key={formVersion.version}
+                className="p-2 hover:bg-gray-200 rounded transition-colors cursor-pointer border"
+              >
+                <div className="flex justify-center items-center">
+                  <span>v{formVersion.version}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </aside>
   );
 };
