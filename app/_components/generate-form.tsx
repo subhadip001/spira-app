@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { generateFormSchema } from "@/lib/queries";
 import { TFormData } from "@/lib/types";
 import { useMutation } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormBuilder } from "./form-components/FormBuilder";
 import { devopsForm } from "@/schema/testSchema";
 import { sampleFormSchema } from "@/schema/formSchema";
@@ -44,11 +44,9 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({ formData }) => {
     },
   });
   return (
-    <div className="w-[80%] mx-auto">
+    <div className="px-3 py-2 bg-white border rounded-md">
       {formSchemaGenerateMutation.isPending && <div>Loading...</div>}
-      {sampleFormSchema && (
-        <FormBuilder schema={sampleFormSchema} className="" />
-      )}
+      {devopsForm && <FormBuilder schema={devopsForm} className="" />}
     </div>
   );
 };

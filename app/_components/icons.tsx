@@ -22,11 +22,11 @@ export const Icons = {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(22.5 22.5) rotate(90) scale(22.5)"
         >
-          <stop offset="0.617171" stop-color="#9E00FF" />
-          <stop offset="0.824261" stop-color="#4A67FF" />
-          <stop offset="0.887244" stop-color="#5EB2FF" />
-          <stop offset="0.934871" stop-color="#73DDFE" />
-          <stop offset="1" stop-color="white" />
+          <stop offset="0.617171" stopColor="#9E00FF" />
+          <stop offset="0.824261" stopColor="#4A67FF" />
+          <stop offset="0.887244" stopColor="#5EB2FF" />
+          <stop offset="0.934871" stopColor="#73DDFE" />
+          <stop offset="1" stopColor="white" />
         </radialGradient>
       </defs>
     </svg>
