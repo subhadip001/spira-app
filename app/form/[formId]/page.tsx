@@ -1,10 +1,12 @@
-import GenerateForm from "../../_components/generate-form";
+import EditForm from "@/app/_components/edit-form";
+import Header from "@/app/_components/header";
+import HistorySidebar from "@/app/_components/history-sidebar";
 
 type TSearchParams = {
   q: string;
 };
 
-export default function EditForm({
+export default function EditFormHome({
   searchParams,
   params,
 }: {
@@ -12,15 +14,12 @@ export default function EditForm({
   params: { formId: string };
 }) {
   return (
-    <main className="bg-white min-h-screen">
-      <div>
-        <span>Edit Form</span>
-        <GenerateForm
-          formData={{
-            prompt: searchParams.q,
-          }}
-        />
-      </div>
-    </main>
+    <div className="bg-white w-[100vw] min-h-[100svh]">
+      <Header />
+      <main className="flex px-2">
+        <HistorySidebar />
+        <EditForm query={searchParams.q} />
+      </main>
+    </div>
   );
 }

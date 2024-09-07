@@ -3,19 +3,23 @@ import { Button } from "@/components/ui/button";
 import { generateFormSchema } from "@/lib/queries";
 import { TFormData } from "@/lib/types";
 import { useMutation } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormBuilder } from "./form-components/FormBuilder";
 import { devopsForm } from "@/schema/testSchema";
 import { sampleFormSchema } from "@/schema/formSchema";
+import HorizontalResizableComponent from "./resizable-component";
 
 type TGenerateFormProps = {
   formData: TFormData;
+  selectedViewport: "phone" | "tablet" | "desktop";
 };
 
-const GenerateForm: React.FC<TGenerateFormProps> = ({ formData }) => {
-  const [formSchema, setFormSchema] = useState(null);
+const GenerateForm: React.FC<TGenerateFormProps> = ({
+  formData,
+  selectedViewport,
+}) => {
+  const [formSchema, setFormSchema] = useState(devopsForm);
 
-  console.log("formData", formData);
   // useEffect(() => {
   //   formSchemaGenerateMutation.mutate(formData);
   // }, [formData]);
@@ -43,14 +47,29 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({ formData }) => {
       console.error("Error generating form schema", error);
     },
   });
+
   return (
-    <div className="w-[80%] mx-auto">
-      <Button onClick={() => formSchemaGenerateMutation.mutate(formData)}>
-        Generate Form
-      </Button>
-      {formSchemaGenerateMutation.isPending && <div>Loading...</div>}
-      {formSchema && <FormBuilder schema={formSchema} className="" />}
-    </div>
+    <HorizontalResizableComponent
+      initialWidth={
+        selectedViewport === "desktop"
+          ? 1300
+          : selectedViewport === "tablet"
+          ? 800
+          : 400
+      }
+    >
+      <div className="mx-3 px-4 py-3 bg-white border shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto">
+        {formSchemaGenerateMutation.isPending && <div>Loading...</div>}
+        {devopsForm && (
+          <FormBuilder
+            initialSchema={devopsForm}
+            className=""
+            published={false}
+            editable={true}
+          />
+        )}
+      </div>
+    </HorizontalResizableComponent>
   );
 };
 
