@@ -1,3 +1,4 @@
+import genarateForSchema from "@/app/_functions/genarateFormSchema";
 import { createGeminiResponse, createGroqChatCompletion } from "@/lib/ai-query";
 import { FORM_SCHEMA_GENERATOR_PROMPT } from "@/lib/utils";
 
@@ -9,27 +10,13 @@ export async function POST(req: Request) {
       status: 400,
     });
   }
-
   try {
-    const chatCompletion = await createGroqChatCompletion(
-      FORM_SCHEMA_GENERATOR_PROMPT,
-      prompt
-    );
+    const returndevalued = await genarateForSchema(prompt);
 
-    let fullResponse = "";
-    for await (const chunk of chatCompletion) {
-      const content = chunk.choices[0]?.delta?.content || "";
-      fullResponse += content;
+    if (!returndevalued.success) {
+      throw new Error(returndevalued.message);
     }
-
-    // const fullResponse = await createGeminiResponse(
-    //   FORM_SCHEMA_GENERATOR_PROMPT,
-    //   prompt
-    // );
-
-    console.log(fullResponse);
-
-    return Response.json({ message: fullResponse }, { status: 200 });
+    return Response.json({ message: returndevalued.data }, { status: 200 });
   } catch (error) {
     console.error(error);
     return Response.json(

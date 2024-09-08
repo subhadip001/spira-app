@@ -9,20 +9,21 @@ import { v4 as uuidv4 } from "uuid";
 import { ReactTyped } from "react-typed";
 import { quickStartQueries } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import PostInitialUserQuery from "../_actions/form/postInitialUserQuery";
 
 const PromptBox = () => {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    const formData = Object.fromEntries(data.entries()) as TFormData;
-    const prompt = formData.prompt;
-    if (!prompt) return;
-    const uuid = uuidv4();
-    const encodedPrompt = encodeURIComponent(prompt);
-    router.push(`/form/${uuid}?q=${encodedPrompt}`);
-  };
+  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   const data = new FormData(e.currentTarget);
+  //   const formData = Object.fromEntries(data.entries()) as TFormData;
+  //   const prompt = formData.prompt;
+  //   if (!prompt) return;
+  //   const uuid = uuidv4();
+  //   const encodedPrompt = encodeURIComponent(prompt);
+  //   router.push(`/form/${uuid}?q=${encodedPrompt}`);
+  // };
 
   return (
     <div className="flex flex-col gap-3">
@@ -32,7 +33,8 @@ const PromptBox = () => {
       >
         <form
           className=" flex flex-col gap-3 rounded-lg p-3 z-50  "
-          onSubmit={handleSubmit}
+          // onSubmit={handleSubmit}
+          action={PostInitialUserQuery}
         >
           <ReactTyped
             strings={[

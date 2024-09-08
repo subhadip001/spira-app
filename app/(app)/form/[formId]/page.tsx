@@ -1,16 +1,14 @@
-import GenerateForm from "../../_components/generate-form";
-
-type TSearchParams = {
-  q: string;
-};
-
+import GenerateForm from "../../../_components/generate-form";
 export default function EditForm({
-  searchParams,
+
   params,
 }: {
-  searchParams: TSearchParams;
+  
   params: { formId: string };
 }) {
+  
+  
+
   return (
     <main className="bg-white min-h-screen">
       <div>
