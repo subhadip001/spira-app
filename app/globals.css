@@ -71,6 +71,10 @@
   overscroll-behavior: none;
 }
 
+html {
+  overflow: hidden;
+}
+
 .font-bricolage_grotesque {
   font-family: 'Bricolage Grotesque', sans-serif;
 }
