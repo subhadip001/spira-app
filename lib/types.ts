@@ -1,3 +1,3 @@
-export type TFormData = {
+export type TQueryData = {
   prompt: string;
 };

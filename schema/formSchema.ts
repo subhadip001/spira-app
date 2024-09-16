@@ -1,6 +1,6 @@
 import { FormSchema } from "@/types/FormSchema";
 
-export const sampleFormSchema: FormSchema = {
+export const sampleFormSchema = {
   title: "Frontend Developer Job Application",
   description:
     "Please fill out the form to apply for the Frontend Developer position.",

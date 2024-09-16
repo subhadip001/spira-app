@@ -1,10 +1,10 @@
-import { TFormData } from "./types";
+import { TQueryData } from "./types";
 
 export enum QueryKeys {
   GetSpiraResponse = "getSpiraResponse",
 }
 
-export const generateFormSchema = async (data: TFormData) => {
+export const generateFormSchema = async (data: TQueryData) => {
   const response = await fetch("/api/generate-form-schema", {
     method: "POST",
     headers: {

@@ -1,40 +1,45 @@
 import { validateForm } from "@/lib/form-lib/validation";
 import { sampleFormSchema } from "@/schema/formSchema";
-import { TFormDetails, TFormErrors, TFormValues } from "@/types/form";
+import {
+  TFormData,
+  TFormDetails,
+  TFormErrors,
+  TFormValues,
+} from "@/types/form";
+import { FormSchema } from "@/types/FormSchema";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 interface FormStore {
-  formDetails: TFormDetails;
-  formData: TFormValues;
-  setFormData: (data: TFormValues) => void;
+  currentFormSchema: FormSchema;
+  formData: TFormData;
+  setFormData: (
+    details: TFormDetails,
+    values: TFormValues,
+    formSchema: FormSchema
+  ) => void;
   formErrors: TFormErrors;
-  initializeForm: (details: TFormDetails, data: TFormValues) => void;
 }
 
 const useFormStore = create<FormStore>((set) => ({
-  formDetails: {
-    title: "",
-    description: "",
+  currentFormSchema: {} as FormSchema,
+  formData: {
+    details: {
+      title: "",
+      description: "",
+    },
+    values: [],
   },
-  formData: {},
-  formErrors: {},
-  setFormData: (data) =>
+  formErrors: [],
+  setFormData: (details, values, formSchema) =>
     set((state) => {
       return {
         ...state,
-        formData: data,
-        formErrors: validateForm(sampleFormSchema, data),
-      };
-    }),
-
-  initializeForm: (details, data) =>
-    set((state) => {
-      return {
-        ...state,
-        formDetails: details,
-        formData: data,
-        formErrors: validateForm(sampleFormSchema, data),
+        formData: {
+          details: details,
+          values: values,
+        },
+        formErrors: validateForm(formSchema, values),
       };
     }),
 }));

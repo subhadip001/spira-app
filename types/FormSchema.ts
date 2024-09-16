@@ -4,6 +4,8 @@ export interface FormFieldOption {
 }
 
 export interface FormField {
+  constantId: number;
+  serialId: number;
   type: string;
   label: string;
   name: string;

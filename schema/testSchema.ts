@@ -1,33 +1,45 @@
-export const devopsForm = {
+import { FormSchema } from "@/types/FormSchema";
+
+export const devopsForm: FormSchema = {
   title: "DevOps Engineer Application Form",
   description:
     "Please provide the following information to apply for the DevOps Engineer position.",
   fields: [
     {
+      constantId: 1,
+      serialId: 1,
       type: "text",
       label: "Full Name",
       name: "fullName",
       required: true,
     },
     {
+      constantId: 2,
+      serialId: 2,
       type: "email",
       label: "Email Address",
       name: "email",
       required: true,
     },
     {
+      constantId: 3,
+      serialId: 3,
       type: "tel",
       label: "Phone Number",
       name: "phoneNumber",
       required: true,
     },
     {
+      constantId: 4,
+      serialId: 4,
       type: "textarea",
       label: "Resume (upload or paste text)",
       name: "resume",
       required: true,
     },
     {
+      constantId: 5,
+      serialId: 5,
       type: "select",
       label: "Preferred Programming Language",
       name: "preferredLanguage",
@@ -52,12 +64,16 @@ export const devopsForm = {
       required: true,
     },
     {
+      constantId: 6,
+      serialId: 6,
       type: "checkbox",
       label: "Have you worked with containerization tools (e.g., Docker)?",
       name: "containerizationExperience",
       required: true,
     },
     {
+      constantId: 7,
+      serialId: 7,
       type: "checkbox",
       label:
         "Have you worked with cloud platforms (e.g., AWS, Azure, Google Cloud)?",
@@ -65,6 +81,8 @@ export const devopsForm = {
       required: true,
     },
     {
+      constantId: 8,
+      serialId: 8,
       type: "radio",
       label: "What is your level of experience with DevOps tools?",
       name: "devOpsExperience",
@@ -85,6 +103,8 @@ export const devopsForm = {
       required: true,
     },
     {
+      constantId: 9,
+      serialId: 9,
       type: "range",
       label:
         "How many years of experience do you have in software development?",

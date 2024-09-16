@@ -72,6 +72,8 @@ When generating a schema, follow these guidelines and examples:
 
    a. Text Input:
    {
+     "constantId": 1,
+     "serialId": 1,
      "type": "text",
      "label": "Full Name",
      "name": "fullName",
@@ -81,6 +83,8 @@ When generating a schema, follow these guidelines and examples:
 
    b. Email Input:
    {
+     "constantId": 2,
+     "serialId": 2,
      "type": "email",
      "label": "Email Address",
      "name": "email",
@@ -90,6 +94,8 @@ When generating a schema, follow these guidelines and examples:
 
    c. Telephone Input:
    {
+     "constantId": 3,
+     "serialId": 3,
      "type": "tel",
      "label": "Phone Number",
      "name": "phone",
@@ -99,6 +105,8 @@ When generating a schema, follow these guidelines and examples:
 
    d. Textarea:
    {
+     "constantId": 4,
+     "serialId": 4,
      "type": "textarea",
      "label": "Summary",
      "name": "summary",
@@ -108,6 +116,8 @@ When generating a schema, follow these guidelines and examples:
 
    e. Select Dropdown:
    {
+     "constantId": 5,
+     "serialId": 5,
      "type": "select",
      "label": "Years of Experience",
      "name": "experience",
@@ -123,6 +133,8 @@ When generating a schema, follow these guidelines and examples:
 
    f. Checkbox (Multiple Selection):
    {
+     "constantId": 6,
+     "serialId": 6,
      "type": "checkbox",
      "label": "Skills",
      "name": "skills",
@@ -137,6 +149,8 @@ When generating a schema, follow these guidelines and examples:
 
    g. Checkbox (Single Option, e.g., Terms and Conditions):
    {
+     "constantId": 7,
+     "serialId": 7,
      "type": "checkbox",
      "label": "Terms and Conditions",
      "name": "terms",
@@ -151,6 +165,8 @@ When generating a schema, follow these guidelines and examples:
 
    h. Radio Buttons:
    {
+     "constantId": 8,
+     "serialId": 8,
      "type": "radio",
      "label": "Preferred Work Location",
      "name": "workLocation",
@@ -164,6 +180,8 @@ When generating a schema, follow these guidelines and examples:
 
    i. Range Input:
    {
+     "constantId": 9,
+     "serialId": 9,
      "type": "range",
      "label": "Salary Range",
      "name": "salary",
@@ -174,6 +192,8 @@ When generating a schema, follow these guidelines and examples:
    }
    j. File Upload:
     {
+      "constantId": 10,
+      "serialId": 10,
       "type": "file",
       "label": "Resume",
       "name": "resume",
@@ -183,6 +203,8 @@ When generating a schema, follow these guidelines and examples:
     }
     k. File Upload (Of other types):
     {
+      "constantId": 11,
+      "serialId": 11,
       "type": "file",
       "label": "Project screenshots or videos",
       "name": "projectFiles",
@@ -203,11 +225,13 @@ NOTE: Above labels and values in the exampls are for reference. You should adjus
 
 4. Validation: Set \`required\` to true for mandatory fields.
 
-5. Organization: Group related fields together and order them logically.
+5. Assiging IDs: Assign unique constantId and serialId to each field object. constantId should be unique across the form and serialId should be unique within the form.
 
-6. Customization: Tailor the fields and options to the specific requirements of the form type requested by the user.
+6. Organization: Group related fields together and order them logically.
 
-7. Creativity: Be creative while asking questions and collecting information. Make the form engaging and user-friendly.
+7. Customization: Tailor the fields and options to the specific requirements of the form type requested by the user.
+
+8. Creativity: Be creative while asking questions and collecting information. Make the form engaging and user-friendly.
 
 When generating a schema, aim to create a comprehensive and user-friendly form that collects all necessary information while maintaining a good user experience. Be prepared to adjust the schema based on user feedback or additional requirements.`;
 

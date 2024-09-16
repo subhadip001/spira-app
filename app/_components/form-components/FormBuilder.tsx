@@ -1,6 +1,3 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { FormFieldComponent } from "./FormFields";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,42 +8,64 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { TFormValues } from "@/types/form";
+import { devopsForm } from "@/schema/testSchema";
 import useFormStore from "@/store/formStore";
+import { TFormValues } from "@/types/form";
 import { FormSchema } from "@/types/FormSchema";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { FormFieldComponent } from "./FormFields";
 
 interface FormBuilderProps {
-  initialSchema: FormSchema;
+  initialSchema?: FormSchema;
   published: boolean;
   editable: boolean;
   className?: string;
 }
 
 export const FormBuilder: React.FC<FormBuilderProps> = ({
-  initialSchema,
+  initialSchema = devopsForm,
   published,
   editable,
   className,
 }) => {
   const [schema, setSchema] = useState<FormSchema>(initialSchema);
-  const formData = useFormStore((state) => state.formData);
+  const formData = useFormStore((state) => state.formData.values);
+  const formDetails = useFormStore((state) => state.formData.details);
   const setFormData = useFormStore((state) => state.setFormData);
   const formErrors = useFormStore((state) => state.formErrors);
 
+  console.table(formData);
+  console.table(formDetails);
+
   useEffect(() => {
     setSchema(initialSchema);
-  }, [initialSchema]);
+    setFormData(
+      {
+        title: devopsForm.title,
+        description: devopsForm.description,
+      },
+      formData,
+      devopsForm
+    );
+  }, [devopsForm]);
 
-  const form = useForm<TFormValues>({
-    defaultValues: { ...formData },
+  const form = useForm<Record<string, string>>({
+    defaultValues: formData.reduce((acc, field) => {
+      acc[field.formFieldName] = field.formFieldValue;
+      return acc;
+    }, {} as Record<string, string>),
   });
 
-  const onSubmit = (data: TFormValues) => {
-    setFormData(data);
-    console.log("Form submitted:", JSON.stringify(data, null, 2));
-    if (Object.keys(formErrors).length === 0) {
-      console.log("Form submitted:", JSON.stringify(data, null, 2));
-    }
+  const onSubmit = (data: Record<string, string>) => {
+    const newFormData: TFormValues = schema.fields.map((field) => ({
+      formFieldId: field.constantId,
+      formFieldName: field.name,
+      formFieldLabel: field.label,
+      formFieldValue: data[field.name] || "",
+    }));
+    setFormData(formDetails, newFormData, schema);
+    console.log("Form submitted:", JSON.stringify(newFormData, null, 2));
   };
 
   const moveField = (index: number, direction: "up" | "down") => {
@@ -65,9 +84,15 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
     setSchema({ ...schema, fields: newFields });
   };
 
-  const deleteField = (index: number) => {
-    const newFields = schema.fields.filter((_, i) => i !== index);
+  const deleteField = (constantId: number) => {
+    const newFields = schema.fields.filter(
+      (field) => field.constantId !== constantId
+    );
     setSchema({ ...schema, fields: newFields });
+    const newFormData = formData.filter(
+      (field) => field.formFieldId !== constantId
+    );
+    setFormData(formDetails, newFormData, schema);
   };
 
   return (
@@ -76,12 +101,54 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn(className, "")}
       >
-        <h1>{schema?.title}</h1>
-        <FormDescription>{schema?.description}</FormDescription>
-        {schema?.fields.map((field, index) => (
-          <div key={index} className="mb-4">
+        {editable ? (
+          <input
+            type="text"
+            name="title"
+            defaultValue={schema?.title}
+            placeholder="Add Form Title"
+            className="mb-4 w-full outline-none"
+            onChange={(e) => {
+              setSchema({ ...schema, title: e.target.value });
+              setFormData(
+                {
+                  ...formDetails,
+                  title: e.target.value,
+                },
+                formData,
+                schema
+              );
+            }}
+          />
+        ) : (
+          <h2 className="mb-4">{schema?.title}</h2>
+        )}
+        <FormDescription>
+          {editable ? (
+            <textarea
+              name="description"
+              defaultValue={schema?.description}
+              placeholder="Add Form Description"
+              className="mb-4 w-full outline-none"
+              onChange={(e) => {
+                setSchema({ ...schema, description: e.target.value });
+                setFormData(
+                  {
+                    ...formDetails,
+                    description: e.target.value,
+                  },
+                  formData,
+                  schema
+                );
+              }}
+            />
+          ) : (
+            <p>{schema?.description}</p>
+          )}
+        </FormDescription>
+        {schema?.fields?.map((field, index) => (
+          <div key={field.constantId} className="mb-4">
             <FormField
-              key={index}
               control={form.control}
               name={field.name}
               render={({ field: controllerField }) => (
@@ -92,7 +159,21 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
                       value={controllerField.value}
                       onChange={(value: string) => {
                         controllerField.onChange(value);
-                        setFormData({ ...formData, [field.name]: value });
+                        const newFormData = [...formData];
+                        const fieldIndex = newFormData.findIndex(
+                          (f) => f.formFieldId === field.constantId
+                        );
+                        if (fieldIndex !== -1) {
+                          newFormData[fieldIndex].formFieldValue = value;
+                        } else {
+                          newFormData.push({
+                            formFieldId: field.constantId,
+                            formFieldName: field.name,
+                            formFieldLabel: field.label,
+                            formFieldValue: value,
+                          });
+                        }
+                        setFormData(formDetails, newFormData, schema);
                       }}
                       accept={field.type === "file" ? field.accept : undefined}
                       maxSize={
@@ -100,7 +181,12 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
                       }
                     />
                   </FormControl>
-                  <FormMessage> {formErrors[field.name]}</FormMessage>
+                  <FormMessage>
+                    {
+                      formErrors.find((e) => e.formFieldId === field.constantId)
+                        ?.error
+                    }
+                  </FormMessage>
                 </FormItem>
               )}
             />
@@ -120,7 +206,10 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
                 >
                   Move Down
                 </Button>
-                <Button type="button" onClick={() => deleteField(index)}>
+                <Button
+                  type="button"
+                  onClick={() => deleteField(field.constantId)}
+                >
                   Delete
                 </Button>
               </div>
