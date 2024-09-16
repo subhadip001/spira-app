@@ -11,7 +11,7 @@ type InputComponentProps = {
   placeholder?: string;
   required?: boolean;
   value?: string;
-  onChange: (value: any) => void;
+  onChange: (value: string) => void;
   className?: string;
   accept?: string;
   maxSize?: string;

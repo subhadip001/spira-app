@@ -26,7 +26,7 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
   const safeValue = value ?? "";
 
   const handleChange = (newValue: string | number) => {
-    onChange(newValue.toString());
+    onChange(newValue?.toString() ?? "");
   };
 
   switch (field.type) {

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Monitor, Smartphone, SquareArrowUpRight, Tablet } from "lucide-react";
 import React, { useState } from "react";
 import GenerateForm from "./generate-form";
+import useFormStore from "@/store/formStore";
 
 type EditFormProps = {
   query: string;
@@ -12,6 +13,13 @@ const EditForm: React.FC<EditFormProps> = ({ query }) => {
   const [selectedViewport, setSelectedViewport] = useState<
     "phone" | "tablet" | "desktop"
   >("desktop");
+
+  const formData = useFormStore((state) => state.formData);
+
+  const handlePublish = () => {
+    console.log("Publishing form...");
+    console.log(formData);
+  };
   return (
     <section className="relative flex-grow flex flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
       <div className="flex px-3 justify-between items-center w-full rounded-md h-[7vh]">
@@ -53,6 +61,7 @@ const EditForm: React.FC<EditFormProps> = ({ query }) => {
             type="button"
             variant="default"
             className="flex items-center gap-1"
+            onClick={handlePublish}
           >
             Publish
             <div>

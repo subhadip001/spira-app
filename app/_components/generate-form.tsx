@@ -3,7 +3,7 @@ import { jsonExtractor } from "@/lib/form-lib/utils";
 import { generateFormSchema } from "@/lib/queries";
 import { TQueryData } from "@/lib/types";
 import { useMutation } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormBuilder } from "./form-components/FormBuilder";
 import HorizontalResizableComponent from "./resizable-component";
 
