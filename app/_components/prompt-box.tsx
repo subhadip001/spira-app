@@ -1,7 +1,7 @@
 "use client";
 import ShineBorder from "@/components/magicui/shine-border";
 import { Button } from "@/components/ui/button";
-import { TFormData } from "@/lib/types";
+import { TQueryData } from "@/lib/types";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { Fragment, useState } from "react";
@@ -16,7 +16,7 @@ const PromptBox = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    const formData = Object.fromEntries(data.entries()) as TFormData;
+    const formData = Object.fromEntries(data.entries()) as TQueryData;
     const prompt = formData.prompt;
     if (!prompt) return;
     const uuid = uuidv4();

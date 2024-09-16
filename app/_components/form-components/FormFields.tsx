@@ -22,6 +22,13 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
   accept,
   maxSize,
 }) => {
+  // Ensure value is never undefined
+  const safeValue = value ?? "";
+
+  const handleChange = (newValue: string | number) => {
+    onChange(newValue?.toString() ?? "");
+  };
+
   switch (field.type) {
     case "text":
     case "email":
@@ -34,8 +41,8 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             name={field.name}
             placeholder={field.placeholder}
             required={field.required}
-            value={value}
-            onChange={onChange}
+            value={safeValue}
+            onChange={handleChange}
           />
         </div>
       );
@@ -48,8 +55,8 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             name={field.name}
             placeholder={field.placeholder}
             required={field.required}
-            value={value}
-            onChange={onChange}
+            value={safeValue}
+            onChange={handleChange}
           />
         </div>
       );
@@ -60,9 +67,9 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             label={field.label}
             name={field.name}
             options={field.options || []}
-            value={value}
+            value={safeValue}
             placeholder={field.placeholder}
-            onChange={onChange}
+            onChange={handleChange}
           />
         </div>
       );
@@ -72,8 +79,8 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
           <CheckboxField
             field={{
               name: field.name,
-              value: value,
-              onChange: (value) => onChange(value),
+              value: safeValue,
+              onChange: handleChange,
             }}
             label={field.label}
             options={field.options || []}
@@ -86,8 +93,8 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
           <RadioField
             field={{
               name: field.name,
-              value: value,
-              onChange: (value) => onChange(value),
+              value: safeValue,
+              onChange: handleChange,
             }}
             label={field.label}
             options={field.options || []}
@@ -104,8 +111,9 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             name={field.name}
             placeholder={field.placeholder}
             required={field.required}
-            onChange={onChange}
+            onChange={handleChange}
             maxSize={maxSize}
+            // File inputs can't be controlled, so we don't pass a value prop
           />
         </div>
       );
@@ -115,8 +123,8 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
           <SliderField
             field={{
               name: field.name,
-              value: parseFloat(value) || 0,
-              onChange: (newValue) => onChange(newValue.toString()),
+              value: parseFloat(safeValue) || 0,
+              onChange: (newValue) => handleChange(newValue.toString()),
             }}
             label={field.label}
             min={field.min}

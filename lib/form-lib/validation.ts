@@ -1,20 +1,26 @@
-import { TFormValues } from "@/types/form";
+import { TFormValues, TFormErrors } from "@/types/form";
 import { FormSchema } from "@/types/FormSchema";
-
-interface ValidationErrors {
-  [key: string]: string;
-}
 
 export const validateForm = (
   schema: FormSchema,
   values: TFormValues
-): ValidationErrors => {
-  const errors: ValidationErrors = {};
+): TFormErrors => {
+  const errors: TFormErrors = [];
 
   schema.fields.forEach((field) => {
-    if (field.required && !values[field.name]) {
-      errors[field.name] = `${field.label} is required`;
+    const fieldValue = values.find(v => v.formFieldId === field.constantId);
+    
+    if (field.required) {
+      if (!fieldValue || fieldValue.formFieldValue.trim() === "") {
+        errors.push({
+          formFieldId: field.constantId,
+          error: `${field.label} is required`
+        });
+      }
     }
+    
+    // Add more validation rules here if needed
+    // For example, email validation, number range validation, etc.
   });
 
   return errors;
