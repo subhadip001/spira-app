@@ -12,6 +12,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 interface FormStore {
   currentFormSchema: FormSchema;
+  setCurrentFormSchema: (formSchema: FormSchema) => void;
   formData: TFormData;
   setFormData: (
     details: TFormDetails,
@@ -23,6 +24,13 @@ interface FormStore {
 
 const useFormStore = create<FormStore>((set) => ({
   currentFormSchema: {} as FormSchema,
+  setCurrentFormSchema: (formSchema) =>
+    set((state) => {
+      return {
+        ...state,
+        currentFormSchema: formSchema,
+      };
+    }),
   formData: {
     details: {
       title: "",
