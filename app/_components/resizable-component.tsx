@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useCallback, useEffect, MouseEvent } from "react";
 import { useMediaQuery } from "react-responsive";
 

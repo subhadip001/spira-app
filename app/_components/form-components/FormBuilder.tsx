@@ -23,7 +23,7 @@ interface FormBuilderProps {
   className?: string;
 }
 
-export const FormBuilder: React.FC<FormBuilderProps> = ({
+const FormBuilder: React.FC<FormBuilderProps> = ({
   initialSchema = devopsForm,
   published,
   editable,
@@ -34,6 +34,9 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
   const formDetails = useFormStore((state) => state.formData.details);
   const setFormData = useFormStore((state) => state.setFormData);
   const formErrors = useFormStore((state) => state.formErrors);
+  const setCurrentFormSchema = useFormStore(
+    (state) => state.setCurrentFormSchema
+  );
 
   console.table(formData);
   console.table(formDetails);
@@ -49,6 +52,10 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
       devopsForm
     );
   }, [devopsForm]);
+
+  useEffect(() => {
+    setCurrentFormSchema(schema);
+  }, [schema]);
 
   const form = useForm<Record<string, string>>({
     defaultValues: formData.reduce((acc, field) => {
@@ -225,3 +232,5 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
     </Form>
   );
 };
+
+export default FormBuilder;

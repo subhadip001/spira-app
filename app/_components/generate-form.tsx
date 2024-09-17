@@ -4,8 +4,12 @@ import { generateFormSchema } from "@/lib/queries";
 import { TQueryData } from "@/lib/types";
 import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import { FormBuilder } from "./form-components/FormBuilder";
-import HorizontalResizableComponent from "./resizable-component";
+import FormBuilder from "./form-components/FormBuilder";
+import dynamic from "next/dynamic";
+const HorizontalResizableComponent = dynamic(
+  () => import("./resizable-component"),
+  { ssr: false }
+);
 
 type TGenerateFormProps = {
   formData: TQueryData;
