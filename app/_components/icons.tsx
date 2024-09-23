@@ -1,4 +1,5 @@
 import { LucideProps } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 
 export const Icons = {
   logo: ({ ...props }: LucideProps) => (
@@ -30,5 +31,13 @@ export const Icons = {
         </radialGradient>
       </defs>
     </svg>
+  ),
+
+  googleColored: ({ ...props }: LucideProps) => (
+    <FcGoogle
+      {...props}
+      className="mr-2 h-4 w-4 text-white"
+      color="currentColor"
+    />
   ),
 };

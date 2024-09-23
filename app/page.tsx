@@ -3,7 +3,7 @@ import IntroSection from "./_components/intro-section";
 import PromptBox from "./_components/prompt-box";
 import Header from "./_components/header";
 
-export default function Home() {
+export default async function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
