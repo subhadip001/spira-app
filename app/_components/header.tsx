@@ -1,8 +1,7 @@
 import { cn } from "@/lib/utils";
-import React, { useState, useEffect } from "react";
-import { Icons } from "./icons";
-import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
+import React from "react";
+import { Icons } from "./icons";
 
 type HeaderProps = {
   className?: string;

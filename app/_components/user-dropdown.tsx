@@ -1,16 +1,29 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { UserRound } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { createClient } from "@/utils/supabase/client";
+import { UserRound } from "lucide-react";
 
 const UserDropdown = () => {
+  const supabase = createClient();
+
+  const logOut = async () => {
+    const { error } = await supabase.auth.signOut({ scope: "local" });
+    if (error) {
+      console.error(error);
+    }
+    window.location.reload();
+  };
+
+  supabase.auth.getUser().then(({ data }) => {
+    console.log(data);
+  });
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -20,13 +33,13 @@ const UserDropdown = () => {
           </div>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="-translate-x-5">
+      <DropdownMenuContent align="end" className="">
         <DropdownMenuItem>Profile</DropdownMenuItem>
         <DropdownMenuItem>Explore</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Settings</DropdownMenuItem>
         <DropdownMenuItem>Help</DropdownMenuItem>
-        <DropdownMenuItem>Logout</DropdownMenuItem>
+        <DropdownMenuItem onClick={logOut}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
