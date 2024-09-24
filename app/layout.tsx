@@ -49,7 +49,7 @@ export default function RootLayout({
             />
           </div>
           <div className="flex-grow z-10">{children}</div>
-          <Toaster />
+          <Toaster position="top-right" />
         </body>
       </ReactQueryProvider>
     </html>

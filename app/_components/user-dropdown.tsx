@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { UserRound } from "lucide-react";
@@ -16,6 +16,7 @@ import Image from "next/image";
 
 const UserDropdown = () => {
   const supabase = createClient();
+  const pathName = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
 
@@ -35,7 +36,9 @@ const UserDropdown = () => {
       await supabase.auth.signOut({ scope: "local" });
       setUser(null);
       toast.success("Logged out successfully");
-      router.push("/"); // Redirect to home page or login page
+      if (pathName !== "/" || !pathName.startsWith("/form")) {
+        router.push("/");
+      }
     } catch (error) {
       console.error("Logout error:", error);
       toast.error("Failed to log out. Please try again.");
@@ -46,7 +49,18 @@ const UserDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger>
         <div className="rounded-full h-10 w-10 flex items-center justify-center border">
-          <UserRound size={16} />
+          {/* <UserRound size={16} /> */}
+          {user?.user_metadata.full_name ? (
+            <Image
+              src={user.user_metadata.avatar_url}
+              alt="avatar"
+              width={35}
+              height={35}
+              className="rounded-full"
+            />
+          ) : (
+            <UserRound size={16} />
+          )}
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
