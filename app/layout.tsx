@@ -3,6 +3,7 @@ import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import ReactQueryProvider from "@/app/_components/react-query-provider";
+import { Toaster } from "react-hot-toast";
 export const metadata: Metadata = {
   title: "Spira - Ai powered form builder",
   description:
@@ -48,6 +49,7 @@ export default function RootLayout({
             />
           </div>
           <div className="flex-grow z-10">{children}</div>
+          <Toaster />
         </body>
       </ReactQueryProvider>
     </html>
