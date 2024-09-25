@@ -114,5 +114,15 @@ export const devopsForm: FormSchema = {
       step: 1,
       required: true,
     },
+    {
+      constantId: 10,
+      serialId: 10,
+      type: "file",
+      label: "Resume",
+      name: "resume",
+      required: false,
+      accept: ".pdf,.doc,.docx",
+      maxSize: "5242880",
+    },
   ],
 };

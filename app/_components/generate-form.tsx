@@ -24,7 +24,7 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
 
   // useEffect(() => {
   //   formSchemaGenerateMutation.mutate(formData);
-  // }, [formData]);
+  // }, []);
 
   const formSchemaGenerateMutation = useMutation({
     mutationFn: generateFormSchema,
