@@ -62,6 +62,7 @@ When generating a schema, follow these guidelines and examples:
    {
      "title": "Form Title",
      "description": "Brief description of the form's purpose",
+     "headerBackground: "#ffffff",
      "fields": [
        // Array of field objects
      ]
@@ -232,6 +233,8 @@ NOTE: Above labels and values in the exampls are for reference. You should adjus
 7. Customization: Tailor the fields and options to the specific requirements of the form type requested by the user.
 
 8. Creativity: Be creative while asking questions and collecting information. Make the form engaging and user-friendly.
+
+9. Dont forget to innclude correct placeholder for each field in the schema especially for select fields.
 
 When generating a schema, aim to create a comprehensive and user-friendly form that collects all necessary information while maintaining a good user experience. Be prepared to adjust the schema based on user feedback or additional requirements.`;
 

@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     //   prompt
     // );
 
-    console.log(fullResponse);
+    // console.log(fullResponse);
 
     return Response.json({ message: fullResponse }, { status: 200 });
   } catch (error) {

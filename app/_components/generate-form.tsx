@@ -22,9 +22,9 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
 }) => {
   const [formSchema, setFormSchema] = useState();
 
-  // useEffect(() => {
-  //   formSchemaGenerateMutation.mutate(formData);
-  // }, []);
+  useEffect(() => {
+    formSchemaGenerateMutation.mutate(formData);
+  }, []);
 
   const formSchemaGenerateMutation = useMutation({
     mutationFn: generateFormSchema,
@@ -52,13 +52,24 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
       <div className="mx-3 px-4 py-3 bg-white border shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto">
         {formSchemaGenerateMutation.isPending ? (
           <div>Loading...</div>
-        ) : (
+        ) : formSchema ? (
           <FormBuilder
-            initialSchema={formSchema && formSchema}
+            initialSchema={formSchema}
             className=""
             published={false}
             editable={true}
           />
+        ) : (
+          <>
+            <div className="flex flex-col w-full items-center justify-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
+              <div className="text-center">
+                <h1 className="text-2xl font-bold">Form not found</h1>
+                <p className="text-gray-500">
+                  The form you are looking for does not exist.
+                </p>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </HorizontalResizableComponent>

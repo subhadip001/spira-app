@@ -11,6 +11,7 @@ export type TFormErrors = {
 export type TFormDetails = {
   title: string;
   description: string;
+  headerBackground: string;
 };
 
 export type TFormData = {

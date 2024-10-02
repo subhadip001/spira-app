@@ -21,14 +21,27 @@ export default async function EditFormHome({
     .select("*")
     .eq("id", params.formId);
 
-  console.log("forms", forms);
+  console.log("forms", forms?.length);
 
   return (
     <div className="bg-white w-[100vw] min-h-[100svh]">
       <Header />
       <main className="flex px-2">
         <HistorySidebar />
-        <EditForm query={searchParams.q} />
+        {forms?.length ? (
+          <EditForm form={forms[0]} />
+        ) : (
+          <>
+            <div className="flex flex-col w-full items-center justify-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
+              <div className="text-center">
+                <h1 className="text-2xl font-bold">Form not found</h1>
+                <p className="text-gray-500">
+                  The form you are looking for does not exist.
+                </p>
+              </div>
+            </div>
+          </>
+        )}
       </main>
     </div>
   );
