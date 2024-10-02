@@ -4,6 +4,7 @@ export const sampleFormSchema = {
   title: "Frontend Developer Job Application",
   description:
     "Please fill out the form to apply for the Frontend Developer position.",
+  headerBackground: "#ffffff",
   fields: [
     // {
     //   type: "text",
