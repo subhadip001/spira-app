@@ -8,50 +8,56 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { devopsForm } from "@/schema/testSchema";
 import useFormStore from "@/store/formStore";
 import { TFormValues } from "@/types/form";
 import { FormSchema } from "@/types/FormSchema";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FormFieldComponent } from "./FormFields";
+import { HexColorPicker } from "react-colorful";
+import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
 
 interface FormBuilderProps {
-  initialSchema?: FormSchema;
+  initialSchema: FormSchema;
   published: boolean;
   editable: boolean;
   className?: string;
 }
 
 const FormBuilder: React.FC<FormBuilderProps> = ({
-  initialSchema = devopsForm,
+  initialSchema,
   published,
   editable,
   className,
 }) => {
+  const [showColorPicker, setShowColorPicker] = useState(editable);
+  const [hoveredField, setHoveredField] = useState<number | null>(null);
+  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [schema, setSchema] = useState<FormSchema>(initialSchema);
+
   const formData = useFormStore((state) => state.formData.values);
   const formDetails = useFormStore((state) => state.formData.details);
   const setFormData = useFormStore((state) => state.setFormData);
   const formErrors = useFormStore((state) => state.formErrors);
+  const currentFormSchema = useFormStore((state) => state.currentFormSchema);
   const setCurrentFormSchema = useFormStore(
     (state) => state.setCurrentFormSchema
   );
 
-  console.table(formData);
-  console.table(formDetails);
+  // console.table(formData);
+  // console.table(formDetails);
 
   useEffect(() => {
-    setSchema(initialSchema);
     setFormData(
       {
-        title: devopsForm.title,
-        description: devopsForm.description,
+        title: initialSchema.title,
+        description: initialSchema.description,
+        headerBackground: initialSchema.headerBackground,
       },
       formData,
-      devopsForm
+      initialSchema
     );
-  }, [devopsForm]);
+  }, []);
 
   useEffect(() => {
     setCurrentFormSchema(schema);
@@ -102,127 +108,195 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     setFormData(formDetails, newFormData, schema);
   };
 
+  const handleColorChange = (color: string) => {
+    setBackgroundColor(color);
+    setCurrentFormSchema({
+      ...currentFormSchema,
+      headerBackground: color,
+    });
+  };
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn(className, "")}
       >
-        {editable ? (
-          <input
-            type="text"
-            name="title"
-            defaultValue={schema?.title}
-            placeholder="Add Form Title"
-            className="mb-4 w-full outline-none"
-            onChange={(e) => {
-              setSchema({ ...schema, title: e.target.value });
-              setFormData(
-                {
-                  ...formDetails,
-                  title: e.target.value,
-                },
-                formData,
-                schema
-              );
-            }}
-          />
-        ) : (
-          <h2 className="mb-4">{schema?.title}</h2>
-        )}
-        <FormDescription>
+        <div className="flex flex-col gap-8">
           {editable ? (
-            <textarea
-              name="description"
-              defaultValue={schema?.description}
-              placeholder="Add Form Description"
-              className="mb-4 w-full outline-none"
-              onChange={(e) => {
-                setSchema({ ...schema, description: e.target.value });
-                setFormData(
-                  {
-                    ...formDetails,
-                    description: e.target.value,
-                  },
-                  formData,
-                  schema
-                );
-              }}
-            />
-          ) : (
-            <p>{schema?.description}</p>
-          )}
-        </FormDescription>
-        {schema?.fields?.map((field, index) => (
-          <div key={field.constantId} className="mb-4">
-            <FormField
-              control={form.control}
-              name={field.name}
-              render={({ field: controllerField }) => (
-                <FormItem>
-                  <FormControl>
-                    <FormFieldComponent
-                      field={field}
-                      value={controllerField.value}
-                      onChange={(value: string) => {
-                        controllerField.onChange(value);
-                        const newFormData = [...formData];
-                        const fieldIndex = newFormData.findIndex(
-                          (f) => f.formFieldId === field.constantId
-                        );
-                        if (fieldIndex !== -1) {
-                          newFormData[fieldIndex].formFieldValue = value;
-                        } else {
-                          newFormData.push({
-                            formFieldId: field.constantId,
-                            formFieldName: field.name,
-                            formFieldLabel: field.label,
-                            formFieldValue: value,
-                          });
-                        }
-                        setFormData(formDetails, newFormData, schema);
-                      }}
-                      accept={field.type === "file" ? field.accept : undefined}
-                      maxSize={
-                        field.type === "file" ? field.maxSize : undefined
-                      }
+            <section
+              className="form-cover-background relative flex flex-col "
+              style={{ backgroundColor }}
+            >
+              <>
+                <input
+                  type="text"
+                  name="title"
+                  defaultValue={schema?.title}
+                  placeholder="Add Form Title"
+                  className="mb-4 text-4xl w-full outline-none bg-transparent"
+                  onChange={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSchema({ ...schema, title: e.target.value });
+                    setFormData(
+                      {
+                        ...formDetails,
+                        title: e.target.value,
+                      },
+                      formData,
+                      schema
+                    );
+                  }}
+                />
+                <FormDescription>
+                  <textarea
+                    name="description"
+                    defaultValue={schema?.description}
+                    placeholder="Add Form Description"
+                    className="mb-4 w-full outline-none bg-transparent"
+                    onChange={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSchema({ ...schema, description: e.target.value });
+                      setFormData(
+                        {
+                          ...formDetails,
+                          description: e.target.value,
+                        },
+                        formData,
+                        schema
+                      );
+                    }}
+                  />
+                </FormDescription>
+
+                {false && (
+                  <div className=" absolute top-0 right-0">
+                    <HexColorPicker
+                      color={backgroundColor}
+                      onChange={handleColorChange}
                     />
-                  </FormControl>
-                  <FormMessage>
-                    {
-                      formErrors.find((e) => e.formFieldId === field.constantId)
-                        ?.error
-                    }
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            {editable && (
-              <div className="mt-2">
-                <Button
-                  type="button"
-                  onClick={() => moveField(index, "up")}
-                  disabled={index === 0}
-                >
-                  Move Up
-                </Button>
-                <Button
-                  type="button"
-                  onClick={() => moveField(index, "down")}
-                  disabled={index === schema.fields.length - 1}
-                >
-                  Move Down
-                </Button>
-                <Button
-                  type="button"
-                  onClick={() => deleteField(field.constantId)}
-                >
-                  Delete
-                </Button>
+                  </div>
+                )}
+              </>
+            </section>
+          ) : (
+            <section
+              className="form-cover-background flex flex-col "
+              style={{ backgroundColor }}
+            >
+              <span className="mb-4 text-4xl">{schema?.title}</span>
+              <FormDescription>
+                <p>{schema?.description}</p>
+              </FormDescription>
+            </section>
+          )}
+          <section className="flex flex-col gap-6 pb-3">
+            {schema?.fields?.map((field, index) => (
+              <div
+                key={field.constantId}
+                className=" relative border rounded-md"
+                onMouseEnter={() => setHoveredField(index)}
+                onMouseLeave={() => setHoveredField(null)}
+              >
+                {editable && hoveredField === index && (
+                  <div className="absolute z-50 right-5 -top-5 bg-white border p-2 rounded-md flex gap-4">
+                    <button
+                      onClick={() => moveField(index, "up")}
+                      disabled={index === 0}
+                      className={`p-1 rounded-full border outline-none ${
+                        index === 0 ? "text-gray-400 cursor-not-allowed" : ""
+                      }`}
+                    >
+                      <div>
+                        <ArrowUp className="h-3 w-3" />
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => moveField(index, "down")}
+                      disabled={index === schema.fields.length - 1}
+                      className={`p-1 rounded-full border outline-none ${
+                        index === schema.fields.length - 1
+                          ? "text-gray-400 cursor-not-allowed"
+                          : ""
+                      }`}
+                    >
+                      <div>
+                        <ArrowDown className="h-3 w-3" />
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => {}}
+                      className="p-1 rounded-full border outline-none"
+                    >
+                      <div>
+                        <Plus className="h-3 w-3" />
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => deleteField(field.constantId)}
+                      className="p-1 rounded-full border outline-none"
+                    >
+                      <div>
+                        <Trash2 className="h-3 w-3" color="red" />
+                      </div>
+                    </button>
+                  </div>
+                )}
+                <div className="p-3">
+                  <FormField
+                    control={form.control}
+                    name={field.name}
+                    render={({ field: controllerField }) => (
+                      <FormItem>
+                        <FormControl>
+                          <FormFieldComponent
+                            field={field}
+                            value={controllerField.value}
+                            onChange={(value: string) => {
+                              controllerField.onChange(value);
+                              const newFormData = [...formData];
+                              const fieldIndex = newFormData.findIndex(
+                                (f) => f.formFieldId === field.constantId
+                              );
+                              if (fieldIndex !== -1) {
+                                newFormData[fieldIndex].formFieldValue = value;
+                              } else {
+                                newFormData.push({
+                                  formFieldId: field.constantId,
+                                  formFieldName: field.name,
+                                  formFieldLabel: field.label,
+                                  formFieldValue: value,
+                                });
+                              }
+                              setFormData(formDetails, newFormData, schema);
+                            }}
+                            accept={
+                              field.type === "file" ? field.accept : undefined
+                            }
+                            maxSize={
+                              field.type === "file" ? field.maxSize : undefined
+                            }
+                          />
+                        </FormControl>
+                        {published && (
+                          <FormMessage>
+                            {
+                              formErrors.find(
+                                (e) => e.formFieldId === field.constantId
+                              )?.error
+                            }
+                          </FormMessage>
+                        )}
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
-            )}
-          </div>
-        ))}
+            ))}
+          </section>
+        </div>
         {published && (
           <Button variant="outline" type="submit">
             Submit

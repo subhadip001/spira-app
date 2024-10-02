@@ -6,19 +6,23 @@ import GenerateForm from "./generate-form";
 import useFormStore from "@/store/formStore";
 
 type EditFormProps = {
-  query: string;
+  form: {
+    created_at: string;
+    id: string;
+    query: string;
+  };
 };
 
-const EditForm: React.FC<EditFormProps> = ({ query }) => {
+const EditForm: React.FC<EditFormProps> = ({ form }) => {
   const [selectedViewport, setSelectedViewport] = useState<
     "phone" | "tablet" | "desktop"
   >("desktop");
 
-  const formData = useFormStore((state) => state.formData);
+  const currentFormSchema = useFormStore((state) => state.currentFormSchema);
 
   const handlePublish = () => {
     console.log("Publishing form...");
-    console.log(formData);
+    console.log(currentFormSchema);
   };
   return (
     <section className="relative flex-grow flex flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
@@ -27,7 +31,9 @@ const EditForm: React.FC<EditFormProps> = ({ query }) => {
           <div className="w-8 h-8 bg-blue-400 flex text-white justify-center items-center rounded-full">
             O
           </div>
-          <span className="bg-gray-200 px-3 py-1 rounded-full">Edit Form</span>
+          <span className="bg-gray-200 px-3 py-1 rounded-full">
+            {form.query}
+          </span>
         </div>
         <div className="flex gap-5 items-center">
           <div className="bg-white h-full border rounded-md flex gap-2 p-1">
@@ -73,7 +79,7 @@ const EditForm: React.FC<EditFormProps> = ({ query }) => {
       <div className="flex w-full justify-center items-center h-[calc(90svh-128px)]">
         <GenerateForm
           formData={{
-            prompt: query,
+            prompt: form.query,
           }}
           selectedViewport={selectedViewport}
         />

@@ -22,7 +22,6 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
   accept,
   maxSize,
 }) => {
-  // Ensure value is never undefined
   const safeValue = value ?? "";
 
   const handleChange = (newValue: string | number) => {
@@ -113,7 +112,6 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             required={field.required}
             onChange={handleChange}
             maxSize={maxSize}
-            // File inputs can't be controlled, so we don't pass a value prop
           />
         </div>
       );

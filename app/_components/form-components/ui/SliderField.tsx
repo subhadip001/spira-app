@@ -22,7 +22,7 @@ const SliderField: React.FC<SliderFieldProps> = ({
   step = 1,
 }) => {
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col gap-2">
       <Label htmlFor={field.name}>{label}</Label>
       <Slider
         id={field.name}

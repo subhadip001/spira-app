@@ -4,6 +4,7 @@ export const devopsForm: FormSchema = {
   title: "DevOps Engineer Application Form",
   description:
     "Please provide the following information to apply for the DevOps Engineer position.",
+  headerBackground: "#ffffff",
   fields: [
     {
       constantId: 1,
@@ -113,6 +114,16 @@ export const devopsForm: FormSchema = {
       max: 20,
       step: 1,
       required: true,
+    },
+    {
+      constantId: 10,
+      serialId: 10,
+      type: "file",
+      label: "Resume",
+      name: "resume",
+      required: false,
+      accept: ".pdf,.doc,.docx",
+      maxSize: "5242880",
     },
   ],
 };

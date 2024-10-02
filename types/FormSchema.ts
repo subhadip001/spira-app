@@ -22,5 +22,6 @@ export interface FormField {
 export interface FormSchema {
   title: string;
   description: string;
+  headerBackground: string;
   fields: FormField[];
 }

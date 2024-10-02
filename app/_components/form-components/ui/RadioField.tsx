@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
@@ -14,7 +14,7 @@ interface RadioFieldProps {
 
 const RadioField: React.FC<RadioFieldProps> = ({ field, label, options }) => {
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col gap-2">
       <Label>{label}</Label>
       <RadioGroup
         value={field.value}
@@ -27,7 +27,9 @@ const RadioField: React.FC<RadioFieldProps> = ({ field, label, options }) => {
               id={`${field.name}-${option.value}`}
               value={option.value}
             />
-            <Label htmlFor={`${field.name}-${option.value}`}>{option.label}</Label>
+            <Label htmlFor={`${field.name}-${option.value}`}>
+              {option.label}
+            </Label>
           </div>
         ))}
       </RadioGroup>

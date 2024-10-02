@@ -28,13 +28,17 @@ const useFormStore = create<FormStore>((set) => ({
     set((state) => {
       return {
         ...state,
-        currentFormSchema: formSchema,
+        currentFormSchema: {
+          ...formSchema,
+          headerBackground: "#ffffff",
+        },
       };
     }),
   formData: {
     details: {
       title: "",
       description: "",
+      headerBackground: "#ffffff",
     },
     values: [],
   },

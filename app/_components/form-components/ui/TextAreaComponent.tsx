@@ -23,8 +23,10 @@ const TextAreaComponent: React.FC<TextAreaComponentProps> = ({
   classname,
 }) => {
   return (
-    <div className={cn(classname, "")}>
-      <Label htmlFor={name}>{label}</Label>
+    <div className={cn(classname, "flex flex-col gap-2")}>
+      <Label htmlFor={name} className="">
+        {label}
+      </Label>
       <Textarea
         name={name}
         id={name}
