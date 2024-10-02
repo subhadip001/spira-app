@@ -30,8 +30,8 @@ const InputComponent: React.FC<InputComponentProps> = ({
   maxSize,
 }) => {
   return (
-    <div className={cn(className, "")}>
-      <Label htmlFor={name} className="text-gray-500">
+    <div className={cn(className, "flex flex-col gap-2")}>
+      <Label htmlFor={name} className="">
         {label}
       </Label>
       {type === "file" ? (

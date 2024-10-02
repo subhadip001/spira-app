@@ -33,7 +33,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col gap-2">
       <Label>{label}</Label>
       <div className="space-y-1">
         {options.map((option) => (

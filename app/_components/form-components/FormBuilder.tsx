@@ -31,8 +31,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   className,
 }) => {
   const [showColorPicker, setShowColorPicker] = useState(editable);
+  const [hoveredField, setHoveredField] = useState<number | null>(null);
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [schema, setSchema] = useState<FormSchema>(initialSchema);
+
   const formData = useFormStore((state) => state.formData.values);
   const formDetails = useFormStore((state) => state.formData.details);
   const setFormData = useFormStore((state) => state.setFormData);
@@ -147,25 +149,27 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                     );
                   }}
                 />
-                <textarea
-                  name="description"
-                  defaultValue={schema?.description}
-                  placeholder="Add Form Description"
-                  className="mb-4 w-full outline-none bg-transparent"
-                  onChange={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setSchema({ ...schema, description: e.target.value });
-                    setFormData(
-                      {
-                        ...formDetails,
-                        description: e.target.value,
-                      },
-                      formData,
-                      schema
-                    );
-                  }}
-                />
+                <FormDescription>
+                  <textarea
+                    name="description"
+                    defaultValue={schema?.description}
+                    placeholder="Add Form Description"
+                    className="mb-4 w-full outline-none bg-transparent"
+                    onChange={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSchema({ ...schema, description: e.target.value });
+                      setFormData(
+                        {
+                          ...formDetails,
+                          description: e.target.value,
+                        },
+                        formData,
+                        schema
+                      );
+                    }}
+                  />
+                </FormDescription>
 
                 {false && (
                   <div className=" absolute top-0 right-0">
@@ -183,7 +187,9 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
               style={{ backgroundColor }}
             >
               <span className="mb-4 text-4xl">{schema?.title}</span>
-              <p>{schema?.description}</p>
+              <FormDescription>
+                <p>{schema?.description}</p>
+              </FormDescription>
             </section>
           )}
           <section className="flex flex-col gap-6 pb-3">
@@ -191,8 +197,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
               <div
                 key={field.constantId}
                 className=" relative border rounded-md"
+                onMouseEnter={() => setHoveredField(index)}
+                onMouseLeave={() => setHoveredField(null)}
               >
-                {editable && (
+                {editable && hoveredField === index && (
                   <div className="absolute z-50 right-5 -top-5 bg-white border p-2 rounded-md flex gap-4">
                     <button
                       onClick={() => moveField(index, "up")}
@@ -272,13 +280,15 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                             }
                           />
                         </FormControl>
-                        <FormMessage>
-                          {
-                            formErrors.find(
-                              (e) => e.formFieldId === field.constantId
-                            )?.error
-                          }
-                        </FormMessage>
+                        {published && (
+                          <FormMessage>
+                            {
+                              formErrors.find(
+                                (e) => e.formFieldId === field.constantId
+                              )?.error
+                            }
+                          </FormMessage>
+                        )}
                       </FormItem>
                     )}
                   />
