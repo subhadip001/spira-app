@@ -31,7 +31,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
   triggerClassName,
 }) => {
   return (
-    <div className={cn(classname, "flex flex-col gap-2")}>
+    <div className={cn(classname, "flex flex-col gap-4")}>
       <Label htmlFor={name}>{label}</Label>
       <Select name={name} value={value} onValueChange={onChange}>
         <SelectTrigger id={name} className={cn(triggerClassName, "")}>

@@ -70,6 +70,12 @@ export const devopsForm: FormSchema = {
       type: "checkbox",
       label: "Have you worked with containerization tools (e.g., Docker)?",
       name: "containerizationExperience",
+      options: [
+        {
+          label: "Yes",
+          value: "yes",
+        },
+      ],
       required: true,
     },
     {
@@ -79,6 +85,12 @@ export const devopsForm: FormSchema = {
       label:
         "Have you worked with cloud platforms (e.g., AWS, Azure, Google Cloud)?",
       name: "cloudExperience",
+      options: [
+        {
+          label: "Yes",
+          value: "yes",
+        },
+      ],
       required: true,
     },
     {
@@ -124,6 +136,27 @@ export const devopsForm: FormSchema = {
       required: false,
       accept: ".pdf,.doc,.docx",
       maxSize: "5242880",
+    },
+    {
+      constantId: 11,
+      serialId: 11,
+      type: "checkbox",
+      label: "Skills",
+      name: "skills",
+      options: [
+        { label: "HTML", value: "html" },
+        { label: "CSS", value: "css" },
+        { label: "JavaScript", value: "javascript" },
+        { label: "React", value: "react" },
+        { label: "Angular", value: "angular" },
+        { label: "Vue.js", value: "vuejs" },
+        { label: "TypeScript", value: "typescript" },
+        { label: "Sass", value: "sass" },
+        { label: "Webpack", value: "webpack" },
+        { label: "Git", value: "git" },
+        { label: "Other", value: "other" },
+      ],
+      required: true,
     },
   ],
 };

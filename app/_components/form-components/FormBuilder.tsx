@@ -10,12 +10,18 @@ import {
 import { cn } from "@/lib/utils";
 import useFormStore from "@/store/formStore";
 import { TFormValues } from "@/types/form";
-import { FormSchema } from "@/types/FormSchema";
+import {
+  FieldType,
+  FormField as FormSchemaField,
+  FormSchema,
+} from "@/types/FormSchema";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FormFieldComponent } from "./FormFields";
 import { HexColorPicker } from "react-colorful";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
+import { ChooseCreatePosition } from "./ui/choose-create-position";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 interface FormBuilderProps {
   initialSchema: FormSchema;
@@ -108,6 +114,124 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     setFormData(formDetails, newFormData, schema);
   };
 
+  const addNewField = (
+    constantId: number,
+    serialId: number,
+    type: FieldType
+  ) => {
+    let newField: FormSchemaField;
+    switch (type) {
+      case FieldType.TEXT || FieldType.TEL:
+        newField = {
+          constantId,
+          serialId,
+          type,
+          label: "",
+          name: "",
+          placeholder: "",
+          required: false,
+        };
+        break;
+      case FieldType.EMAIL:
+        newField = {
+          constantId,
+          serialId,
+          type,
+          label: "",
+          name: "",
+          placeholder: "",
+          required: false,
+        };
+        break;
+      case FieldType.TEXTAREA:
+        newField = {
+          constantId,
+          serialId,
+          type,
+          label: "",
+          name: "",
+          placeholder: "",
+          required: false,
+        };
+        break;
+      case FieldType.SELECT:
+        newField = {
+          constantId,
+          serialId,
+          type,
+          label: "",
+          name: "",
+          placeholder: "",
+          required: false,
+          options: [],
+        };
+        break;
+      case FieldType.CHECKBOX:
+        newField = {
+          constantId,
+          serialId,
+          type,
+          label: "",
+          name: "",
+          placeholder: "",
+          required: false,
+          options: [],
+        };
+        break;
+      case FieldType.RADIO:
+        newField = {
+          constantId,
+          serialId,
+          type,
+          label: "",
+          name: "",
+          placeholder: "",
+          required: false,
+          options: [],
+        };
+        break;
+      case FieldType.RANGE:
+        newField = {
+          constantId,
+          serialId,
+          type,
+          label: "",
+          name: "",
+          placeholder: "",
+          required: false,
+          min: 0,
+          max: 100,
+          step: 1,
+        };
+        break;
+      case FieldType.FILE:
+        newField = {
+          constantId,
+          serialId,
+          type,
+          label: "",
+          name: "",
+          placeholder: "",
+          required: false,
+          accept: "",
+          maxSize: "",
+        };
+        break;
+      default:
+        newField = {
+          constantId,
+          serialId,
+          type,
+          label: "",
+          name: "",
+          placeholder: "",
+          required: false,
+        };
+        break;
+    }
+    setSchema({ ...schema, fields: [...schema.fields, newField] });
+  };
+
   const handleColorChange = (color: string) => {
     setBackgroundColor(color);
     setCurrentFormSchema({
@@ -195,7 +319,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           <section className="flex flex-col gap-6 pb-3">
             {schema?.fields?.map((field, index) => (
               <div
-                key={field.constantId}
+                key={index}
                 className=" relative border rounded-md"
                 onMouseEnter={() => setHoveredField(index)}
                 onMouseLeave={() => setHoveredField(null)}
@@ -226,14 +350,22 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                         <ArrowDown className="h-3 w-3" />
                       </div>
                     </button>
-                    <button
-                      onClick={() => {}}
-                      className="p-1 rounded-full border outline-none"
-                    >
-                      <div>
-                        <Plus className="h-3 w-3" />
-                      </div>
-                    </button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                          className="p-1 rounded-full border outline-none"
+                        >
+                          <div>
+                            <Plus className="h-3 w-3" />
+                          </div>
+                        </button>
+                      </DialogTrigger>
+                      <ChooseCreatePosition />
+                    </Dialog>
+
                     <button
                       onClick={() => deleteField(field.constantId)}
                       className="p-1 rounded-full border outline-none"
