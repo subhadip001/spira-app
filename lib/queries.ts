@@ -21,3 +21,23 @@ export const generateFormSchema = async (data: TQueryData) => {
 
   return response.json();
 };
+
+// export const generateFormSchema = async (data: TQueryData): Promise<ReadableStream<Uint8Array>> => {
+//   const response = await fetch("/api/generate-form-schema", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(data),
+//   });
+
+//   if (!response.ok) {
+//     throw new Error("Failed to generate form schema");
+//   }
+
+//   if (!response.body) {
+//     throw new Error("Response body is null");
+//   }
+
+//   return response.body;
+// };

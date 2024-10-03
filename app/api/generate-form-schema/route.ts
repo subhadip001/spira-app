@@ -1,5 +1,10 @@
 import { createGeminiResponse, createGroqChatCompletion } from "@/lib/ai-query";
 import { FORM_SCHEMA_GENERATOR_PROMPT } from "@/lib/utils";
+import { NextResponse } from "next/server";
+
+export const config = {
+  runtime: "edge",
+};
 
 export async function POST(req: Request) {
   const { prompt } = await req.json();
@@ -11,21 +16,35 @@ export async function POST(req: Request) {
   }
 
   try {
-    const chatCompletion = await createGroqChatCompletion(
+    const stream = await createGroqChatCompletion(
       FORM_SCHEMA_GENERATOR_PROMPT,
       prompt
     );
 
+    // const readableStream = new ReadableStream({
+    //   async start(controller) {
+    //     for await (const chunk of stream) {
+    //       const content = chunk?.choices?.[0]?.delta?.content || "";
+    //       if (content) {
+    //         controller.enqueue(new TextEncoder().encode(content));
+    //       }
+    //     }
+    //     controller.close();
+    //   },
+    // });
+
+    // return new NextResponse(readableStream, {
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Transfer-Encoding": "chunked",
+    //   },
+    // });
+
     let fullResponse = "";
-    for await (const chunk of chatCompletion) {
+    for await (const chunk of stream) {
       const content = chunk.choices[0]?.delta?.content || "";
       fullResponse += content;
     }
-
-    // const fullResponse = await createGeminiResponse(
-    //   FORM_SCHEMA_GENERATOR_PROMPT,
-    //   prompt
-    // );
 
     // console.log(fullResponse);
 
