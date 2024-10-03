@@ -12,22 +12,28 @@ interface RadioFieldProps {
   options: { value: string; label: string }[];
 }
 
+const selectedThemePrimaryColor = "#007bff";
+
 const RadioField: React.FC<RadioFieldProps> = ({ field, label, options }) => {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
       <Label>{label}</Label>
       <RadioGroup
         value={field.value}
         onValueChange={field.onChange}
         className=""
       >
-        {options.map((option) => (
-          <div key={option.value} className="flex items-center space-x-2">
+        {options.map((option, index) => (
+          <div key={option.value + index} className="relative">
             <RadioGroupItem
               id={`${field.name}-${option.value}`}
               value={option.value}
+              className="peer sr-only "
             />
-            <Label htmlFor={`${field.name}-${option.value}`}>
+            <Label
+              htmlFor={`${field.name}-${option.value}`}
+              className={`flex items-center justify-between p-4 rounded-lg border-2 border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-all`}
+            >
               {option.label}
             </Label>
           </div>

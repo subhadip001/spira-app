@@ -1,6 +1,7 @@
 import Groq from "groq-sdk";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { models } from "./models";
+import { Anthropic } from "@anthropic-ai/sdk";
 
 export const createGroqChatCompletion = async (
   system_prompt: string,
@@ -55,4 +56,24 @@ export async function createGeminiResponse(
   const response = await result.response;
   const text = response.text();
   return text;
+}
+
+export async function createClaudeResponse(
+  system_prompt: string,
+  user_question: string
+) {
+  const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+
+  const response = await anthropic.messages.create({
+    messages: [{ role: "user", content: user_question }],
+    model: models.claude_models.CLAUDE_3_5_SONNET,
+    stream: false,
+    max_tokens: 8192,
+    system: system_prompt,
+    temperature: 0.2,
+  });
+
+  return response.content[0].type === "text" ? response.content[0].text : "";
 }

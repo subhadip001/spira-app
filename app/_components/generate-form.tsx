@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import FormBuilder from "./form-components/FormBuilder";
 import dynamic from "next/dynamic";
+import useFormSchemaGenerator from "@/hooks/form-schema-generator";
 const HorizontalResizableComponent = dynamic(
   () => import("./resizable-component"),
   { ssr: false }
@@ -21,6 +22,9 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   selectedViewport,
 }) => {
   const [formSchema, setFormSchema] = useState();
+
+  // const { formSchema, formSchemaGenerateMutation, streamedMessage } =
+  //   useFormSchemaGenerator();
 
   useEffect(() => {
     formSchemaGenerateMutation.mutate(formData);
@@ -51,7 +55,11 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
     >
       <div className="mx-3 px-4 py-3 bg-white border shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto">
         {formSchemaGenerateMutation.isPending ? (
-          <div>Loading...</div>
+          <div>
+            <h3 className="text-lg font-semibold mb-2">
+              Generating Form Schema...
+            </h3>
+          </div>
         ) : formSchema ? (
           <FormBuilder
             initialSchema={formSchema}

@@ -126,7 +126,7 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             }}
             label={field.label}
             min={field.min}
-            max={field.max}
+            max={100}
             step={field.step}
           />
         </div>
