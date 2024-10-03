@@ -28,6 +28,7 @@ export interface FormSchema {
 
 export enum FieldType {
   TEXT = "text",
+  TEL = "tel",
   EMAIL = "email",
   TEXTAREA = "textarea",
   SELECT = "select",

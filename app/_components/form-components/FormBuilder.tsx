@@ -121,7 +121,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   ) => {
     let newField: FormSchemaField;
     switch (type) {
-      case FieldType.TEXT:
+      case FieldType.TEXT || FieldType.TEL:
         newField = {
           constantId,
           serialId,
