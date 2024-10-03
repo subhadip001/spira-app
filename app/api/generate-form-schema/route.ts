@@ -6,10 +6,6 @@ import {
 import { FORM_SCHEMA_GENERATOR_PROMPT } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
-export const config = {
-  runtime: "edge",
-};
-
 export async function POST(req: Request) {
   const { prompt } = await req.json();
 
