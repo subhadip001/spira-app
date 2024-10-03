@@ -25,3 +25,14 @@ export interface FormSchema {
   headerBackground: string;
   fields: FormField[];
 }
+
+export enum FieldType {
+  TEXT = "text",
+  EMAIL = "email",
+  TEXTAREA = "textarea",
+  SELECT = "select",
+  CHECKBOX = "checkbox",
+  RADIO = "radio",
+  RANGE = "range",
+  FILE = "file",
+}
