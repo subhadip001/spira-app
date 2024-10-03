@@ -1,20 +1,37 @@
-// hooks/useFormSchemaGenerator.ts
 import { useState, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { generateFormSchema } from "@/lib/queries";
-import { jsonExtractor } from "@/lib/form-lib/utils";
+import {
+  partialJsonExtractor,
+  extractSchemaSection,
+} from "@/lib/form-lib/utils";
 import { TQueryData } from "@/lib/types";
 
 const useFormSchemaGenerator = () => {
-  const [formSchema, setFormSchema] = useState<any>(null);
-  const [streamedMessage, setStreamedMessage] = useState("");
+  const [state, setState] = useState<{
+    formSchema: any;
+    streamedMessage: string;
+    fields: any[];
+  }>({
+    formSchema: null,
+    streamedMessage: "",
+    fields: [],
+  });
 
   const extractAndUpdateSchema = useCallback((message: string) => {
     console.log("Attempting to extract schema from:", message);
-    const extractedSchema = jsonExtractor(message);
+    const extractedSchema = partialJsonExtractor(message);
     if (extractedSchema && !extractedSchema.error) {
       console.log("Valid schema extracted:", extractedSchema);
-      setFormSchema(extractedSchema);
+
+      // Extract specific sections of the schema
+      const fields = extractSchemaSection(message, "fields") || [];
+
+      setState((prevState) => ({
+        ...prevState,
+        formSchema: extractedSchema,
+        fields: [...prevState.fields, ...fields],
+      }));
     } else {
       console.log("Failed to extract valid schema:", extractedSchema);
     }
@@ -33,10 +50,13 @@ const useFormSchemaGenerator = () => {
 
           const chunk = decoder.decode(value);
           console.log("Received chunk:", chunk);
-          setStreamedMessage((prev) => {
-            const updatedMessage = prev + chunk;
-            extractAndUpdateSchema(updatedMessage);
-            return updatedMessage;
+          setState((prevState) => {
+            const updatedMessage = prevState.streamedMessage + chunk;
+            // extractAndUpdateSchema(updatedMessage);
+            return {
+              ...prevState,
+              streamedMessage: updatedMessage,
+            };
           });
         }
       } finally {
@@ -48,10 +68,9 @@ const useFormSchemaGenerator = () => {
     },
   });
 
-  console.log("Current formSchema:", formSchema);
-  console.log("Current streamedMessage:", streamedMessage);
+  console.log("Current state:", state);
 
-  return { formSchema, formSchemaGenerateMutation, streamedMessage };
+  return { ...state, formSchemaGenerateMutation };
 };
 
 export default useFormSchemaGenerator;

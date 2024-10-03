@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { parse, Allow } from "partial-json";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -52,3 +53,32 @@ export const jsonExtractor = (jsonString: string) => {
 //     };
 //   }
 // };
+
+export const partialJsonExtractor = (jsonString: string) => {
+  try {
+    // Use partial-json to parse the content, allowing all types of partial values
+    const partialResult = parse(jsonString, Allow.ALL);
+    console.log("Parsed partial JSON:", partialResult);
+    return partialResult;
+  } catch (error) {
+    if (error instanceof Error && error.name === "MalformedJSON") {
+      console.error("Malformed JSON:", error.message);
+      return { error: "Malformed JSON" };
+    } else {
+      console.error("Error processing JSON:", error);
+      return { error: "Error processing JSON" };
+    }
+  }
+};
+
+// Helper function to extract specific parts of the schema
+export const extractSchemaSection = (jsonString: string, section: string) => {
+  try {
+    const allowOptions = Allow.OBJ | Allow.ARR | Allow.STR | Allow.NUM;
+    const partialSchema = parse(jsonString, allowOptions);
+    return partialSchema[section] || null;
+  } catch (error) {
+    console.error(`Error extracting ${section} from schema:`, error);
+    return null;
+  }
+};

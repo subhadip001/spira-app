@@ -21,27 +21,29 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   formData,
   selectedViewport,
 }) => {
-  const [formSchema, setFormSchema] = useState();
+  // const [formSchema, setFormSchema] = useState();
 
-  // const { formSchema, formSchemaGenerateMutation, streamedMessage } =
-  //   useFormSchemaGenerator();
+  const { formSchema, formSchemaGenerateMutation, streamedMessage } =
+    useFormSchemaGenerator();
 
   useEffect(() => {
     formSchemaGenerateMutation.mutate(formData);
   }, []);
 
-  const formSchemaGenerateMutation = useMutation({
-    mutationFn: generateFormSchema,
-    onSuccess: (data) => {
-      const message = data.message;
-      const formSchema = jsonExtractor(message);
-      console.log("formSchema", formSchema);
-      setFormSchema(formSchema);
-    },
-    onError: (error: Error) => {
-      console.error("Error generating form schema", error);
-    },
-  });
+  // const formSchemaGenerateMutation = useMutation({
+  //   mutationFn: generateFormSchema,
+  //   onSuccess: (data) => {
+  //     const message = data.message;
+  //     const formSchema = jsonExtractor(message);
+  //     console.log("formSchema", formSchema);
+  //     setFormSchema(formSchema);
+  //   },
+  //   onError: (error: Error) => {
+  //     console.error("Error generating form schema", error);
+  //   },
+  // });
+
+  console.log(formSchema);
 
   return (
     <HorizontalResizableComponent
