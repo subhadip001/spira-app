@@ -19,7 +19,6 @@ type FormVersionStore = {
 const useFormVersionStore = create<FormVersionStore>((set) => ({
   formVersionsData: [],
   setFormVersionsData: (formData) => {
-    console.log(formData, "inside store");
     set(() => ({
       formVersionsData: formData,
     }));

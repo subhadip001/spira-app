@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -12,16 +13,16 @@ import useFormStore from "@/store/formStore";
 import { TFormValues } from "@/types/form";
 import {
   FieldType,
-  FormField as FormSchemaField,
   FormSchema,
+  FormField as FormSchemaField,
 } from "@/types/FormSchema";
+import { ArrowDown, ArrowUp, Edit, Plus, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { HexColorPicker } from "react-colorful";
 import { useForm } from "react-hook-form";
 import { FormFieldComponent } from "./FormFields";
-import { HexColorPicker } from "react-colorful";
-import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
-import { ChooseCreatePosition } from "./ui/choose-create-position";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { CreateNewField } from "./ui/create-new-field";
+import useAppStore from "@/store/appStore";
 
 interface FormBuilderProps {
   initialSchema: FormSchema;
@@ -48,6 +49,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   const currentFormSchema = useFormStore((state) => state.currentFormSchema);
   const setCurrentFormSchema = useFormStore(
     (state) => state.setCurrentFormSchema
+  );
+  const editFormSideBarOpen = useAppStore((state) => state.editFormSideBarOpen);
+  const setIsEditFormSideBarOpen = useAppStore(
+    (state) => state.setIsEditFormSideBarOpen
   );
 
   // console.table(formData);
@@ -240,6 +245,21 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     });
   };
 
+  const handleAddFieldForEditing = (fieldConstantId: number) => {
+    console.log("fieldId", fieldConstantId);
+    if (editFormSideBarOpen.fieldConstantId === fieldConstantId) {
+      setIsEditFormSideBarOpen({
+        isEditFormSideBarOpen: true,
+        fieldConstantId: 0,
+      });
+    } else {
+      setIsEditFormSideBarOpen({
+        isEditFormSideBarOpen: true,
+        fieldConstantId,
+      });
+    }
+  };
+
   return (
     <Form {...form}>
       <form
@@ -332,6 +352,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                       className={`p-1 rounded-full border outline-none ${
                         index === 0 ? "text-gray-400 cursor-not-allowed" : ""
                       }`}
+                      type="button"
                     >
                       <div>
                         <ArrowUp className="h-3 w-3" />
@@ -345,29 +366,38 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                           ? "text-gray-400 cursor-not-allowed"
                           : ""
                       }`}
+                      type="button"
                     >
                       <div>
                         <ArrowDown className="h-3 w-3" />
                       </div>
                     </button>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                          className="p-1 rounded-full border outline-none"
-                        >
-                          <div>
-                            <Plus className="h-3 w-3" />
-                          </div>
-                        </button>
-                      </DialogTrigger>
-                      <ChooseCreatePosition />
-                    </Dialog>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                      type="button"
+                      className="p-1 rounded-full border outline-none"
+                    >
+                      <div>
+                        <Plus className="h-3 w-3" />
+                      </div>
+                    </button>
 
                     <button
+                      onClick={() => {
+                        handleAddFieldForEditing(field.constantId);
+                      }}
+                      type="button"
+                      className="p-1 rounded-full border outline-none"
+                    >
+                      <div>
+                        <Edit className="h-3 w-3" />
+                      </div>
+                    </button>
+                    <button
                       onClick={() => deleteField(field.constantId)}
+                      type="button"
                       className="p-1 rounded-full border outline-none"
                     >
                       <div>

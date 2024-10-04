@@ -20,8 +20,6 @@ export async function login(formData: FormData) {
   const origin = getURL() ?? headers().get("origin");
   const formId = formData.get("formId");
 
-  console.log(origin, "origin");
-
   const { error, data } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {

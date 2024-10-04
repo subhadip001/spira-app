@@ -61,6 +61,7 @@ const UserDropdown = () => {
     try {
       await supabase.auth.signOut({ scope: "local" });
       setUser(null);
+      setAppStoreUser(null);
       toast.success("Logged out successfully");
       if (pathName !== "/" || !pathName.startsWith("/form")) {
         router.push("/");
@@ -77,10 +78,7 @@ const UserDropdown = () => {
         <div className="rounded-full h-10 w-10 flex items-center justify-center border">
           {/* <UserRound size={16} /> */}
           {user?.name ? (
-            <Avvvatars
-              size={40}
-              value={user.name}
-            />
+            <Avvvatars size={40} value={user.name} />
           ) : (
             <UserRound size={16} />
           )}
