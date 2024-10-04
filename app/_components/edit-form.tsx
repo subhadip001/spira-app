@@ -40,7 +40,7 @@ const EditForm: React.FC<EditFormProps> = ({
           <div className="min-w-8 min-h-8 bg-blue-400 flex text-white justify-center items-center rounded-full"></div>
           <div className="flex-grow">
             <span className=" mx-auto line-clamp-1 bg-gray-200 px-3 py-1 rounded-full text-gray-500 outline-none">
-              {form.query}
+              {baseQuery}
             </span>
           </div>
         </div>
