@@ -1,3 +1,4 @@
+import aiApiHandler from "@/lib/ai-api-handler";
 import {
   createClaudeResponse,
   createGeminiResponse,
@@ -16,44 +17,12 @@ export async function POST(req: Request) {
   }
 
   try {
-    // const stream = await createGroqChatCompletion(
-    //   FORM_SCHEMA_GENERATOR_PROMPT,
-    //   prompt
-    // );
-
-    const response = await createClaudeResponse(
-      FORM_SCHEMA_GENERATOR_PROMPT,
-      prompt
-    );
+    const response = await aiApiHandler("claude", {
+      system_prompt: FORM_SCHEMA_GENERATOR_PROMPT,
+      user_question: prompt,
+    });
 
     return Response.json({ message: response }, { status: 200 });
-
-    // const readableStream = new ReadableStream({
-    //   async start(controller) {
-    //     for await (const chunk of stream) {
-    //       const content = chunk?.choices?.[0]?.delta?.content || "";
-    //       if (content) {
-    //         controller.enqueue(new TextEncoder().encode(content));
-    //       }
-    //     }
-    //     controller.close();
-    //   },
-    // });
-
-    // return new NextResponse(readableStream, {
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "Transfer-Encoding": "chunked",
-    //   },
-    // });
-
-    // let fullResponse = "";
-    // for await (const chunk of stream) {
-    //   const content = chunk.choices[0]?.delta?.content || "";
-    //   fullResponse += content;
-    // }
-
-    // return Response.json({ message: fullResponse }, { status: 200 });
   } catch (error) {
     console.error(error);
     return Response.json(

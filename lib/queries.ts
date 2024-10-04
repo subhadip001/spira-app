@@ -15,8 +15,6 @@ export const generateFormSchema = async (data: TQueryData) => {
     body: JSON.stringify(data),
   });
 
-  console.log(response);
-
   if (!response.ok) {
     throw new Error("Failed to generate form schema");
   }
@@ -65,9 +63,9 @@ export const addNewFormVersion = async ({
 
 export const fetchFormVersions = async (baseFormId: string) => {
   const supabase = createClient();
- const {data} =await supabase
+  const { data } = await supabase
     .from("form_versions")
     .select()
     .eq("form_id", baseFormId);
-    return data;
+  return data;
 };

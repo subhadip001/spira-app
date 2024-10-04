@@ -14,14 +14,13 @@ export const fileSizeConverter = (bytes: number): string => {
     return `${megabytes.toFixed(2)} MB`;
   }
 };
-
 export const jsonExtractor = (jsonString: string) => {
   try {
-    const jsonRegex = /```json\n([\s\S]*?\n)```/;
+    const jsonRegex = /```json\n?([\s\S]+?)```/;
     const match = jsonString.match(jsonRegex);
 
     if (match && match[1]) {
-      const requiredJson = JSON.parse(match[1]);
+      const requiredJson = JSON.parse(match[1].trim());
       return requiredJson;
     }
   } catch (error) {
