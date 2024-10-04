@@ -6,14 +6,16 @@ import GenerateForm from "./generate-form";
 import useFormStore from "@/store/formStore";
 
 type EditFormProps = {
-  form: {
-    created_at: string;
-    id: string;
-    query: string;
-  };
+  baseQuery: string;
+  baseFormId: string;
+  generatedFormSchema: boolean;
 };
 
-const EditForm: React.FC<EditFormProps> = ({ form }) => {
+const EditForm: React.FC<EditFormProps> = ({
+  baseQuery,
+  baseFormId,
+  generatedFormSchema,
+}) => {
   const [selectedViewport, setSelectedViewport] = useState<
     "phone" | "tablet" | "desktop"
   >("desktop");
@@ -32,7 +34,7 @@ const EditForm: React.FC<EditFormProps> = ({ form }) => {
             O
           </div>
           <span className="bg-gray-200 px-3 py-1 rounded-full">
-            {form.query}
+            {baseQuery}
           </span>
         </div>
         <div className="flex gap-5 items-center">
@@ -79,9 +81,11 @@ const EditForm: React.FC<EditFormProps> = ({ form }) => {
       <div className="flex w-full justify-center items-center h-[calc(90svh-128px)]">
         <GenerateForm
           formData={{
-            prompt: form.query,
+            prompt: baseQuery,
           }}
           selectedViewport={selectedViewport}
+          baseFormId={baseFormId}
+          generatedFormSchema={generatedFormSchema}
         />
       </div>
     </section>

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
@@ -13,23 +13,46 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import useAppStore from "@/store/appStore";
+import Avvvatars from "avvvatars-react";
+type UserProfile = {
+  created_at: string;
+  email: string;
+  id: string;
+  name: string;
+};
 
 const UserDropdown = () => {
   const supabase = createClient();
   const pathName = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const setAppStoreUser = useAppStore((state) => state.setUser);
   const formId = pathName.split("/")[2];
 
-  console.log("searchParams", formId);
+  // console.log("searchParams", formId);
   useEffect(() => {
     const fetchUser = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      console.log(user);
-      setUser(user);
+
+      if (!user) return;
+      const { data: userProfile, error } = await supabase
+        .from("profiles")
+        .select()
+        .eq("id", user.id)
+        .single();
+      if (error) {
+        console.error("Error fetching user profile", error);
+        return;
+      }
+      setUser(userProfile);
+      setAppStoreUser({
+        id: userProfile?.id,
+        email: userProfile?.email,
+        name: userProfile?.name,
+      });
     };
     fetchUser();
   }, []);
@@ -53,13 +76,10 @@ const UserDropdown = () => {
       <DropdownMenuTrigger>
         <div className="rounded-full h-10 w-10 flex items-center justify-center border">
           {/* <UserRound size={16} /> */}
-          {user?.user_metadata.full_name ? (
-            <Image
-              src={user.user_metadata.avatar_url}
-              alt="avatar"
-              width={35}
-              height={35}
-              className="rounded-full"
+          {user?.name ? (
+            <Avvvatars
+              size={40}
+              value={user.name}
             />
           ) : (
             <UserRound size={16} />
@@ -72,7 +92,7 @@ const UserDropdown = () => {
             <DropdownMenuItem>
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span>{user.user_metadata.full_name}</span>
+                  <span>{user.name}</span>
                 </div>
                 <span className="text-sm text-gray-500">{user.email}</span>
               </div>

@@ -2,9 +2,33 @@
 
 import React, { useEffect, useState } from "react";
 import { ChevronsLeft, ChevronsRight, FileClock } from "lucide-react";
+import useSelectedFormVersionStore from "@/store/seletedFormVersions";
+import useFormVersionStore from "@/store/formVersions";
+type formVersions = {
+  created_at: string;
+  form_id: string;
+  form_schema_string: string;
+  id: string;
+  query: string;
+  version_number: number;
+}[];
 
 const HistorySidebar = () => {
   const [openedHistory, setOpenedHistory] = useState(true);
+  const [formVersions, setFormVersions] = useState<formVersions>([]);
+  const formVersionsData = useFormVersionStore(
+    (state) => state.formVersionsData
+  );
+  console.log(formVersionsData, "formVersionsData123");
+  const setSelectedFormVersion = useSelectedFormVersionStore(
+    (state) => state.setSelectedFormVersion
+  );
+  console.log(formVersionsData, "formVersionsData123");
+  useEffect(() => {
+    if (formVersionsData && formVersionsData?.length > 0) {
+      setFormVersions(formVersionsData);
+    }
+  }, [formVersionsData]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -21,14 +45,7 @@ const HistorySidebar = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const formVersions = [
-    { version: 1, date: "2021-10-10" },
-    { version: 2, date: "2021-10-11" },
-    { version: 3, date: "2021-10-12" },
-    { version: 4, date: "2021-10-13" },
-  ];
 
-  //w-[calc-size(auto)]
 
   return (
     <aside
@@ -52,18 +69,19 @@ const HistorySidebar = () => {
           <div className="flex flex-col space-y-2">
             {formVersions.map((formVersion) => (
               <div
-                key={formVersion.version}
+                key={formVersion.version_number}
                 className="py-2 hover:bg-gray-200 rounded transition-colors cursor-pointer border"
+                onClick={() => setSelectedFormVersion(formVersion)}
               >
                 <div className="flex justify-between items-center px-2">
                   <div className="flex items-center space-x-2">
                     <div>
                       <FileClock className="h-4 w-4 text-gray-500" />
                     </div>
-                    <span>v{formVersion.version}</span>
+                    <span>v{formVersion.version_number}</span>
                   </div>
                   <div className="text-sm text-gray-500">
-                    {formVersion.date}
+                    {/* {formVersion.created_at} */}
                   </div>
                 </div>
               </div>
@@ -73,11 +91,12 @@ const HistorySidebar = () => {
           <div className="flex flex-col space-y-2">
             {formVersions.map((formVersion) => (
               <div
-                key={formVersion.version}
+                key={formVersion.version_number}
                 className="p-2 hover:bg-gray-200 rounded transition-colors cursor-pointer border"
+                onClick={() => setSelectedFormVersion(formVersion)}
               >
                 <div className="flex justify-center items-center">
-                  <span>v{formVersion.version}</span>
+                  <span>v{formVersion.version_number}</span>
                 </div>
               </div>
             ))}
