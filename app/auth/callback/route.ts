@@ -1,6 +1,16 @@
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
+const getURL = () => {
+  let url =
+    process?.env?.NEXT_PUBLIC_SITE_URL ??
+    process?.env?.NEXT_PUBLIC_VERCEL_URL ??
+    "http://localhost:3000/";
+  url = url.startsWith("http") ? url : `https://${url}`;
+  url = url.endsWith("/") ? url : `${url}/`;
+  return url;
+};
+
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
@@ -20,15 +30,22 @@ export async function GET(request: Request) {
     return NextResponse.redirect("/login");
   }
 
+  const origin = getURL();
+
+  console.log("origin", origin);
+
   if (!formId) {
-    return NextResponse.redirect(requestUrl.origin);
+    return NextResponse.redirect(origin ?? requestUrl.origin);
   }
-  
+
   const formdata = await supabase
     .from("forms")
     .update({ user_id: userData.user.id })
     .eq("id", formId);
 
-  const newRedirectUrl = new URL(`/form/${formId}`, requestUrl.origin);
+  const newRedirectUrl = new URL(
+    `/form/${formId}`,
+    origin ?? requestUrl.origin
+  );
   return NextResponse.redirect(newRedirectUrl);
 }
