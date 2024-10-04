@@ -20,6 +20,9 @@ const UserDropdown = () => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
 
+  const formId = pathName.split("/")[2];
+
+  console.log("searchParams", formId);
   useEffect(() => {
     const fetchUser = async () => {
       const {
@@ -84,7 +87,11 @@ const UserDropdown = () => {
         ) : (
           <>
             <DropdownMenuItem>Help</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push("/login")}>
+            <DropdownMenuItem
+              onClick={() =>
+                router.push(`/login?${formId ? `formId=${formId}` : ""}`)
+              }
+            >
               Login
             </DropdownMenuItem>
           </>

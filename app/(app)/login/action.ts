@@ -8,11 +8,12 @@ import { headers } from "next/headers";
 export async function login(formData: FormData) {
   const supabase = createClient();
   const origin = headers().get("origin");
+  const formId = formData.get("formId");
 
   const { error, data } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${origin}/auth/callback`,
+      redirectTo: `${origin}/auth/callback${formId ? `?formId=${formId}` : ""}`,
     },
   });
 
