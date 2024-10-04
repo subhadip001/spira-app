@@ -58,11 +58,11 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   );
   const formSchemaGenerateMutation = useMutation({
     mutationFn: generateFormSchema,
-    onSuccess: (data) => {
-      // console.log("1sttime");
-      setCurrentFormSchema(jsonExtractor(JSON.parse(data.message)));
+    onSuccess: async (data) => {
+      setFormSchema(jsonExtractor(data.message));
+      setCurrentFormSchema(jsonExtractor(data.message));
       addNewFormversionMutation.mutate({
-        formSchemaString: JSON.stringify(data.message),
+        formSchemaString: data.message,
         baseFormId: baseFormId,
         query: formData.prompt,
         version: 1,
@@ -75,7 +75,6 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
       console.error("Error generating form schema", error);
     },
   });
-  // console.log("genrateform", generatedFormSchema);
   useEffect(() => {
     if (needToGenerateFormSchema) {
       formSchemaGenerateMutation.mutate(formData);
@@ -83,13 +82,13 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   }, [needToGenerateFormSchema]);
 
   useEffect(() => {
-    if (seletedFormVersion) {
-      setFormSchema(
-        jsonExtractor(JSON.parse(seletedFormVersion.form_schema_string))
+    if (seletedFormVersion?.form_schema_string) {
+      const jsonFormSchema = jsonExtractor(
+        seletedFormVersion.form_schema_string
       );
-      setCurrentFormSchema(
-        jsonExtractor(JSON.parse(seletedFormVersion.form_schema_string))
-      );
+      console.log("jsonFormSchema", jsonFormSchema);
+      setFormSchema(jsonFormSchema);
+      setCurrentFormSchema(jsonFormSchema);
     }
   }, [seletedFormVersion]);
 
@@ -123,7 +122,7 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
           </div>
         ) : formSchema ? (
           <FormBuilder
-            initialSchema={formSchema}
+            initialSchema={currentFormSchema}
             className=""
             published={isViewAsPublished}
             editable={!isViewAsPublished}

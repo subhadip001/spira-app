@@ -59,14 +59,12 @@ const EditForm: React.FC<EditFormProps> = ({
   return (
     <section className="relative flex-grow flex flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
       <div className="flex px-3 justify-between items-center w-full rounded-md h-[7vh] gap-5">
-        <div className="flex items-center w-full gap-1">
+        <div className="flex items-center w-full gap-2 text-gray-500 bg-gray-200 px-3 py-2 rounded-md">
+          <div>
+            <Sparkles className="h-4 w-4" />
+          </div>
           <div className="flex-grow">
-            <span className=" mx-auto line-clamp-1 flex items-center gap-2 bg-gray-200 px-3 py-2 rounded-md text-gray-500 outline-none">
-              <div>
-                <Sparkle className="h-4 w-4" />
-              </div>
-              {baseQuery}
-            </span>
+            <span className=" mx-auto line-clamp-1">{baseQuery}</span>
           </div>
         </div>
         <div className="flex gap-5 items-center">

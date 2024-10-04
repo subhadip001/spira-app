@@ -42,11 +42,10 @@ const EditFormField = () => {
   const setCurrentFormSchema = useFormStore(
     (state) => state.setCurrentFormSchema
   );
-
   const [editedField, setEditedField] = useState<FormField | null>(null);
 
   useEffect(() => {
-    const filteredFormFieldSchema = currentFormSchema.fields.find(
+    const filteredFormFieldSchema = currentFormSchema?.fields?.find(
       (field) => field.constantId === editFormSideBarOpen.fieldConstantId
     );
     if (filteredFormFieldSchema) {
