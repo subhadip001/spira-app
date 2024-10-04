@@ -14,6 +14,8 @@ import useFormSchemaGenerator from "@/hooks/form-schema-generator";
 import { set } from "react-hook-form";
 import useFormVersionStore from "@/store/formVersions";
 import useSelectedFormVersionStore from "@/store/seletedFormVersions";
+import useAppStore from "@/store/appStore";
+import useFormStore from "@/store/formStore";
 
 const HorizontalResizableComponent = dynamic(
   () => import("./resizable-component"),
@@ -24,21 +26,29 @@ type TGenerateFormProps = {
   formData: TQueryData;
   selectedViewport: "phone" | "tablet" | "desktop";
   baseFormId: string;
-  generatedFormSchema: boolean;
+  needToGenerateFormSchema: boolean;
 };
 
 const GenerateForm: React.FC<TGenerateFormProps> = ({
   formData,
   selectedViewport,
   baseFormId,
-  generatedFormSchema,
+  needToGenerateFormSchema,
 }) => {
   const [formSchema, setFormSchema] = useState();
+  const currentFormSchema = useFormStore((state) => state.currentFormSchema);
+  const setCurrentFormSchema = useFormStore(
+    (state) => state.setCurrentFormSchema
+  );
   const formVersionsData = useFormVersionStore(
     (state) => state.formVersionsData
   );
 
-  console.log(formVersionsData, "formVersionsData12312312312");
+  const isViewAsPublished = useAppStore((state) => state.isViewAsPublished);
+  const setIsViewAsPublished = useAppStore(
+    (state) => state.setIsViewAsPublished
+  );
+
   const queryClient = useQueryClient();
   // const { formSchema, formSchemaGenerateMutation, streamedMessage } =
   //   useFormSchemaGenerator();
@@ -46,11 +56,11 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   const seletedFormVersion = useSelectedFormVersionStore(
     (state) => state.selectedFormVersion
   );
-  console.log(seletedFormVersion, "seletedFormVersion");
   const formSchemaGenerateMutation = useMutation({
     mutationFn: generateFormSchema,
     onSuccess: (data) => {
       // console.log("1sttime");
+      setCurrentFormSchema(jsonExtractor(JSON.parse(data.message)));
       addNewFormversionMutation.mutate({
         formSchemaString: JSON.stringify(data.message),
         baseFormId: baseFormId,
@@ -67,14 +77,17 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   });
   // console.log("genrateform", generatedFormSchema);
   useEffect(() => {
-    if (generatedFormSchema) {
+    if (needToGenerateFormSchema) {
       formSchemaGenerateMutation.mutate(formData);
     }
-  }, [generatedFormSchema]);
+  }, [needToGenerateFormSchema]);
 
   useEffect(() => {
     if (seletedFormVersion) {
       setFormSchema(
+        jsonExtractor(JSON.parse(seletedFormVersion.form_schema_string))
+      );
+      setCurrentFormSchema(
         jsonExtractor(JSON.parse(seletedFormVersion.form_schema_string))
       );
     }
@@ -112,8 +125,8 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
           <FormBuilder
             initialSchema={formSchema}
             className=""
-            published={false}
-            editable={true}
+            published={isViewAsPublished}
+            editable={!isViewAsPublished}
           />
         ) : (
           <>

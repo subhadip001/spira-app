@@ -16,8 +16,7 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get("code");
   const formId = requestUrl.searchParams.get("formId");
   const supabase = createClient();
-  console.log(formId, "formId");
-  console.log(request, "request");
+
   if (!code) {
     return NextResponse.redirect("/login");
   }
@@ -32,16 +31,9 @@ export async function GET(request: Request) {
 
   const origin = getURL();
 
-  console.log("origin", origin);
-
   if (!formId) {
     return NextResponse.redirect(origin ?? requestUrl.origin);
   }
-
-  const formdata = await supabase
-    .from("forms")
-    .update({ user_id: userData.user.id })
-    .eq("id", formId);
 
   const newRedirectUrl = new URL(
     `/form/${formId}`,

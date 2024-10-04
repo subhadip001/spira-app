@@ -7,6 +7,8 @@ import { fetchFormVersions, QueryKeys } from "@/lib/queries";
 import useFormVersionStore from "@/store/formVersions";
 import useSelectedFormVersionStore from "@/store/seletedFormVersions";
 import { set } from "react-hook-form";
+import useAppStore from "@/store/appStore";
+import EditFormField from "./edit-form-field";
 
 type FormPageProps = {
   baseQuery: string;
@@ -26,7 +28,6 @@ const FormPage: React.FC<FormPageProps> = ({
   formVersions,
   baseFormId,
 }) => {
-  // console.log("formVersions", formVersions);
   const [isFormVersionsAvalible, setIsFormVersionsAvalible] =
     useState<boolean>(true);
   const setFormVersionsData = useFormVersionStore(
@@ -63,7 +64,7 @@ const FormPage: React.FC<FormPageProps> = ({
         <EditForm
           baseQuery={baseQuery}
           baseFormId={baseFormId}
-          generatedFormSchema={!isFormVersionsAvalible}
+          needToGenerateFormSchema={!isFormVersionsAvalible}
         />
       ) : (
         <>
@@ -77,6 +78,8 @@ const FormPage: React.FC<FormPageProps> = ({
           </div>
         </>
       )}
+
+      <EditFormField />
     </>
   );
 };

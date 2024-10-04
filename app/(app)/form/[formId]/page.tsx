@@ -20,7 +20,7 @@ export default async function EditFormHome({
   if (!baseformId) return null;
 
   const supabase = createClient();
-  const { data: form, error } = await supabase
+  const { data: formVersions, error } = await supabase
     .from("form_versions")
     .select()
     .eq("form_id", baseformId);
@@ -28,26 +28,22 @@ export default async function EditFormHome({
     return null;
   }
   let baseQuery = "";
-  if (form.length === 0) {
-    const { data: baseForm, error: baseFormError } = await supabase
-      .from("forms")
-      .select("*")
-      .eq("id", baseformId);
-    if (baseFormError) {
-      return null;
-    }
-    // console.log("baseForm", baseForm);
-    baseQuery = baseForm[0]?.query;
+
+  const { data: baseForm, error: baseFormError } = await supabase
+    .from("forms")
+    .select("*")
+    .eq("id", baseformId);
+  if (baseFormError) {
+    return null;
   }
-  // console.log("baseQuery", baseQuery);
 
   return (
     <div className="bg-white w-[100vw] min-h-[100svh]">
       <Header />
       <main className="flex px-2">
         <FormPage
-          baseQuery={baseQuery}
-          formVersions={form}
+          baseQuery={baseForm[0]?.query}
+          formVersions={formVersions}
           baseFormId={baseformId}
         />
       </main>

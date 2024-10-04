@@ -19,11 +19,9 @@ const HistorySidebar = () => {
   const formVersionsData = useFormVersionStore(
     (state) => state.formVersionsData
   );
-  console.log(formVersionsData, "formVersionsData123");
   const setSelectedFormVersion = useSelectedFormVersionStore(
     (state) => state.setSelectedFormVersion
   );
-  console.log(formVersionsData, "formVersionsData123");
   useEffect(() => {
     if (formVersionsData && formVersionsData?.length > 0) {
       setFormVersions(formVersionsData);
@@ -44,8 +42,6 @@ const HistorySidebar = () => {
     // Cleanup
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-
 
   return (
     <aside

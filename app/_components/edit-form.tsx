@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import {
   Eye,
   Monitor,
+  Pencil,
   Smartphone,
+  Sparkle,
   Sparkles,
   SquareArrowUpRight,
   Tablet,
@@ -11,25 +13,46 @@ import {
 import React, { useState } from "react";
 import GenerateForm from "./generate-form";
 import useFormStore from "@/store/formStore";
+import { createClient } from "@/utils/supabase/client";
+import useAppStore from "@/store/appStore";
+import { usePathname, useRouter } from "next/navigation";
+import UserProfileAvatar from "./profile-avatar";
 
 type EditFormProps = {
   baseQuery: string;
   baseFormId: string;
-  generatedFormSchema: boolean;
+  needToGenerateFormSchema: boolean;
 };
 
 const EditForm: React.FC<EditFormProps> = ({
   baseQuery,
   baseFormId,
-  generatedFormSchema,
+  needToGenerateFormSchema,
 }) => {
   const [selectedViewport, setSelectedViewport] = useState<
     "phone" | "tablet" | "desktop"
   >("desktop");
 
   const currentFormSchema = useFormStore((state) => state.currentFormSchema);
+  const user = useAppStore((state) => state.user);
+  const router = useRouter();
+  const pathName = usePathname();
+  const formId = pathName.split("/")[2];
+
+  const editFormSideBarOpen = useAppStore((state) => state.editFormSideBarOpen);
+  const setIsEditFormSideBarOpen = useAppStore(
+    (state) => state.setIsEditFormSideBarOpen
+  );
+  const isViewAsPublished = useAppStore((state) => state.isViewAsPublished);
+  const setIsViewAsPublished = useAppStore(
+    (state) => state.setIsViewAsPublished
+  );
 
   const handlePublish = () => {
+    if (!user) {
+      router.push(`/login?${formId ? `formId=${formId}` : ""}`);
+      return;
+    }
     console.log("Publishing form...");
     console.log(currentFormSchema);
   };
@@ -37,9 +60,11 @@ const EditForm: React.FC<EditFormProps> = ({
     <section className="relative flex-grow flex flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
       <div className="flex px-3 justify-between items-center w-full rounded-md h-[7vh] gap-5">
         <div className="flex items-center w-full gap-1">
-          <div className="min-w-8 min-h-8 bg-blue-400 flex text-white justify-center items-center rounded-full"></div>
           <div className="flex-grow">
-            <span className=" mx-auto line-clamp-1 bg-gray-200 px-3 py-1 rounded-full text-gray-500 outline-none">
+            <span className=" mx-auto line-clamp-1 flex items-center gap-2 bg-gray-200 px-3 py-2 rounded-md text-gray-500 outline-none">
+              <div>
+                <Sparkle className="h-4 w-4" />
+              </div>
               {baseQuery}
             </span>
           </div>
@@ -47,10 +72,28 @@ const EditForm: React.FC<EditFormProps> = ({
         <div className="flex gap-5 items-center">
           <div className="bg-white h-full border rounded-md flex gap-2 p-1">
             <div
-              className="p-2 cursor-pointer rounded bg-gray-100"
-              onClick={() => {}}
+              className={`p-2 cursor-pointer ${
+                isViewAsPublished ? "bg-gray-200" : ""
+              } rounded border border-gray-200`}
+              onClick={() => {
+                setIsViewAsPublished(!isViewAsPublished);
+              }}
             >
               <Eye className="h-4 w-4" />
+            </div>
+            <div
+              className={`p-2 cursor-pointer rounded border border-gray-200 ${
+                editFormSideBarOpen.isEditFormSideBarOpen ? "bg-gray-200" : ""
+              }`}
+              onClick={() => {
+                setIsEditFormSideBarOpen({
+                  isEditFormSideBarOpen:
+                    !editFormSideBarOpen.isEditFormSideBarOpen,
+                  fieldConstantId: 0,
+                });
+              }}
+            >
+              <Pencil className="h-4 w-4" />
             </div>
           </div>
           <div className="bg-white h-full border rounded-md flex gap-2 p-1">
@@ -99,7 +142,7 @@ const EditForm: React.FC<EditFormProps> = ({
           }}
           selectedViewport={selectedViewport}
           baseFormId={baseFormId}
-          generatedFormSchema={generatedFormSchema}
+          needToGenerateFormSchema={needToGenerateFormSchema}
         />
       </div>
       <div className="flex w-full px-3">
