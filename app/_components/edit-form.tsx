@@ -87,7 +87,9 @@ const EditForm: React.FC<EditFormProps> = ({
                 setIsEditFormSideBarOpen({
                   isEditFormSideBarOpen:
                     !editFormSideBarOpen.isEditFormSideBarOpen,
-                  fieldConstantId: 0,
+                  fieldConstantId: editFormSideBarOpen.isEditFormSideBarOpen
+                    ? 0
+                    : 1,
                 });
               }}
             >
