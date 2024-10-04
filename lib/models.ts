@@ -11,4 +11,7 @@ export const models = {
     LLAMA_3_1_70B: "llama-3.1-70b-versatile",
     MIXTRAL_7B: "mixtral-8x7b-32768",
   },
+  claude_models: {
+    CLAUDE_3_5_SONNET: "claude-3-5-sonnet-20240620",
+  },
 };

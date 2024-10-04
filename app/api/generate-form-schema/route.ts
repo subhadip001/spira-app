@@ -1,10 +1,10 @@
-import { createGeminiResponse, createGroqChatCompletion } from "@/lib/ai-query";
+import {
+  createClaudeResponse,
+  createGeminiResponse,
+  createGroqChatCompletion,
+} from "@/lib/ai-query";
 import { FORM_SCHEMA_GENERATOR_PROMPT } from "@/lib/utils";
 import { NextResponse } from "next/server";
-
-// export const config = {
-//   runtime: "edge",
-// };
 
 export async function POST(req: Request) {
   const { prompt } = await req.json();
@@ -16,10 +16,17 @@ export async function POST(req: Request) {
   }
 
   try {
-    const stream = await createGroqChatCompletion(
+    // const stream = await createGroqChatCompletion(
+    //   FORM_SCHEMA_GENERATOR_PROMPT,
+    //   prompt
+    // );
+
+    const response = await createClaudeResponse(
       FORM_SCHEMA_GENERATOR_PROMPT,
       prompt
     );
+
+    return Response.json({ message: response }, { status: 200 });
 
     // const readableStream = new ReadableStream({
     //   async start(controller) {
@@ -40,15 +47,13 @@ export async function POST(req: Request) {
     //   },
     // });
 
-    let fullResponse = "";
-    for await (const chunk of stream) {
-      const content = chunk.choices[0]?.delta?.content || "";
-      fullResponse += content;
-    }
+    // let fullResponse = "";
+    // for await (const chunk of stream) {
+    //   const content = chunk.choices[0]?.delta?.content || "";
+    //   fullResponse += content;
+    // }
 
-    // console.log(fullResponse);
-
-    return Response.json({ message: fullResponse }, { status: 200 });
+    // return Response.json({ message: fullResponse }, { status: 200 });
   } catch (error) {
     console.error(error);
     return Response.json(

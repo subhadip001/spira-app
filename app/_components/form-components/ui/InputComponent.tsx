@@ -30,7 +30,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
   maxSize,
 }) => {
   return (
-    <div className={cn(className, "flex flex-col gap-2")}>
+    <div className={cn(className, "flex flex-col gap-4")}>
       <Label htmlFor={name} className="">
         {label}
       </Label>

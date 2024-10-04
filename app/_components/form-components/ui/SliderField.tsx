@@ -1,5 +1,4 @@
 import React from "react";
-import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 
 interface SliderFieldProps {
@@ -21,18 +20,30 @@ const SliderField: React.FC<SliderFieldProps> = ({
   max = 100,
   step = 1,
 }) => {
+  const percentage = ((field.value - min) / (max - min)) * 100;
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
       <Label htmlFor={field.name}>{label}</Label>
-      <Slider
-        id={field.name}
-        min={min}
-        max={max}
-        step={step}
-        value={[field.value]}
-        onValueChange={(values) => field.onChange(values[0])}
-        className="w-full"
-      />
+      <div className="relative w-full h-10">
+        <div className="absolute top-0 left-0 w-full h-10 rounded-md bg-gray-300"></div>
+        <div
+          className="absolute top-0 left-0 h-10 rounded-md bg-gray-700"
+          style={{ width: `${percentage}%` }}
+        ></div>
+
+        <input
+          type="range"
+          id={field.name}
+          name={field.name}
+          min={min}
+          max={max}
+          step={step}
+          value={field.value}
+          onChange={(e) => field.onChange(Number(e.target.value))}
+          className="absolute top-0 left-0 w-full h-10 opacity-0 cursor-pointer"
+        />
+      </div>
       <div className="flex justify-between text-sm text-gray-500">
         <span>{min}</span>
         <span>{field.value}</span>

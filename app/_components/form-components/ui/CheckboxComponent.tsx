@@ -33,19 +33,23 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
       <Label>{label}</Label>
       <div className="space-y-1">
         {options.map((option) => (
-          <div key={option.value} className="flex items-center space-x-2">
+          <div key={option.value} className="relative">
             <Checkbox
               id={`${field.name}-${option.value}`}
               checked={field.value?.split(",").includes(option.value)}
               onCheckedChange={(checked) =>
                 handleChange(option.value, checked as boolean)
               }
+              className="peer sr-only"
             />
-            <Label htmlFor={`${field.name}-${option.value}`}>
+            <Label
+              htmlFor={`${field.name}-${option.value}`}
+              className="flex items-center justify-between p-4 rounded-lg border-2 border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-all"
+            >
               {option.label}
             </Label>
           </div>
