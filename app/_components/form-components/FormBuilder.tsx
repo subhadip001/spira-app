@@ -246,10 +246,9 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   };
 
   const handleAddFieldForEditing = (fieldConstantId: number) => {
-    console.log("fieldId", fieldConstantId);
     if (editFormSideBarOpen.fieldConstantId === fieldConstantId) {
       setIsEditFormSideBarOpen({
-        isEditFormSideBarOpen: true,
+        isEditFormSideBarOpen: false,
         fieldConstantId: 0,
       });
     } else {

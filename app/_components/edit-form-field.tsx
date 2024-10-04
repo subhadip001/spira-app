@@ -115,15 +115,39 @@ const EditFormField = () => {
   };
 
   if (!editedField) {
-    return null;
+    return (
+      <section
+        className={`${
+          editFormSideBarOpen.isEditFormSideBarOpen
+            ? "min-w-[30%] max-w-[30%] bg-primary/5 ml-3 rounded-md"
+            : "min-w-0 ml-0 max-w-0"
+        } flex flex-col transition-all duration-300 overflow-hidden`}
+      >
+        <div className="flex justify-between items-center py-3 px-3 border-b">
+          <span className="text-lg font-semibold">Edit Selected Field</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() =>
+              setIsEditFormSideBarOpen({
+                isEditFormSideBarOpen: false,
+                fieldConstantId: 0,
+              })
+            }
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      </section>
+    );
   }
 
   return (
     <section
       className={`${
         editFormSideBarOpen.isEditFormSideBarOpen
-          ? "min-w-[25%] max-w-[25%] bg-primary/5 ml-3 rounded-md"
-          : "min-w-0 max-w-0"
+          ? "min-w-[30%] max-w-[30%] bg-primary/5 ml-3 rounded-md"
+          : "min-w-0 ml-0 max-w-0"
       } flex flex-col transition-all duration-300 overflow-hidden`}
     >
       <div className="flex justify-between items-center py-3 px-3 border-b">
