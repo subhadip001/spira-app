@@ -10,11 +10,12 @@ import { ReactTyped } from "react-typed";
 import { quickStartQueries } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { addFormQueryToDb } from "../_actions/formAction";
+import useAppStore from "@/store/appStore";
 
 const PromptBox = () => {
   const router = useRouter();
   const [query, setQuery] = useState("");
-
+    const user = useAppStore((state) => state.user);
   return (
     <div className="flex flex-col gap-3">
       <ShineBorder
@@ -24,9 +25,9 @@ const PromptBox = () => {
         <form
           className=" flex flex-col gap-3 rounded-lg p-3 z-50  "
           action={async (data) => {
-            console.log(data);
+            // console.log(data);
             const formData = Object.fromEntries(data.entries()) as TQueryData;
-            console.log(formData);
+            // console.log(formData);
             const prompt = formData.prompt;
             const uuid = uuidv4();
             await addFormQueryToDb(uuid, prompt);

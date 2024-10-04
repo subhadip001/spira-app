@@ -7,7 +7,7 @@ export const validateForm = (
 ): TFormErrors => {
   const errors: TFormErrors = [];
 
-  schema.fields.forEach((field) => {
+  schema?.fields?.forEach((field) => {
     const fieldValue = values.find(v => v.formFieldId === field.constantId);
     
     if (field.required) {
