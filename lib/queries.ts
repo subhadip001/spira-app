@@ -1,7 +1,9 @@
-import { TQueryData } from "./types";
+import { createClient } from "@/utils/supabase/client";
+import { TQueryData, AddNewFormVersionVariables } from "./types";
 
 export enum QueryKeys {
   GetSpiraResponse = "getSpiraResponse",
+  GetFormVersions = "getFormVersions",
 }
 
 export const generateFormSchema = async (data: TQueryData) => {
@@ -41,3 +43,31 @@ export const generateFormSchema = async (data: TQueryData) => {
 
 //   return response.body;
 // };
+
+export const addNewFormVersion = async ({
+  formSchemaString,
+  baseFormId,
+  query,
+  version,
+}: AddNewFormVersionVariables) => {
+  const supabase = createClient();
+  const response = await supabase
+    .from("form_versions")
+    .insert({
+      form_schema_string: formSchemaString,
+      form_id: baseFormId,
+      query: query,
+      version_number: version,
+    })
+    .select();
+  return response;
+};
+
+export const fetchFormVersions = async (baseFormId: string) => {
+  const supabase = createClient();
+ const {data} =await supabase
+    .from("form_versions")
+    .select()
+    .eq("form_id", baseFormId);
+    return data;
+};

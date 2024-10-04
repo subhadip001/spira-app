@@ -1,12 +1,20 @@
 "use client";
 import { jsonExtractor } from "@/lib/form-lib/utils";
-import { generateFormSchema } from "@/lib/queries";
-import { TQueryData } from "@/lib/types";
-import { useMutation } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import {
+  generateFormSchema,
+  addNewFormVersion,
+  QueryKeys,
+} from "@/lib/queries";
+import { AddNewFormVersionVariables, TQueryData } from "@/lib/types";
+import { Query, useMutation, useQueryClient } from "@tanstack/react-query";
+import React, { use, useEffect, useState } from "react";
 import FormBuilder from "./form-components/FormBuilder";
 import dynamic from "next/dynamic";
 import useFormSchemaGenerator from "@/hooks/form-schema-generator";
+import { set } from "react-hook-form";
+import useFormVersionStore from "@/store/formVersions";
+import useSelectedFormVersionStore from "@/store/seletedFormVersions";
+
 const HorizontalResizableComponent = dynamic(
   () => import("./resizable-component"),
   { ssr: false }
@@ -15,31 +23,71 @@ const HorizontalResizableComponent = dynamic(
 type TGenerateFormProps = {
   formData: TQueryData;
   selectedViewport: "phone" | "tablet" | "desktop";
+  baseFormId: string;
+  generatedFormSchema: boolean;
 };
 
 const GenerateForm: React.FC<TGenerateFormProps> = ({
   formData,
   selectedViewport,
+  baseFormId,
+  generatedFormSchema,
 }) => {
   const [formSchema, setFormSchema] = useState();
+  const formVersionsData = useFormVersionStore(
+    (state) => state.formVersionsData
+  );
 
+  console.log(formVersionsData, "formVersionsData12312312312");
+  const queryClient = useQueryClient();
   // const { formSchema, formSchemaGenerateMutation, streamedMessage } =
   //   useFormSchemaGenerator();
 
-  useEffect(() => {
-    formSchemaGenerateMutation.mutate(formData);
-  }, []);
-
+  const seletedFormVersion = useSelectedFormVersionStore(
+    (state) => state.selectedFormVersion
+  );
+  console.log(seletedFormVersion, "seletedFormVersion");
   const formSchemaGenerateMutation = useMutation({
     mutationFn: generateFormSchema,
     onSuccess: (data) => {
-      const message = data.message;
-      const formSchema = jsonExtractor(message);
-      console.log("formSchema", formSchema);
-      setFormSchema(formSchema);
+      // console.log("1sttime");
+      addNewFormversionMutation.mutate({
+        formSchemaString: JSON.stringify(data.message),
+        baseFormId: baseFormId,
+        query: formData.prompt,
+        version: 1,
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.GetFormVersions, baseFormId],
+      });
     },
     onError: (error: Error) => {
       console.error("Error generating form schema", error);
+    },
+  });
+  // console.log("genrateform", generatedFormSchema);
+  useEffect(() => {
+    if (generatedFormSchema) {
+      formSchemaGenerateMutation.mutate(formData);
+    }
+  }, [generatedFormSchema]);
+
+  useEffect(() => {
+    if (seletedFormVersion) {
+      setFormSchema(
+        jsonExtractor(JSON.parse(seletedFormVersion.form_schema_string))
+      );
+    }
+  }, [seletedFormVersion]);
+
+  const addNewFormversionMutation = useMutation({
+    mutationFn: (variables: AddNewFormVersionVariables) =>
+      addNewFormVersion(variables),
+    onSuccess: (data) => {
+      // console.log("data", data);
+    },
+    onError: (error: Error) => {
+      console.error("Error adding new form version", error);
     },
   });
 
