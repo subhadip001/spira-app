@@ -86,7 +86,6 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
       const jsonFormSchema = jsonExtractor(
         seletedFormVersion.form_schema_string
       );
-      console.log("jsonFormSchema", jsonFormSchema);
       setFormSchema(jsonFormSchema);
       setCurrentFormSchema(jsonFormSchema);
     }
@@ -113,7 +112,7 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
           : 400
       }
     >
-      <div className="mx-3 px-4 py-3 bg-white border shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto">
+      <div className="mx-3 w-full  mmd:w-auto  bg-white border shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto">
         {formSchemaGenerateMutation.isPending ? (
           <div>
             <h3 className="text-lg font-semibold mb-2">
@@ -123,8 +122,8 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
         ) : formSchema ? (
           <FormBuilder
             initialSchema={currentFormSchema}
-            className=""
-            published={isViewAsPublished}
+            className="px-4 py-3 mmd:px-10 mmd:py-8"
+            published={false}
             editable={!isViewAsPublished}
           />
         ) : (

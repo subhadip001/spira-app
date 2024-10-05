@@ -9,12 +9,14 @@ interface CheckboxFieldProps {
     onChange: (value: string) => void;
   };
   label: string;
+  required?: boolean;
   options: { value: string; label: string }[];
 }
 
 const CheckboxField: React.FC<CheckboxFieldProps> = ({
   field,
   label,
+  required,
   options,
 }) => {
   const handleChange = (optionValue: string, checked: boolean) => {
@@ -34,7 +36,10 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <Label>{label}</Label>
+      <Label>
+        {label}
+        {required && <span className="text-red-500">*</span>}
+      </Label>
       <div className="space-y-1">
         {options.map((option) => (
           <div key={option.value} className="relative">

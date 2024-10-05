@@ -8,6 +8,7 @@ interface SliderFieldProps {
     onChange: (value: number) => void;
   };
   label: string;
+  required?: boolean;
   min?: number;
   max?: number;
   step?: number;
@@ -16,6 +17,7 @@ interface SliderFieldProps {
 const SliderField: React.FC<SliderFieldProps> = ({
   field,
   label,
+  required,
   min = 0,
   max = 100,
   step = 1,
@@ -24,7 +26,10 @@ const SliderField: React.FC<SliderFieldProps> = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <Label htmlFor={field.name}>{label}</Label>
+      <Label htmlFor={field.name}>
+        {label}
+        {required && <span className="text-red-500">*</span>}
+      </Label>
       <div className="relative w-full h-10">
         <div className="absolute top-0 left-0 w-full h-10 rounded-md bg-gray-300"></div>
         <div

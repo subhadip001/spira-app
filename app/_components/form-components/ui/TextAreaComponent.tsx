@@ -21,11 +21,13 @@ const TextAreaComponent: React.FC<TextAreaComponentProps> = ({
   value,
   onChange,
   classname,
+  required,
 }) => {
   return (
     <div className={cn(classname, "flex flex-col gap-4")}>
       <Label htmlFor={name} className="">
         {label}
+        {required && <span className="text-red-500">*</span>}
       </Label>
       <Textarea
         name={name}

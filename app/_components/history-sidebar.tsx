@@ -63,9 +63,9 @@ const HistorySidebar = () => {
       <section className="p-4">
         {openedHistory ? (
           <div className="flex flex-col space-y-2">
-            {formVersions.map((formVersion) => (
+            {formVersions.map((formVersion, index) => (
               <div
-                key={formVersion.version_number}
+                key={index}
                 className="py-2 hover:bg-gray-200 rounded transition-colors cursor-pointer border"
                 onClick={() => setSelectedFormVersion(formVersion)}
               >
