@@ -33,6 +33,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
     <div className={cn(className, "flex flex-col gap-4")}>
       <Label htmlFor={name} className="">
         {label}
+        {required && <span className="text-red-500">*</span>}
       </Label>
       {type === "file" ? (
         <FileInput

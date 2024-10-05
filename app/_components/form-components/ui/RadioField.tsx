@@ -9,15 +9,24 @@ interface RadioFieldProps {
     onChange: (value: string) => void;
   };
   label: string;
+  required?: boolean;
   options: { value: string; label: string }[];
 }
 
 const selectedThemePrimaryColor = "#007bff";
 
-const RadioField: React.FC<RadioFieldProps> = ({ field, label, options }) => {
+const RadioField: React.FC<RadioFieldProps> = ({
+  field,
+  label,
+  required,
+  options,
+}) => {
   return (
     <div className="flex flex-col gap-4">
-      <Label>{label}</Label>
+      <Label>
+        {label}
+        {required && <span className="text-red-500">*</span>}
+      </Label>
       <RadioGroup
         value={field.value}
         onValueChange={field.onChange}

@@ -35,16 +35,22 @@ const useAppStore = create<AppStore>()(
         })),
       editFormSideBarOpen: { isEditFormSideBarOpen: false, fieldConstantId: 0 },
       setIsEditFormSideBarOpen: (editFormSideBarOpen) =>
-        set((state) => ({
-          ...state,
-          editFormSideBarOpen,
-        })),
+        set((state) => {
+          if (state.isViewAsPublished) return state;
+          return {
+            ...state,
+            editFormSideBarOpen,
+          };
+        }),
       isViewAsPublished: false,
       setIsViewAsPublished: (isViewAsPublished) =>
-        set((state) => ({
-          ...state,
-          isViewAsPublished,
-        })),
+        set((state) => {
+          if (state.editFormSideBarOpen.isEditFormSideBarOpen) return state;
+          return {
+            ...state,
+            isViewAsPublished,
+          };
+        }),
       user: null,
       setUser: (user) =>
         set((state) => ({

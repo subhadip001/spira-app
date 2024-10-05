@@ -67,6 +67,7 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             name={field.name}
             options={field.options || []}
             value={safeValue}
+            required={field.required}
             placeholder={field.placeholder}
             onChange={handleChange}
           />
@@ -81,6 +82,7 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
               value: safeValue,
               onChange: handleChange,
             }}
+            required={field.required}
             label={field.label}
             options={field.options || []}
           />
@@ -95,6 +97,7 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
               value: safeValue,
               onChange: handleChange,
             }}
+            required={field.required}
             label={field.label}
             options={field.options || []}
           />
@@ -124,6 +127,7 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
               value: parseFloat(safeValue) || 0,
               onChange: (newValue) => handleChange(newValue.toString()),
             }}
+            required={field.required}
             label={field.label}
             min={field.min}
             max={field.max}

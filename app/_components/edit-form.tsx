@@ -1,22 +1,20 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { RainbowButton } from "@/components/magicui/rainbow-button";
+import useAppStore from "@/store/appStore";
+import useFormStore from "@/store/formStore";
 import {
   Eye,
   Monitor,
   Pencil,
   Smartphone,
-  Sparkle,
   Sparkles,
   SquareArrowUpRight,
   Tablet,
+  WandSparkles,
 } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import GenerateForm from "./generate-form";
-import useFormStore from "@/store/formStore";
-import { createClient } from "@/utils/supabase/client";
-import useAppStore from "@/store/appStore";
-import { usePathname, useRouter } from "next/navigation";
-import UserProfileAvatar from "./profile-avatar";
 
 type EditFormProps = {
   baseQuery: string;
@@ -58,13 +56,15 @@ const EditForm: React.FC<EditFormProps> = ({
   };
   return (
     <section className="relative flex-grow flex flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
-      <div className="flex px-3 justify-between items-center w-full rounded-md h-[7vh] gap-5">
-        <div className="flex items-center w-full gap-2 text-gray-500 bg-gray-200 px-3 py-2 rounded-md">
+      <div className="flex flex-col mmd:flex-row px-3 justify-between mmd:items-center w-full rounded-md mmd:h-[7vh] gap-2 mmd:gap-5">
+        <div className="flex items-center w-full gap-2 bg-[#ffff] border px-3 py-2 rounded-md">
           <div>
-            <Sparkles className="h-4 w-4" />
+            <Sparkles className="h-4 w-4 text-[#6b6b6b]" />
           </div>
           <div className="flex-grow">
-            <span className=" mx-auto line-clamp-1">{baseQuery}</span>
+            <span className="mx-auto line-clamp-1 text-[1.1rem] text-[#6b6b6b]">
+              {baseQuery}
+            </span>
           </div>
         </div>
         <div className="flex gap-5 items-center">
@@ -122,17 +122,16 @@ const EditForm: React.FC<EditFormProps> = ({
               <Smartphone className="h-4 w-4" />
             </div>
           </div>
-          <Button
+          <RainbowButton
             type="button"
-            variant="default"
-            className="flex items-center gap-1"
+            className="flex items-center gap-2"
             onClick={handlePublish}
           >
             Publish
             <div>
               <SquareArrowUpRight className="h-4 w-4" />
             </div>
-          </Button>
+          </RainbowButton>
         </div>
       </div>
       <div className="flex w-full justify-center items-center h-[calc(90svh-128px)]">
@@ -148,7 +147,7 @@ const EditForm: React.FC<EditFormProps> = ({
       <div className="flex w-full px-3">
         <div className="w-full flex gap-2 items-center border px-3 py-2 rounded-md bg-white">
           <div>
-            <Sparkles className="h-4 w-4" />
+            <WandSparkles className="h-4 w-4" />
           </div>
           <input
             placeholder="Ask spira to modify the form"

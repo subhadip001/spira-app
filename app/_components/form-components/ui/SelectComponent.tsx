@@ -14,6 +14,7 @@ type SelectComponentProps = {
   name: string;
   options: { value: string; label: string }[];
   value: string;
+  required?: boolean;
   placeholder?: string;
   onChange: (value: string) => void;
   classname?: string;
@@ -29,17 +30,23 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
   onChange,
   classname,
   triggerClassName,
+  required,
 }) => {
   return (
     <div className={cn(classname, "flex flex-col gap-4")}>
-      <Label htmlFor={name}>{label}</Label>
+      <Label htmlFor={name}>
+        {label} {required && <span className="text-red-500">*</span>}
+      </Label>
       <Select name={name} value={value} onValueChange={onChange}>
         <SelectTrigger id={name} className={cn(triggerClassName, "")}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
+          {options.map((option, index) => (
+            <SelectItem
+              key={index}
+              value={option.value.length > 0 ? option.value : `-${index}-`}
+            >
               {option.label}
             </SelectItem>
           ))}
