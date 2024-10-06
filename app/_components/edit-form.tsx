@@ -1,7 +1,21 @@
 "use client";
 import { RainbowButton } from "@/components/magicui/rainbow-button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { addNewFormVersion, QueryKeys } from "@/lib/queries";
 import useAppStore from "@/store/appStore";
+import useEditFormPageStore from "@/store/editFormPageStore";
 import useFormStore from "@/store/formStore";
+import useFormVersionStore from "@/store/formVersions";
 import {
   Eye,
   Monitor,
@@ -15,6 +29,9 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import GenerateForm from "./generate-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AddNewFormVersionVariables } from "@/lib/types";
+import toast from "react-hot-toast";
 
 type EditFormProps = {
   baseQuery: string;
@@ -37,13 +54,28 @@ const EditForm: React.FC<EditFormProps> = ({
   const pathName = usePathname();
   const formId = pathName.split("/")[2];
 
-  const editFormSideBarOpen = useAppStore((state) => state.editFormSideBarOpen);
-  const setIsEditFormSideBarOpen = useAppStore(
+  const queryClient = useQueryClient();
+
+  const editFormSideBarOpen = useEditFormPageStore(
+    (state) => state.editFormSideBarOpen
+  );
+  const setIsEditFormSideBarOpen = useEditFormPageStore(
     (state) => state.setIsEditFormSideBarOpen
   );
-  const isViewAsPublished = useAppStore((state) => state.isViewAsPublished);
-  const setIsViewAsPublished = useAppStore(
+  const isViewAsPublished = useEditFormPageStore(
+    (state) => state.isViewAsPublished
+  );
+  const setIsViewAsPublished = useEditFormPageStore(
     (state) => state.setIsViewAsPublished
+  );
+  const selectedFormVersion = useFormVersionStore(
+    (state) => state.selectedFormVersion
+  );
+  const setSelectedFormVersion = useFormVersionStore(
+    (state) => state.setSelectedFormVersion
+  );
+  const formVersionsData = useFormVersionStore(
+    (state) => state.formVersionsData
   );
 
   const handlePublish = () => {
@@ -54,6 +86,20 @@ const EditForm: React.FC<EditFormProps> = ({
     console.log("Publishing form...");
     console.log(currentFormSchema);
   };
+
+  const addNewFormversionMutation = useMutation({
+    mutationFn: (variables: AddNewFormVersionVariables) =>
+      addNewFormVersion(variables),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.GetFormVersions, baseFormId],
+      });
+      toast.success("Form version added successfully");
+    },
+    onError: (error: Error) => {
+      console.error("Error adding new form version", error);
+    },
+  });
   return (
     <section className="relative flex-grow flex flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
       <div className="flex flex-col mmd:flex-row px-3 justify-between mmd:items-center w-full rounded-md mmd:h-[7vh] gap-2 mmd:gap-5">
@@ -122,6 +168,50 @@ const EditForm: React.FC<EditFormProps> = ({
               <Smartphone className="h-4 w-4" />
             </div>
           </div>
+          <AlertDialog>
+            <AlertDialogTrigger>
+              <div className="flex items-center gap-2 border rounded-md py-2 px-3 bg-white">
+                Save
+              </div>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Save changes to the form?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  You can save the changes to the form as a new version or
+                  overwrite the current version.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    addNewFormversionMutation.mutate({
+                      formSchemaString: JSON.stringify(currentFormSchema),
+                      baseFormId: baseFormId,
+                      query: selectedFormVersion?.query as string,
+                      version: (formVersionsData?.length as number) + 1,
+                    });
+                  }}
+                >
+                  Save as New Version
+                </AlertDialogAction>
+                <AlertDialogAction
+                  onClick={() => {
+                    addNewFormversionMutation.mutate({
+                      formSchemaString: JSON.stringify(currentFormSchema),
+                      baseFormId: baseFormId,
+                      query: selectedFormVersion?.query as string,
+                      version: selectedFormVersion?.version_number as number,
+                    });
+                  }}
+                >
+                  Save as current version
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
           <RainbowButton
             type="button"
             className="flex items-center gap-2"

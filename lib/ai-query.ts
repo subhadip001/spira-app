@@ -2,6 +2,7 @@ import Groq from "groq-sdk";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { models } from "./models";
 import { Anthropic } from "@anthropic-ai/sdk";
+import OpenaAi from "openai";
 
 export const createGroqChatCompletion = async (
   system_prompt: string,
@@ -58,7 +59,7 @@ export async function createGeminiResponse(
   return text;
 }
 
-export async function createClaudeResponse(
+export async function createAnthropicResponse(
   system_prompt: string,
   user_question: string
 ) {
@@ -68,7 +69,7 @@ export async function createClaudeResponse(
 
   const response = await anthropic.messages.create({
     messages: [{ role: "user", content: user_question }],
-    model: models.claude_models.CLAUDE_3_5_SONNET,
+    model: models.anthropic_models.CLAUDE_3_5_SONNET,
     stream: false,
     max_tokens: 8192,
     system: system_prompt,
@@ -76,4 +77,24 @@ export async function createClaudeResponse(
   });
 
   return response.content[0].type === "text" ? response.content[0].text : "";
+}
+
+export async function createOpenAIChatCompletion(
+  system_prompt: string,
+  user_question: string
+) {
+  const openai = new OpenaAi({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+  const response = await openai.chat.completions.create({
+    messages: [
+      { role: "system", content: system_prompt },
+      { role: "user", content: user_question },
+    ],
+    model: models.openai_models.GPT_4,
+    stream: false,
+    max_tokens: 4000,
+    temperature: 0.2,
+  });
+  return response.choices[0].message.content;
 }

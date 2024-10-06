@@ -1,18 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Edit, Plus, X } from "lucide-react";
-import useAppStore from "@/store/appStore";
-import useFormStore from "@/store/formStore";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { FormField, FormFieldOption } from "@/types/FormSchema";
+import useEditFormPageStore from "@/store/editFormPageStore";
+import useFormStore from "@/store/formStore";
+import { FormField } from "@/types/FormSchema";
+import { Edit, Plus, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const EditFormField = () => {
-  const editFormSideBarOpen = useAppStore((state) => state.editFormSideBarOpen);
-  const setIsEditFormSideBarOpen = useAppStore(
+  const editFormSideBarOpen = useEditFormPageStore((state) => state.editFormSideBarOpen);
+  const setIsEditFormSideBarOpen = useEditFormPageStore(
     (state) => state.setIsEditFormSideBarOpen
   );
   const { currentFormSchema, setCurrentFormSchema } = useFormStore((state) => ({

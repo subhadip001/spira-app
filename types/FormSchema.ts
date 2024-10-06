@@ -8,6 +8,7 @@ export interface FormField {
   serialId: number;
   type: string;
   label: string;
+  description: string;
   name: string;
   placeholder?: string;
   required?: boolean;

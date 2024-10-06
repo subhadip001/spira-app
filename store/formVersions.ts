@@ -1,19 +1,11 @@
+import { TFormVersionData } from "@/lib/types";
 import { create } from "zustand";
 
-type FormData =
-  | {
-      created_at: string;
-      form_id: string;
-      form_schema_string: string;
-      id: string;
-      query: string;
-      version_number: number;
-    }[]
-  | null;
-
 type FormVersionStore = {
-  formVersionsData: FormData;
-  setFormVersionsData: (formData: FormData) => void;
+  formVersionsData: TFormVersionData[];
+  setFormVersionsData: (formsData: TFormVersionData[]) => void;
+  selectedFormVersion: TFormVersionData;
+  setSelectedFormVersion: (form: TFormVersionData) => void;
 };
 
 const useFormVersionStore = create<FormVersionStore>((set) => ({
@@ -23,6 +15,11 @@ const useFormVersionStore = create<FormVersionStore>((set) => ({
       formVersionsData: formData,
     }));
   },
+  selectedFormVersion: {} as TFormVersionData,
+  setSelectedFormVersion: (form) =>
+    set(() => ({
+      selectedFormVersion: form,
+    })),
 }));
 
 export default useFormVersionStore;

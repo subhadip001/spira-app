@@ -1,11 +1,5 @@
 import aiApiHandler from "@/lib/ai-api-handler";
-import {
-  createClaudeResponse,
-  createGeminiResponse,
-  createGroqChatCompletion,
-} from "@/lib/ai-query";
 import { FORM_SCHEMA_GENERATOR_PROMPT } from "@/lib/utils";
-import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const { prompt } = await req.json();
@@ -17,7 +11,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const response = await aiApiHandler("claude", {
+    const response = await aiApiHandler("groq", {
       system_prompt: FORM_SCHEMA_GENERATOR_PROMPT,
       user_question: prompt,
     });

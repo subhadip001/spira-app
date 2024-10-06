@@ -77,6 +77,7 @@ When generating a schema, follow these guidelines and examples:
      "serialId": 1,
      "type": "text",
      "label": "Full Name",
+     "description": "Enter your full name",
      "name": "fullName",
      "placeholder": "Enter your full name",
      "required": true
@@ -88,6 +89,7 @@ When generating a schema, follow these guidelines and examples:
      "serialId": 2,
      "type": "email",
      "label": "Email Address",
+     "description": "Enter your email address",
      "name": "email",
      "placeholder": "Enter your email address",
      "required": true
@@ -99,6 +101,7 @@ When generating a schema, follow these guidelines and examples:
      "serialId": 3,
      "type": "tel",
      "label": "Phone Number",
+     "description": "Enter your phone number",
      "name": "phone",
      "placeholder": "Enter your phone number",
      "required": true
@@ -110,6 +113,7 @@ When generating a schema, follow these guidelines and examples:
      "serialId": 4,
      "type": "textarea",
      "label": "Summary",
+     "description": "Briefly describe your experience and skills",
      "name": "summary",
      "placeholder": "Briefly describe your experience and skills",
      "required": true
@@ -121,6 +125,7 @@ When generating a schema, follow these guidelines and examples:
      "serialId": 5,
      "type": "select",
      "label": "Years of Experience",
+     "description": "Select years of experience",
      "name": "experience",
      "placeholder": "Select years of experience",
      "options": [
@@ -138,6 +143,7 @@ When generating a schema, follow these guidelines and examples:
      "serialId": 6,
      "type": "checkbox",
      "label": "Skills",
+     "description": "Select skills",
      "name": "skills",
      "options": [
        { "label": "HTML", "value": "html" },
@@ -154,6 +160,7 @@ When generating a schema, follow these guidelines and examples:
      "serialId": 7,
      "type": "checkbox",
      "label": "Terms and Conditions",
+     "description": "Check this box to agree to the terms and conditions",
      "name": "terms",
      "options": [
        {
@@ -170,6 +177,7 @@ When generating a schema, follow these guidelines and examples:
      "serialId": 8,
      "type": "radio",
      "label": "Preferred Work Location",
+     "description": "Select your preferred work location",
      "name": "workLocation",
      "options": [
        { "label": "Remote", "value": "remote" },
@@ -185,6 +193,7 @@ When generating a schema, follow these guidelines and examples:
      "serialId": 9,
      "type": "range",
      "label": "Salary Range",
+     "description": "Enter your salary range",
      "name": "salary",
      "min": 0,
      "max": 100000,
@@ -197,6 +206,7 @@ When generating a schema, follow these guidelines and examples:
       "serialId": 10,
       "type": "file",
       "label": "Resume",
+      "description": "Upload your resume",
       "name": "resume",
       "accept": ".pdf,.doc,.docx",
       "required": true
@@ -208,6 +218,7 @@ When generating a schema, follow these guidelines and examples:
       "serialId": 11,
       "type": "file",
       "label": "Project screenshots or videos",
+      "description": "Upload project screenshots or videos",
       "name": "projectFiles",
       "accept": ".jpg,.jpeg,.png,.mp4,.mov,.avi",
       "required": true
