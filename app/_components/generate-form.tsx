@@ -1,21 +1,19 @@
 "use client";
 import { jsonExtractor } from "@/lib/form-lib/utils";
 import {
-  generateFormSchema,
   addNewFormVersion,
+  generateFormSchema,
   QueryKeys,
 } from "@/lib/queries";
 import { AddNewFormVersionVariables, TQueryData } from "@/lib/types";
-import { Query, useMutation, useQueryClient } from "@tanstack/react-query";
-import React, { use, useEffect, useState } from "react";
-import FormBuilder from "./form-components/FormBuilder";
-import dynamic from "next/dynamic";
-import useFormSchemaGenerator from "@/hooks/form-schema-generator";
-import { set } from "react-hook-form";
-import useFormVersionStore from "@/store/formVersions";
-import useSelectedFormVersionStore from "@/store/seletedFormVersions";
-import useAppStore from "@/store/appStore";
+import useEditFormPageStore from "@/store/editFormPageStore";
 import useFormStore from "@/store/formStore";
+import useFormVersionStore from "@/store/formVersions";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
+import React, { useEffect, useState } from "react";
+import FormBuilder from "./form-components/FormBuilder";
+import toast from "react-hot-toast";
 
 const HorizontalResizableComponent = dynamic(
   () => import("./resizable-component"),
@@ -35,40 +33,33 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   baseFormId,
   needToGenerateFormSchema,
 }) => {
-  const [formSchema, setFormSchema] = useState();
   const currentFormSchema = useFormStore((state) => state.currentFormSchema);
   const setCurrentFormSchema = useFormStore(
     (state) => state.setCurrentFormSchema
   );
-  const formVersionsData = useFormVersionStore(
-    (state) => state.formVersionsData
-  );
 
-  const isViewAsPublished = useAppStore((state) => state.isViewAsPublished);
-  const setIsViewAsPublished = useAppStore(
-    (state) => state.setIsViewAsPublished
+  const isViewAsPublished = useEditFormPageStore(
+    (state) => state.isViewAsPublished
   );
 
   const queryClient = useQueryClient();
   // const { formSchema, formSchemaGenerateMutation, streamedMessage } =
   //   useFormSchemaGenerator();
 
-  const seletedFormVersion = useSelectedFormVersionStore(
+  const seletedFormVersion = useFormVersionStore(
     (state) => state.selectedFormVersion
   );
+
   const formSchemaGenerateMutation = useMutation({
     mutationFn: generateFormSchema,
     onSuccess: async (data) => {
-      setFormSchema(jsonExtractor(data.message));
-      setCurrentFormSchema(jsonExtractor(data.message));
+      const extractedFormSchema = jsonExtractor(data.message);
+      setCurrentFormSchema(extractedFormSchema);
       addNewFormversionMutation.mutate({
-        formSchemaString: data.message,
+        formSchemaString: JSON.stringify(extractedFormSchema),
         baseFormId: baseFormId,
         query: formData.prompt,
         version: 1,
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.GetFormVersions, baseFormId],
       });
     },
     onError: (error: Error) => {
@@ -82,20 +73,22 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   }, [needToGenerateFormSchema]);
 
   useEffect(() => {
-    if (seletedFormVersion?.form_schema_string) {
-      const jsonFormSchema = jsonExtractor(
-        seletedFormVersion.form_schema_string
+    if (!needToGenerateFormSchema && seletedFormVersion?.form_schema_string) {
+      const jsonFormSchema = JSON.parse(
+        seletedFormVersion?.form_schema_string as string
       );
-      setFormSchema(jsonFormSchema);
       setCurrentFormSchema(jsonFormSchema);
     }
-  }, [seletedFormVersion]);
+  }, [seletedFormVersion, needToGenerateFormSchema]);
 
   const addNewFormversionMutation = useMutation({
     mutationFn: (variables: AddNewFormVersionVariables) =>
       addNewFormVersion(variables),
     onSuccess: (data) => {
-      // console.log("data", data);
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.GetFormVersions, baseFormId],
+      });
+      toast.success("Form version added successfully");
     },
     onError: (error: Error) => {
       console.error("Error adding new form version", error);
@@ -119,7 +112,7 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
               Generating Form Schema...
             </h3>
           </div>
-        ) : formSchema ? (
+        ) : currentFormSchema ? (
           <FormBuilder
             initialSchema={currentFormSchema}
             className="px-4 py-3 mmd:px-10 mmd:py-8"

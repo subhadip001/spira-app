@@ -10,16 +10,6 @@ type User = {
 type AppStore = {
   isDarkMode: boolean;
   setIsDarkMode: (isDarkMode: boolean) => void;
-  editFormSideBarOpen: {
-    isEditFormSideBarOpen: boolean;
-    fieldConstantId: number;
-  };
-  setIsEditFormSideBarOpen: (editFormSideBarOpen: {
-    isEditFormSideBarOpen: boolean;
-    fieldConstantId: number;
-  }) => void;
-  isViewAsPublished: boolean;
-  setIsViewAsPublished: (isViewAsPublished: boolean) => void;
   user: User | null;
   setUser: (user: User | null) => void;
 };
@@ -33,24 +23,7 @@ const useAppStore = create<AppStore>()(
           ...state,
           isDarkMode,
         })),
-      editFormSideBarOpen: { isEditFormSideBarOpen: false, fieldConstantId: 0 },
-      setIsEditFormSideBarOpen: (editFormSideBarOpen) =>
-        set((state) => {
-          if (state.isViewAsPublished) return state;
-          return {
-            ...state,
-            editFormSideBarOpen,
-          };
-        }),
-      isViewAsPublished: false,
-      setIsViewAsPublished: (isViewAsPublished) =>
-        set((state) => {
-          if (state.editFormSideBarOpen.isEditFormSideBarOpen) return state;
-          return {
-            ...state,
-            isViewAsPublished,
-          };
-        }),
+
       user: null,
       setUser: (user) =>
         set((state) => ({

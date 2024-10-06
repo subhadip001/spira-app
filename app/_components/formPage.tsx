@@ -1,14 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import EditForm from "./edit-form";
-import HistorySidebar from "./history-sidebar";
-import { useQuery } from "@tanstack/react-query";
 import { fetchFormVersions, QueryKeys } from "@/lib/queries";
 import useFormVersionStore from "@/store/formVersions";
-import useSelectedFormVersionStore from "@/store/seletedFormVersions";
-import { set } from "react-hook-form";
-import useAppStore from "@/store/appStore";
+import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import EditForm from "./edit-form";
 import EditFormField from "./edit-form-field";
+import HistorySidebar from "./history-sidebar";
 
 type FormPageProps = {
   baseQuery: string;
@@ -28,16 +25,8 @@ const FormPage: React.FC<FormPageProps> = ({
   formVersions,
   baseFormId,
 }) => {
-  const [isFormVersionsAvalible, setIsFormVersionsAvalible] =
-    useState<boolean>(true);
   const setFormVersionsData = useFormVersionStore(
     (state) => state.setFormVersionsData
-  );
-  const seletedFormVersion = useSelectedFormVersionStore(
-    (state) => state.selectedFormVersion
-  );
-  const setSelectedFormVersion = useSelectedFormVersionStore(
-    (state) => state.setSelectedFormVersion
   );
 
   const { data } = useQuery({
@@ -45,26 +34,32 @@ const FormPage: React.FC<FormPageProps> = ({
     queryFn: () => fetchFormVersions(baseFormId),
     initialData: formVersions,
     enabled: !!baseFormId,
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
     if (data && data?.length > 0) {
-      setIsFormVersionsAvalible(true);
-      setFormVersionsData(data);
-      setSelectedFormVersion(seletedFormVersion ? seletedFormVersion : data[0]);
-    } else {
-      setIsFormVersionsAvalible(false);
+      const sortedData = data.sort((a, b) =>
+        b.created_at.localeCompare(a.created_at)
+      );
+      setFormVersionsData(sortedData);
     }
   }, [data]);
 
   return (
     <>
       <HistorySidebar />
-      {(data && data?.length > 0) || baseQuery ? (
+      {data && data?.length > 0 ? (
         <EditForm
           baseQuery={baseQuery}
           baseFormId={baseFormId}
-          needToGenerateFormSchema={!isFormVersionsAvalible}
+          needToGenerateFormSchema={false}
+        />
+      ) : baseQuery ? (
+        <EditForm
+          baseQuery={baseQuery}
+          baseFormId={baseFormId}
+          needToGenerateFormSchema={true}
         />
       ) : (
         <>

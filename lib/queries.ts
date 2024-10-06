@@ -49,15 +49,38 @@ export const addNewFormVersion = async ({
   version,
 }: AddNewFormVersionVariables) => {
   const supabase = createClient();
-  const response = await supabase
+
+  const { data: existingVersion } = await supabase
     .from("form_versions")
-    .insert({
-      form_schema_string: formSchemaString,
-      form_id: baseFormId,
-      query: query,
-      version_number: version,
-    })
-    .select();
+    .select()
+    .eq("form_id", baseFormId)
+    .eq("version_number", version)
+    .single();
+
+  let response;
+
+  if (existingVersion) {
+    response = await supabase
+      .from("form_versions")
+      .update({
+        form_schema_string: formSchemaString,
+        query: query,
+      })
+      .eq("form_id", baseFormId)
+      .eq("version_number", version)
+      .select();
+  } else {
+    response = await supabase
+      .from("form_versions")
+      .insert({
+        form_schema_string: formSchemaString,
+        form_id: baseFormId,
+        query: query,
+        version_number: version,
+      })
+      .select();
+  }
+  
   return response;
 };
 

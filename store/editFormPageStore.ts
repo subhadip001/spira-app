@@ -1,0 +1,46 @@
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+type EditFormPageStore = {
+  editFormSideBarOpen: {
+    isEditFormSideBarOpen: boolean;
+    fieldConstantId: number;
+  };
+  setIsEditFormSideBarOpen: (editFormSideBarOpen: {
+    isEditFormSideBarOpen: boolean;
+    fieldConstantId: number;
+  }) => void;
+  isViewAsPublished: boolean;
+  setIsViewAsPublished: (isViewAsPublished: boolean) => void;
+};
+
+const useEditFormPageStore = create<EditFormPageStore>()(
+  persist(
+    (set) => ({
+      editFormSideBarOpen: { isEditFormSideBarOpen: false, fieldConstantId: 0 },
+      setIsEditFormSideBarOpen: (editFormSideBarOpen) =>
+        set((state) => {
+          if (state.isViewAsPublished) return state;
+          return {
+            ...state,
+            editFormSideBarOpen,
+          };
+        }),
+      isViewAsPublished: false,
+      setIsViewAsPublished: (isViewAsPublished) =>
+        set((state) => {
+          if (state.editFormSideBarOpen.isEditFormSideBarOpen) return state;
+          return {
+            ...state,
+            isViewAsPublished,
+          };
+        }),
+    }),
+    {
+      name: "edit-form-page-storage",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
+export default useEditFormPageStore;

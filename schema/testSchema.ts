@@ -11,6 +11,7 @@ export const devopsForm: FormSchema = {
       serialId: 1,
       type: "text",
       label: "Full Name",
+      description: "Enter your full name",
       name: "fullName",
       required: true,
     },
@@ -19,6 +20,7 @@ export const devopsForm: FormSchema = {
       serialId: 2,
       type: "email",
       label: "Email Address",
+      description: "Enter your email address",
       name: "email",
       required: true,
     },
@@ -27,6 +29,7 @@ export const devopsForm: FormSchema = {
       serialId: 3,
       type: "tel",
       label: "Phone Number",
+      description: "Enter your phone number",
       name: "phoneNumber",
       required: true,
     },
@@ -35,6 +38,7 @@ export const devopsForm: FormSchema = {
       serialId: 4,
       type: "textarea",
       label: "Resume (upload or paste text)",
+      description: "Upload your resume or paste your resume text here",
       name: "resume",
       required: true,
     },
@@ -43,6 +47,7 @@ export const devopsForm: FormSchema = {
       serialId: 5,
       type: "select",
       label: "Preferred Programming Language",
+      description: "Select your preferred programming language",
       name: "preferredLanguage",
       options: [
         {
@@ -69,6 +74,8 @@ export const devopsForm: FormSchema = {
       serialId: 6,
       type: "checkbox",
       label: "Have you worked with containerization tools (e.g., Docker)?",
+      description:
+        "Check this box if you have worked with containerization tools (e.g., Docker)",
       name: "containerizationExperience",
       options: [
         {
@@ -82,6 +89,8 @@ export const devopsForm: FormSchema = {
       constantId: 7,
       serialId: 7,
       type: "checkbox",
+      description:
+        "Check this box if you have worked with cloud platforms (e.g., AWS, Azure, Google Cloud)",
       label:
         "Have you worked with cloud platforms (e.g., AWS, Azure, Google Cloud)?",
       name: "cloudExperience",
@@ -98,6 +107,8 @@ export const devopsForm: FormSchema = {
       serialId: 8,
       type: "radio",
       label: "What is your level of experience with DevOps tools?",
+      description:
+        "Select the level of experience with DevOps tools that best applies to you",
       name: "devOpsExperience",
       options: [
         {
@@ -121,6 +132,8 @@ export const devopsForm: FormSchema = {
       type: "range",
       label:
         "How many years of experience do you have in software development?",
+      description:
+        "Select the level of experience with DevOps tools that best applies to you",
       name: "softwareDevelopmentExperience",
       min: 0,
       max: 20,
@@ -132,6 +145,7 @@ export const devopsForm: FormSchema = {
       serialId: 10,
       type: "file",
       label: "Resume",
+      description: "Upload your resume",
       name: "resume",
       required: false,
       accept: ".pdf,.doc,.docx",
@@ -142,6 +156,7 @@ export const devopsForm: FormSchema = {
       serialId: 11,
       type: "checkbox",
       label: "Skills",
+      description: "Select skills",
       name: "skills",
       options: [
         { label: "HTML", value: "html" },

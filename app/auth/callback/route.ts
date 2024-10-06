@@ -35,6 +35,11 @@ export async function GET(request: Request) {
     return NextResponse.redirect(origin ?? requestUrl.origin);
   }
 
+  await supabase
+    .from("forms")
+    .update({ user_id: userData.user.id })
+    .eq("id", formId);
+
   const newRedirectUrl = new URL(
     `/form/${formId}`,
     origin ?? requestUrl.origin

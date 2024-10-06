@@ -1,19 +1,20 @@
 import {
-  createClaudeResponse,
+  createAnthropicResponse,
   createGeminiResponse,
   createGroqChatCompletion,
+  createOpenAIChatCompletion,
 } from "./ai-query";
 
 const aiApiHandler = async (
-  model: "claude" | "gemini" | "groq",
+  model: "anthropic" | "gemini" | "groq" | "openai",
   prompt: {
     system_prompt: string;
     user_question: string;
   }
 ) => {
   switch (model) {
-    case "claude":
-      const response = await createClaudeResponse(
+    case "anthropic":
+      const response = await createAnthropicResponse(
         prompt.system_prompt,
         prompt.user_question
       );
@@ -34,6 +35,12 @@ const aiApiHandler = async (
         fullResponse += content;
       }
       return fullResponse;
+    case "openai":
+      const openaiResponse = await createOpenAIChatCompletion(
+        prompt.system_prompt,
+        prompt.user_question
+      );
+      return openaiResponse;
     default:
       return "Invalid model";
   }

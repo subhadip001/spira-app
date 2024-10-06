@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -9,6 +8,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import useEditFormPageStore from "@/store/editFormPageStore";
 import useFormStore from "@/store/formStore";
 import { TFormValues } from "@/types/form";
 import {
@@ -17,16 +17,14 @@ import {
   FormField as FormSchemaField,
 } from "@/types/FormSchema";
 import { ArrowDown, ArrowUp, Edit, Plus, Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import { useForm } from "react-hook-form";
 import { FormFieldComponent } from "./FormFields";
-import { CreateNewField } from "./ui/create-new-field";
-import useAppStore from "@/store/appStore";
 
 interface FormBuilderProps {
   initialSchema: FormSchema;
-  published: boolean;
+  published?: boolean;
   editable: boolean;
   className?: string;
   formStatus?: "live" | "draft" | "closed";
@@ -51,8 +49,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   const setCurrentFormSchema = useFormStore(
     (state) => state.setCurrentFormSchema
   );
-  const editFormSideBarOpen = useAppStore((state) => state.editFormSideBarOpen);
-  const setIsEditFormSideBarOpen = useAppStore(
+  const editFormSideBarOpen = useEditFormPageStore(
+    (state) => state.editFormSideBarOpen
+  );
+  const setIsEditFormSideBarOpen = useEditFormPageStore(
     (state) => state.setIsEditFormSideBarOpen
   );
 
@@ -135,6 +135,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           serialId,
           type,
           label: "",
+          description: "",
           name: "",
           placeholder: "",
           required: false,
@@ -146,6 +147,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           serialId,
           type,
           label: "",
+          description: "",
           name: "",
           placeholder: "",
           required: false,
@@ -157,6 +159,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           serialId,
           type,
           label: "",
+          description: "",
           name: "",
           placeholder: "",
           required: false,
@@ -168,6 +171,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           serialId,
           type,
           label: "",
+          description: "",
           name: "",
           placeholder: "",
           required: false,
@@ -180,6 +184,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           serialId,
           type,
           label: "",
+          description: "",
           name: "",
           placeholder: "",
           required: false,
@@ -192,6 +197,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           serialId,
           type,
           label: "",
+          description: "",
           name: "",
           placeholder: "",
           required: false,
@@ -204,6 +210,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           serialId,
           type,
           label: "",
+          description: "",
           name: "",
           placeholder: "",
           required: false,
@@ -218,6 +225,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           serialId,
           type,
           label: "",
+          description: "",
           name: "",
           placeholder: "",
           required: false,
@@ -231,6 +239,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           serialId,
           type,
           label: "",
+          description: "",
           name: "",
           placeholder: "",
           required: false,
@@ -279,7 +288,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                   <input
                     type="text"
                     name="title"
-                    defaultValue={initialSchema?.title}
+                    value={initialSchema?.title ?? ""}
                     placeholder="Add Form Title"
                     className="mb-4 text-3xl w-full outline-none bg-transparent"
                     onChange={(e) => {
@@ -302,7 +311,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                   <FormDescription>
                     <textarea
                       name="description"
-                      defaultValue={initialSchema?.description}
+                      value={initialSchema?.description ?? ""}
                       placeholder="Add Form Description"
                       className="mb-4 w-full outline-none bg-transparent"
                       onChange={(e) => {
