@@ -35,6 +35,10 @@ export async function GET(request: Request) {
     return NextResponse.redirect(origin ?? requestUrl.origin);
   }
 
+  if (!userData.user.id) {
+    return NextResponse.redirect("/login");
+  }
+
   await supabase
     .from("forms")
     .update({ user_id: userData.user.id })

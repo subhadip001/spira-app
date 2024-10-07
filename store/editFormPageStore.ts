@@ -12,6 +12,7 @@ type EditFormPageStore = {
   }) => void;
   isViewAsPublished: boolean;
   setIsViewAsPublished: (isViewAsPublished: boolean) => void;
+  resetStore: () => void;
 };
 
 const useEditFormPageStore = create<EditFormPageStore>()(
@@ -35,6 +36,14 @@ const useEditFormPageStore = create<EditFormPageStore>()(
             isViewAsPublished,
           };
         }),
+      resetStore: () =>
+        set(() => ({
+          editFormSideBarOpen: {
+            isEditFormSideBarOpen: false,
+            fieldConstantId: 0,
+          },
+          isViewAsPublished: false,
+        })),
     }),
     {
       name: "edit-form-page-storage",

@@ -10,17 +10,27 @@ import { Fragment, useState, useTransition } from "react";
 import { ReactTyped } from "react-typed";
 import { v4 as uuidv4 } from "uuid";
 import { addFormQueryToDb } from "../_actions/formAction";
+import useFormVersionStore from "@/store/formVersions";
+import useEditFormPageStore from "@/store/editFormPageStore";
 
 const PromptBox = () => {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [isPending, startTransition] = useTransition();
+  const resetFormVersionStore = useFormVersionStore(
+    (state) => state.resetStore
+  );
+  const resetEditFormPageStore = useEditFormPageStore(
+    (state) => state.resetStore
+  );
 
   const handleSubmit = async (formData: FormData) => {
     const data = Object.fromEntries(formData.entries()) as TQueryData;
     const prompt = data.prompt;
     const uuid = uuidv4();
     startTransition(async () => {
+      resetFormVersionStore();
+      resetEditFormPageStore();
       await addFormQueryToDb(uuid, prompt);
       router.push(`/form/${uuid}`);
     });

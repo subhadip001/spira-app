@@ -3,37 +3,29 @@ import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Required } from "./Required";
+import { FormField } from "@/types/FormSchema";
+import { LabelComponent } from "./LabelComponent";
 
 type TextAreaComponentProps = {
-  label: string;
-  type: string;
-  name: string;
-  placeholder?: string;
-  required?: boolean;
+  field: FormField;
   value: string;
   onChange: (value: string) => void;
   classname?: string;
 };
 
 const TextAreaComponent: React.FC<TextAreaComponentProps> = ({
-  label,
-  name,
-  placeholder,
+  field,
   value,
   onChange,
   classname,
-  required,
 }) => {
   return (
     <div className={cn(classname, "flex flex-col gap-4")}>
-      <Label htmlFor={name} className="flex items-center gap-1">
-        {label}
-        {required && <Required />}
-      </Label>
+      <LabelComponent field={field} />
       <Textarea
-        name={name}
-        id={name}
-        placeholder={placeholder}
+        name={field.name}
+        id={field.name}
+        placeholder={field.placeholder}
         value={value}
         cols={30}
         onChange={(e) => onChange(e.target.value)}

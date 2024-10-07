@@ -2,38 +2,21 @@ import React from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Required } from "./Required";
+import { FormField, FormFieldOption } from "@/types/FormSchema";
+import { LabelComponent } from "./LabelComponent";
 
 interface RadioFieldProps {
-  field: {
-    name: string;
-    value: string;
-    onChange: (value: string) => void;
-  };
-  label: string;
-  required?: boolean;
-  options: { value: string; label: string }[];
+  field: FormField;
+  value: string;
+  onChange: (value: string) => void;
 }
 
-const selectedThemePrimaryColor = "#007bff";
-
-const RadioField: React.FC<RadioFieldProps> = ({
-  field,
-  label,
-  required,
-  options,
-}) => {
+const RadioField: React.FC<RadioFieldProps> = ({ field, value, onChange }) => {
   return (
     <div className="flex flex-col gap-4">
-      <Label className="flex items-center gap-1">
-        {label}
-        {required && <Required />}
-      </Label>
-      <RadioGroup
-        value={field.value}
-        onValueChange={field.onChange}
-        className=""
-      >
-        {options.map((option, index) => (
+      <LabelComponent field={field} />
+      <RadioGroup value={value} onValueChange={onChange} className="">
+        {field.options?.map((option: FormFieldOption, index: number) => (
           <div key={option.value + index} className="relative">
             <RadioGroupItem
               id={`${field.name}-${option.value}`}

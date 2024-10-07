@@ -4,13 +4,11 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import FileInput from "./file-input";
 import { Required } from "./Required";
+import { FormField } from "@/types/FormSchema";
+import { LabelComponent } from "./LabelComponent";
 
 type InputComponentProps = {
-  label: string;
-  type: string;
-  name: string;
-  placeholder?: string;
-  required?: boolean;
+  field: FormField;
   value?: string;
   onChange: (value: string) => void;
   className?: string;
@@ -19,11 +17,7 @@ type InputComponentProps = {
 };
 
 const InputComponent: React.FC<InputComponentProps> = ({
-  label,
-  type,
-  name,
-  placeholder,
-  required,
+  field,
   value,
   onChange,
   className,
@@ -32,16 +26,13 @@ const InputComponent: React.FC<InputComponentProps> = ({
 }) => {
   return (
     <div className={cn(className, "flex flex-col gap-4")}>
-      <Label htmlFor={name} className="flex items-center gap-1">
-        {label}
-        {required && <Required />}
-      </Label>
-      {type === "file" ? (
+      <LabelComponent field={field} />
+      {field.type === "file" ? (
         <FileInput
-          name={name}
-          id={name}
-          placeholder={placeholder}
-          required={required}
+          name={field.name}
+          id={field.name}
+          placeholder={field.placeholder}
+          required={field.required}
           onChange={(e) => onChange(e)}
           className="hidden"
           accept={accept}
@@ -49,12 +40,12 @@ const InputComponent: React.FC<InputComponentProps> = ({
         />
       ) : (
         <Input
-          type={type}
-          name={name}
+          type={field.type}
+          name={field.name}
           className={cn("")}
-          id={name}
-          placeholder={placeholder}
-          required={required}
+          id={field.name}
+          placeholder={field.placeholder}
+          required={field.required}
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />

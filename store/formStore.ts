@@ -20,6 +20,7 @@ interface FormStore {
     formSchema: FormSchema
   ) => void;
   formErrors: TFormErrors;
+  resetStore: () => void;
 }
 
 const useFormStore = create<FormStore>((set) => ({
@@ -54,6 +55,15 @@ const useFormStore = create<FormStore>((set) => ({
         formErrors: validateForm(formSchema, values),
       };
     }),
+  resetStore: () =>
+    set(() => ({
+      currentFormSchema: {} as FormSchema,
+      formData: {
+        details: { title: "", description: "", headerBackground: "#ffffff" },
+        values: [],
+      },
+      formErrors: [],
+    })),
 }));
 
 export default useFormStore;
