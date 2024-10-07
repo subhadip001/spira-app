@@ -20,6 +20,7 @@ import {
   Eye,
   Monitor,
   Pencil,
+  Save,
   Smartphone,
   Sparkles,
   SquareArrowUpRight,
@@ -171,7 +172,10 @@ const EditForm: React.FC<EditFormProps> = ({
           <AlertDialog>
             <AlertDialogTrigger>
               <div className="flex items-center gap-2 border rounded-md py-2 px-3 bg-white">
-                Save
+                <div>
+                  <Save className="h-4 w-4" />
+                </div>
+                <span className="text-sm font-medium">Save</span>
               </div>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -189,8 +193,8 @@ const EditForm: React.FC<EditFormProps> = ({
                     addNewFormversionMutation.mutate({
                       formSchemaString: JSON.stringify(currentFormSchema),
                       baseFormId: baseFormId,
-                      query: selectedFormVersion?.query as string,
-                      version: (formVersionsData?.length as number) + 1,
+                      query: selectedFormVersion?.query || "N/A",
+                      version: (formVersionsData?.length || 1) + 1,
                     });
                   }}
                 >
@@ -201,8 +205,8 @@ const EditForm: React.FC<EditFormProps> = ({
                     addNewFormversionMutation.mutate({
                       formSchemaString: JSON.stringify(currentFormSchema),
                       baseFormId: baseFormId,
-                      query: selectedFormVersion?.query as string,
-                      version: selectedFormVersion?.version_number as number,
+                      query: selectedFormVersion?.query || "N/A",
+                      version: selectedFormVersion?.version_number || 1,
                     });
                   }}
                 >

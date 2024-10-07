@@ -1,35 +1,27 @@
 import React from "react";
 import { Label } from "@/components/ui/label";
+import { Required } from "./Required";
+import { FormField } from "@/types/FormSchema";
+import { LabelComponent } from "./LabelComponent";
 
 interface SliderFieldProps {
-  field: {
-    name: string;
-    value: number;
-    onChange: (value: number) => void;
-  };
-  label: string;
-  required?: boolean;
-  min?: number;
-  max?: number;
-  step?: number;
+  field: FormField;
+  value: number;
+  onChange: (value: number) => void;
 }
 
 const SliderField: React.FC<SliderFieldProps> = ({
   field,
-  label,
-  required,
-  min = 0,
-  max = 100,
-  step = 1,
+  value,
+  onChange,
 }) => {
-  const percentage = ((field.value - min) / (max - min)) * 100;
+  const percentage =
+    ((value - (field.min ?? 0)) / ((field.max ?? 100) - (field.min ?? 0))) *
+    100;
 
   return (
     <div className="flex flex-col gap-4">
-      <Label htmlFor={field.name}>
-        {label}
-        {required && <span className="text-red-500">*</span>}
-      </Label>
+      <LabelComponent field={field} />
       <div className="relative w-full h-10">
         <div className="absolute top-0 left-0 w-full h-10 rounded-md bg-gray-300"></div>
         <div
@@ -41,18 +33,18 @@ const SliderField: React.FC<SliderFieldProps> = ({
           type="range"
           id={field.name}
           name={field.name}
-          min={min}
-          max={max}
-          step={step}
-          value={field.value}
-          onChange={(e) => field.onChange(Number(e.target.value))}
+          min={field.min ?? 0}
+          max={field.max ?? 100}
+          step={field.step ?? 1}
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
           className="absolute top-0 left-0 w-full h-10 opacity-0 cursor-pointer"
         />
       </div>
       <div className="flex justify-between text-sm text-gray-500">
-        <span>{min}</span>
-        <span>{field.value}</span>
-        <span>{max}</span>
+        <span>{field.min}</span>
+        <span>{value}</span>
+        <span>{field.max}</span>
       </div>
     </div>
   );

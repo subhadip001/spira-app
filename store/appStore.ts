@@ -12,6 +12,7 @@ type AppStore = {
   setIsDarkMode: (isDarkMode: boolean) => void;
   user: User | null;
   setUser: (user: User | null) => void;
+  resetStore: () => void;
 };
 
 const useAppStore = create<AppStore>()(
@@ -29,6 +30,11 @@ const useAppStore = create<AppStore>()(
         set((state) => ({
           ...state,
           user,
+        })),
+      resetStore: () =>
+        set(() => ({
+          isDarkMode: false,
+          user: null,
         })),
     }),
     {

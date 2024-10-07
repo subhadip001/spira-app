@@ -1,51 +1,43 @@
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Required } from "./Required";
+import { FormField, FormFieldOption } from "@/types/FormSchema";
+import { LabelComponent } from "./LabelComponent";
 
 interface CheckboxFieldProps {
-  field: {
-    name: string;
-    value: string;
-    onChange: (value: string) => void;
-  };
-  label: string;
-  required?: boolean;
-  options: { value: string; label: string }[];
+  field: FormField;
+  value: string;
+  onChange: (value: string) => void;
 }
 
 const CheckboxField: React.FC<CheckboxFieldProps> = ({
   field,
-  label,
-  required,
-  options,
+  value,
+  onChange,
 }) => {
   const handleChange = (optionValue: string, checked: boolean) => {
-    const currentValues = field.value
-      ? field.value?.split(",").filter(Boolean)
-      : [];
+    const currentValues = value ? value?.split(",").filter(Boolean) : [];
     let newValues: string[];
 
     if (checked) {
       newValues = [...currentValues, optionValue];
     } else {
-      newValues = currentValues.filter((value) => value !== optionValue);
+      newValues = currentValues.filter((v) => v !== optionValue);
     }
 
-    field.onChange(newValues?.join(","));
+    onChange(newValues?.join(","));
   };
 
   return (
     <div className="flex flex-col gap-4">
-      <Label>
-        {label}
-        {required && <span className="text-red-500">*</span>}
-      </Label>
+      <LabelComponent field={field} />
       <div className="space-y-1">
-        {options.map((option) => (
+        {field.options?.map((option: FormFieldOption) => (
           <div key={option.value} className="relative">
             <Checkbox
               id={`${field.name}-${option.value}`}
-              checked={field.value?.split(",").includes(option.value)}
+              checked={value?.split(",").includes(option.value)}
               onCheckedChange={(checked) =>
                 handleChange(option.value, checked as boolean)
               }

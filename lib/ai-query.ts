@@ -2,7 +2,7 @@ import Groq from "groq-sdk";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { models } from "./models";
 import { Anthropic } from "@anthropic-ai/sdk";
-import OpenaAi from "openai";
+import OpenAI from "openai";
 
 export const createGroqChatCompletion = async (
   system_prompt: string,
@@ -83,7 +83,7 @@ export async function createOpenAIChatCompletion(
   system_prompt: string,
   user_question: string
 ) {
-  const openai = new OpenaAi({
+  const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
   const response = await openai.chat.completions.create({
