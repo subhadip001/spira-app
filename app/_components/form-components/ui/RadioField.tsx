@@ -1,6 +1,7 @@
 import React from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Required } from "./Required";
 
 interface RadioFieldProps {
   field: {
@@ -23,9 +24,9 @@ const RadioField: React.FC<RadioFieldProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-4">
-      <Label>
+      <Label className="flex items-center gap-1">
         {label}
-        {required && <span className="text-red-500">*</span>}
+        {required && <Required />}
       </Label>
       <RadioGroup
         value={field.value}

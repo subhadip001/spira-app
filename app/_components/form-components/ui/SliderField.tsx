@@ -1,5 +1,6 @@
 import React from "react";
 import { Label } from "@/components/ui/label";
+import { Required } from "./Required";
 
 interface SliderFieldProps {
   field: {
@@ -26,9 +27,9 @@ const SliderField: React.FC<SliderFieldProps> = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <Label htmlFor={field.name}>
+      <Label htmlFor={field.name} className="flex items-center gap-1">
         {label}
-        {required && <span className="text-red-500">*</span>}
+        {required && <Required />}
       </Label>
       <div className="relative w-full h-10">
         <div className="absolute top-0 left-0 w-full h-10 rounded-md bg-gray-300"></div>

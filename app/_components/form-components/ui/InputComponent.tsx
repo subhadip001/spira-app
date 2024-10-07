@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import React from "react";
 import FileInput from "./file-input";
+import { Required } from "./Required";
 
 type InputComponentProps = {
   label: string;
@@ -31,9 +32,9 @@ const InputComponent: React.FC<InputComponentProps> = ({
 }) => {
   return (
     <div className={cn(className, "flex flex-col gap-4")}>
-      <Label htmlFor={name} className="">
+      <Label htmlFor={name} className="flex items-center gap-1">
         {label}
-        {required && <span className="text-red-500">*</span>}
+        {required && <Required />}
       </Label>
       {type === "file" ? (
         <FileInput

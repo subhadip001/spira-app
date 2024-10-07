@@ -1,6 +1,7 @@
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Required } from "./Required";
 
 interface CheckboxFieldProps {
   field: {
@@ -36,9 +37,9 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <Label>
+      <Label className="flex items-center gap-1">
         {label}
-        {required && <span className="text-red-500">*</span>}
+        {required && <Required />}
       </Label>
       <div className="space-y-1">
         {options.map((option) => (

@@ -2,6 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Required } from "./Required";
 
 type TextAreaComponentProps = {
   label: string;
@@ -25,9 +26,9 @@ const TextAreaComponent: React.FC<TextAreaComponentProps> = ({
 }) => {
   return (
     <div className={cn(classname, "flex flex-col gap-4")}>
-      <Label htmlFor={name} className="">
+      <Label htmlFor={name} className="flex items-center gap-1">
         {label}
-        {required && <span className="text-red-500">*</span>}
+        {required && <Required />}
       </Label>
       <Textarea
         name={name}

@@ -1,21 +1,30 @@
 "use client";
 import ShineBorder from "@/components/magicui/shine-border";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TQueryData } from "@/lib/types";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React, { Fragment, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { ReactTyped } from "react-typed";
 import { quickStartQueries } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
+import { ArrowRight, ArrowUpRight, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Fragment, useState, useTransition } from "react";
+import { ReactTyped } from "react-typed";
+import { v4 as uuidv4 } from "uuid";
 import { addFormQueryToDb } from "../_actions/formAction";
-import useAppStore from "@/store/appStore";
 
 const PromptBox = () => {
   const router = useRouter();
   const [query, setQuery] = useState("");
-    const user = useAppStore((state) => state.user);
+  const [isPending, startTransition] = useTransition();
+
+  const handleSubmit = async (formData: FormData) => {
+    const data = Object.fromEntries(formData.entries()) as TQueryData;
+    const prompt = data.prompt;
+    const uuid = uuidv4();
+    startTransition(async () => {
+      await addFormQueryToDb(uuid, prompt);
+      router.push(`/form/${uuid}`);
+    });
+  };
   return (
     <div className="flex flex-col gap-3">
       <ShineBorder
@@ -24,15 +33,7 @@ const PromptBox = () => {
       >
         <form
           className=" flex flex-col gap-3 rounded-lg p-3 z-50  "
-          action={async (data) => {
-            // console.log(data);
-            const formData = Object.fromEntries(data.entries()) as TQueryData;
-            // console.log(formData);
-            const prompt = formData.prompt;
-            const uuid = uuidv4();
-            await addFormQueryToDb(uuid, prompt);
-            router.push(`/form/${uuid}`);
-          }}
+          action={handleSubmit}
         >
           <ReactTyped
             strings={[
@@ -60,10 +61,17 @@ const PromptBox = () => {
               type="submit"
               className="rounded-full w-[50px] h-[50px] ml-auto"
               variant="outline"
+              disabled={isPending}
             >
-              <div>
-                <ArrowRight size={20} />
-              </div>
+              {isPending ? (
+                <div className="animate-spin">
+                  <Loader2 size={20} />
+                </div>
+              ) : (
+                <div>
+                  <ArrowRight size={20} />
+                </div>
+              )}
             </Button>
           </div>
         </form>

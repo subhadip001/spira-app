@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
+import { Required } from "./Required";
 
 type SelectComponentProps = {
   label: string;
@@ -34,8 +35,8 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
 }) => {
   return (
     <div className={cn(classname, "flex flex-col gap-4")}>
-      <Label htmlFor={name}>
-        {label} {required && <span className="text-red-500">*</span>}
+      <Label htmlFor={name} className="flex items-center gap-1">
+        {label} {required && <Required />}
       </Label>
       <Select name={name} value={value} onValueChange={onChange}>
         <SelectTrigger id={name} className={cn(triggerClassName, "")}>
