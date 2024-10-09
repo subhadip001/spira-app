@@ -1,7 +1,9 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "spira-app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
