@@ -58,25 +58,25 @@ const EditForm: React.FC<EditFormProps> = ({
   const queryClient = useQueryClient();
 
   const editFormSideBarOpen = useEditFormPageStore(
-    (state) => state.editFormSideBarOpen
+    (state) => state.editFormSideBarOpen,
   );
   const setIsEditFormSideBarOpen = useEditFormPageStore(
-    (state) => state.setIsEditFormSideBarOpen
+    (state) => state.setIsEditFormSideBarOpen,
   );
   const isViewAsPublished = useEditFormPageStore(
-    (state) => state.isViewAsPublished
+    (state) => state.isViewAsPublished,
   );
   const setIsViewAsPublished = useEditFormPageStore(
-    (state) => state.setIsViewAsPublished
+    (state) => state.setIsViewAsPublished,
   );
   const selectedFormVersion = useFormVersionStore(
-    (state) => state.selectedFormVersion
+    (state) => state.selectedFormVersion,
   );
   const setSelectedFormVersion = useFormVersionStore(
-    (state) => state.setSelectedFormVersion
+    (state) => state.setSelectedFormVersion,
   );
   const formVersionsData = useFormVersionStore(
-    (state) => state.formVersionsData
+    (state) => state.formVersionsData,
   );
 
   const handlePublish = () => {
@@ -109,7 +109,7 @@ const EditForm: React.FC<EditFormProps> = ({
             <Sparkles className="h-4 w-4 text-[#6b6b6b]" />
           </div>
           <div className="flex-grow">
-            <span className="mx-auto line-clamp-1 text-[1.1rem] text-[#6b6b6b]">
+            <span className="mx-auto line-clamp-1 text-[1.1rem] text-[#6b6b6b] capitalize">
               {baseQuery}
             </span>
           </div>

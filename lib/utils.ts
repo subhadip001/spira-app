@@ -245,7 +245,7 @@ NOTE: Above labels and values in the exampls are for reference. You should adjus
 
 8. Creativity: Be creative while asking questions and collecting information. Make the form engaging and user-friendly.
 
-9. Dont forget to innclude correct placeholder for each field in the schema especially for select fields.
+9. Dont forget to include correct placeholder for each field in the schema especially for select fields.
 
 When generating a schema, aim to create a comprehensive and user-friendly form that collects all necessary information while maintaining a good user experience. Be prepared to adjust the schema based on user feedback or additional requirements.`;
 
