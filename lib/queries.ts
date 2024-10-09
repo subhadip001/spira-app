@@ -22,6 +22,23 @@ export const generateFormSchema = async (data: TQueryData) => {
   return response.json();
 };
 
+export const generateTypeSuggestion = async (data: TQueryData) => {
+
+  const response = await fetch("/api/ai-type-recommender", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to generate type suggestion");
+  }
+
+  return response.json();
+};
+
 // export const generateFormSchema = async (data: TQueryData): Promise<ReadableStream<Uint8Array>> => {
 //   const response = await fetch("/api/generate-form-schema", {
 //     method: "POST",
@@ -80,7 +97,7 @@ export const addNewFormVersion = async ({
       })
       .select();
   }
-  
+
   return response;
 };
 

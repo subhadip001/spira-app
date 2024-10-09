@@ -6,16 +6,18 @@ import { TQueryData } from "@/lib/types";
 import { quickStartQueries } from "@/lib/utils";
 import { ArrowRight, ArrowUpRight, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Fragment, useState, useTransition } from "react";
+import { Fragment, useState, useTransition, useEffect, useRef } from "react";
 import { ReactTyped } from "react-typed";
 import { v4 as uuidv4 } from "uuid";
 import { addFormQueryToDb } from "../_actions/formAction";
 import useFormVersionStore from "@/store/formVersions";
 import useEditFormPageStore from "@/store/editFormPageStore";
+import { generateTypeSuggestion } from "@/lib/queries";
 
 const PromptBox = () => {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const [suggestion, setSuggestion] = useState("");
   const [isPending, startTransition] = useTransition();
   const resetFormVersionStore = useFormVersionStore(
     (state) => state.resetStore
@@ -23,6 +25,42 @@ const PromptBox = () => {
   const resetEditFormPageStore = useEditFormPageStore(
     (state) => state.resetStore
   );
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isGeneratingSuggestion = useRef(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const generateSuggestion = async () => {
+      if (query.length > 3 && !isGeneratingSuggestion.current) {
+        isGeneratingSuggestion.current = true;
+        try {
+          const response = await generateTypeSuggestion({ prompt: query });
+          console.log("response", response.message);
+
+          const cleanedMessage = response.message.replace(/^"|"$/g, "");
+          setSuggestion(cleanedMessage);
+        } catch (error) {
+          console.error("Error generating suggestion:", error);
+        } finally {
+          isGeneratingSuggestion.current = false;
+        }
+      } else if (query.length <= 3) {
+        setSuggestion("");
+      }
+    };
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(generateSuggestion, 300);
+
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, [query]);
 
   const handleSubmit = async (formData: FormData) => {
     const data = Object.fromEntries(formData.entries()) as TQueryData;
@@ -35,6 +73,23 @@ const PromptBox = () => {
       router.push(`/form/${uuid}`);
     });
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Tab" && suggestion) {
+      e.preventDefault();
+      setQuery((prevQuery) => {
+        const newQuery = prevQuery + suggestion;
+        return newQuery.endsWith(" ") ? newQuery : newQuery + " ";
+      });
+      setSuggestion("");
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+    setSuggestion("");
+  };
+
   return (
     <div className="flex flex-col gap-3">
       <ShineBorder
@@ -45,26 +100,36 @@ const PromptBox = () => {
           className=" flex flex-col gap-3 rounded-lg p-3 z-50  "
           action={handleSubmit}
         >
-          <ReactTyped
-            strings={[
-              "Form to collect my user feedback...",
-              "Create a survey about...",
-              "A form to hire a product designer...",
-              "Ask Spira to build form for anything...",
-            ]}
-            typeSpeed={40}
-            backSpeed={50}
-            attr="placeholder"
-            // loop
-          >
-            <input
-              className="w-full border-none outline-none px-3 py-1 rounded"
-              name="prompt"
-              autoComplete="off"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </ReactTyped>
+          <div className="relative">
+            <ReactTyped
+              strings={[
+                "Form to collect my user feedback...",
+                "Create a survey about...",
+                "A form to hire a product designer...",
+                "Ask Spira to build form for anything...",
+              ]}
+              typeSpeed={40}
+              backSpeed={50}
+              attr="placeholder"
+              // loop
+            >
+              <input
+                ref={inputRef}
+                className="w-full border-none outline-none px-3 py-1 rounded"
+                name="prompt"
+                autoComplete="off"
+                value={query}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+              />
+            </ReactTyped>
+            {suggestion && (
+              <span className="absolute top-0 left-0 w-full pointer-events-none px-3 py-1">
+                <span className="invisible">{query}</span>
+                <span className="text-gray-400">{suggestion}</span>
+              </span>
+            )}
+          </div>
 
           <div className="w-full flex">
             <Button
