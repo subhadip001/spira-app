@@ -1,14 +1,14 @@
-import React from "react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Required } from "./Required";
-import { FormField, FormFieldOption } from "@/types/FormSchema";
-import { LabelComponent } from "./LabelComponent";
+import React from "react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import { Required } from "./Required"
+import { FormField, FormFieldOption } from "@/types/FormSchema"
+import { LabelComponent } from "./LabelComponent"
 
 interface CheckboxFieldProps {
-  field: FormField;
-  value: string;
-  onChange: (value: string) => void;
+  field: FormField
+  value: string
+  onChange: (value: string) => void
 }
 
 const CheckboxField: React.FC<CheckboxFieldProps> = ({
@@ -17,17 +17,17 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   onChange,
 }) => {
   const handleChange = (optionValue: string, checked: boolean) => {
-    const currentValues = value ? value?.split(",").filter(Boolean) : [];
-    let newValues: string[];
+    const currentValues = value ? value?.split(",").filter(Boolean) : []
+    let newValues: string[]
 
     if (checked) {
-      newValues = [...currentValues, optionValue];
+      newValues = [...currentValues, optionValue]
     } else {
-      newValues = currentValues.filter((v) => v !== optionValue);
+      newValues = currentValues.filter((v) => v !== optionValue)
     }
 
-    onChange(newValues?.join(","));
-  };
+    onChange(newValues?.join(","))
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -53,7 +53,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CheckboxField;
+export default CheckboxField

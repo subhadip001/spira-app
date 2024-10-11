@@ -1,5 +1,5 @@
-"use client";
-import { RainbowButton } from "@/components/magicui/rainbow-button";
+"use client"
+import { RainbowButton } from "@/components/magicui/rainbow-button"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,35 +10,41 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { addNewFormVersion, QueryKeys } from "@/lib/queries";
-import useAppStore from "@/store/appStore";
-import useEditFormPageStore from "@/store/editFormPageStore";
-import useFormStore from "@/store/formStore";
-import useFormVersionStore from "@/store/formVersions";
+} from "@/components/ui/alert-dialog"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { addNewFormVersion, QueryKeys } from "@/lib/queries"
+import { AddNewFormVersionVariables } from "@/lib/types"
+import useAppStore from "@/store/appStore"
+import useEditFormPageStore from "@/store/editFormPageStore"
+import useFormStore from "@/store/formStore"
+import useFormVersionStore from "@/store/formVersions"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   Eye,
   Monitor,
-  Pencil,
   Save,
   Smartphone,
   Sparkles,
   SquareArrowUpRight,
   Tablet,
   WandSparkles,
-} from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
-import GenerateForm from "./generate-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AddNewFormVersionVariables } from "@/lib/types";
-import toast from "react-hot-toast";
+} from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
+import React, { useState } from "react"
+import toast from "react-hot-toast"
+import GenerateForm from "./generate-form"
+import VersionDropdown from "./version-dropdown"
 
 type EditFormProps = {
-  baseQuery: string;
-  baseFormId: string;
-  needToGenerateFormSchema: boolean;
-};
+  baseQuery: string
+  baseFormId: string
+  needToGenerateFormSchema: boolean
+}
 
 const EditForm: React.FC<EditFormProps> = ({
   baseQuery,
@@ -47,46 +53,46 @@ const EditForm: React.FC<EditFormProps> = ({
 }) => {
   const [selectedViewport, setSelectedViewport] = useState<
     "phone" | "tablet" | "desktop"
-  >("desktop");
+  >("desktop")
 
-  const currentFormSchema = useFormStore((state) => state.currentFormSchema);
-  const user = useAppStore((state) => state.user);
-  const router = useRouter();
-  const pathName = usePathname();
-  const formId = pathName.split("/")[2];
+  const currentFormSchema = useFormStore((state) => state.currentFormSchema)
+  const user = useAppStore((state) => state.user)
+  const router = useRouter()
+  const pathName = usePathname()
+  const formId = pathName.split("/")[2]
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
-  const editFormSideBarOpen = useEditFormPageStore(
-    (state) => state.editFormSideBarOpen,
-  );
-  const setIsEditFormSideBarOpen = useEditFormPageStore(
-    (state) => state.setIsEditFormSideBarOpen,
-  );
+  const selectedFieldConstantId = useEditFormPageStore(
+    (state) => state.selectedFieldConstantId
+  )
+  const setSelectedFieldConstantId = useEditFormPageStore(
+    (state) => state.setSelectedFieldConstantId
+  )
   const isViewAsPublished = useEditFormPageStore(
-    (state) => state.isViewAsPublished,
-  );
+    (state) => state.isViewAsPublished
+  )
   const setIsViewAsPublished = useEditFormPageStore(
-    (state) => state.setIsViewAsPublished,
-  );
+    (state) => state.setIsViewAsPublished
+  )
   const selectedFormVersion = useFormVersionStore(
-    (state) => state.selectedFormVersion,
-  );
+    (state) => state.selectedFormVersion
+  )
   const setSelectedFormVersion = useFormVersionStore(
-    (state) => state.setSelectedFormVersion,
-  );
+    (state) => state.setSelectedFormVersion
+  )
   const formVersionsData = useFormVersionStore(
-    (state) => state.formVersionsData,
-  );
+    (state) => state.formVersionsData
+  )
 
   const handlePublish = () => {
     if (!user) {
-      router.push(`/login?${formId ? `formId=${formId}` : ""}`);
-      return;
+      router.push(`/login?${formId ? `formId=${formId}` : ""}`)
+      return
     }
-    console.log("Publishing form...");
-    console.log(currentFormSchema);
-  };
+    console.log("Publishing form...")
+    console.log(currentFormSchema)
+  }
 
   const addNewFormversionMutation = useMutation({
     mutationFn: (variables: AddNewFormVersionVariables) =>
@@ -94,13 +100,13 @@ const EditForm: React.FC<EditFormProps> = ({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.GetFormVersions, baseFormId],
-      });
-      toast.success("Form version added successfully");
+      })
+      toast.success("Form version added successfully")
     },
     onError: (error: Error) => {
-      console.error("Error adding new form version", error);
+      console.error("Error adding new form version", error)
     },
-  });
+  })
   return (
     <section className="relative flex-grow flex flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
       <div className="flex flex-col mmd:flex-row px-3 justify-between mmd:items-center w-full rounded-md mmd:h-[7vh] gap-2 mmd:gap-5">
@@ -114,34 +120,26 @@ const EditForm: React.FC<EditFormProps> = ({
             </span>
           </div>
         </div>
-        <div className="flex gap-5 items-center">
+        <div className="flex flex-col sm:flex-row gap-5 items-center">
+          <VersionDropdown />
           <div className="bg-white h-full border rounded-md flex gap-2 p-1">
-            <div
-              className={`p-2 cursor-pointer ${
-                isViewAsPublished ? "bg-gray-200" : ""
-              } rounded border border-gray-200`}
-              onClick={() => {
-                setIsViewAsPublished(!isViewAsPublished);
-              }}
-            >
-              <Eye className="h-4 w-4" />
-            </div>
-            <div
-              className={`p-2 cursor-pointer rounded border border-gray-200 ${
-                editFormSideBarOpen.isEditFormSideBarOpen ? "bg-gray-200" : ""
-              }`}
-              onClick={() => {
-                setIsEditFormSideBarOpen({
-                  isEditFormSideBarOpen:
-                    !editFormSideBarOpen.isEditFormSideBarOpen,
-                  fieldConstantId: editFormSideBarOpen.isEditFormSideBarOpen
-                    ? 0
-                    : 1,
-                });
-              }}
-            >
-              <Pencil className="h-4 w-4" />
-            </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div
+                    className={`p-2 cursor-pointer rounded border border-gray-200 ${
+                      isViewAsPublished ? "bg-gray-200" : ""
+                    }`}
+                    onClick={() => setIsViewAsPublished(!isViewAsPublished)}
+                  >
+                    <div>
+                      <Eye className="h-4 w-4" />
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>View as Published</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <div className="bg-white h-full border rounded-md flex gap-2 p-1">
             <div
@@ -195,7 +193,7 @@ const EditForm: React.FC<EditFormProps> = ({
                       baseFormId: baseFormId,
                       query: selectedFormVersion?.query || "N/A",
                       version: (formVersionsData?.length || 1) + 1,
-                    });
+                    })
                   }}
                 >
                   Save as New Version
@@ -207,7 +205,7 @@ const EditForm: React.FC<EditFormProps> = ({
                       baseFormId: baseFormId,
                       query: selectedFormVersion?.query || "N/A",
                       version: selectedFormVersion?.version_number || 1,
-                    });
+                    })
                   }}
                 >
                   Save as current version
@@ -254,7 +252,7 @@ const EditForm: React.FC<EditFormProps> = ({
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default EditForm;
+export default EditForm

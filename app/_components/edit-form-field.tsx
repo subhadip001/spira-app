@@ -1,57 +1,59 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import useEditFormPageStore from "@/store/editFormPageStore";
-import useFormStore from "@/store/formStore";
-import { FormField } from "@/types/FormSchema";
-import { Edit, Plus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import useEditFormPageStore from "@/store/editFormPageStore"
+import useFormStore from "@/store/formStore"
+import { FormField } from "@/types/FormSchema"
+import { Edit, Plus, X } from "lucide-react"
+import { useEffect, useState } from "react"
 
 const EditFormField = () => {
-  const editFormSideBarOpen = useEditFormPageStore((state) => state.editFormSideBarOpen);
-  const setIsEditFormSideBarOpen = useEditFormPageStore(
-    (state) => state.setIsEditFormSideBarOpen
-  );
+  const selectedFieldConstantId = useEditFormPageStore(
+    (state) => state.selectedFieldConstantId
+  )
+  const setSelectedFieldConstantId = useEditFormPageStore(
+    (state) => state.setSelectedFieldConstantId
+  )
   const { currentFormSchema, setCurrentFormSchema } = useFormStore((state) => ({
     currentFormSchema: state.currentFormSchema,
     setCurrentFormSchema: state.setCurrentFormSchema,
-  }));
-  const [editedField, setEditedField] = useState<FormField | null>(null);
+  }))
+  const [editedField, setEditedField] = useState<FormField | null>(null)
 
   useEffect(() => {
     const filteredFormFieldSchema = currentFormSchema?.fields?.find(
-      (field) => field.constantId === editFormSideBarOpen.fieldConstantId
-    );
+      (field) => field.constantId === selectedFieldConstantId
+    )
     if (filteredFormFieldSchema) {
       setEditedField({
         ...filteredFormFieldSchema,
         required: filteredFormFieldSchema.required ?? false,
-      });
+      })
     } else {
-      setEditedField(null);
+      setEditedField(null)
     }
-  }, [currentFormSchema, editFormSideBarOpen.fieldConstantId]);
+  }, [currentFormSchema, selectedFieldConstantId])
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     if (editedField) {
-      const updatedField = { ...editedField, [e.target.name]: e.target.value };
-      setEditedField(updatedField);
-      saveChanges(updatedField);
+      const updatedField = { ...editedField, [e.target.name]: e.target.value }
+      setEditedField(updatedField)
+      saveChanges(updatedField)
     }
-  };
+  }
 
   const handleCheckboxChange = (checked: boolean) => {
     if (editedField) {
-      const updatedField = { ...editedField, required: checked };
-      setEditedField(updatedField);
-      saveChanges(updatedField);
+      const updatedField = { ...editedField, required: checked }
+      setEditedField(updatedField)
+      saveChanges(updatedField)
     }
-  };
+  }
 
   const handleOptionsChange = (
     index: number,
@@ -59,92 +61,79 @@ const EditFormField = () => {
     value: string
   ) => {
     if (editedField && editedField.options) {
-      const newOptions = [...editedField.options];
-      newOptions[index] = { ...newOptions[index], [key]: value };
-      const updatedField = { ...editedField, options: newOptions };
-      setEditedField(updatedField);
-      saveChanges(updatedField);
+      const newOptions = [...editedField.options]
+      newOptions[index] = { ...newOptions[index], [key]: value }
+      const updatedField = { ...editedField, options: newOptions }
+      setEditedField(updatedField)
+      saveChanges(updatedField)
     }
-  };
+  }
 
   const addOption = () => {
     if (editedField) {
       const newLabelName = `Option ${
         editedField.options?.length ? `${editedField.options?.length + 1}` : "1"
-      }`;
+      }`
       const newValueName = `value-${
         editedField.options?.length ? `${editedField.options?.length + 1}` : "1"
-      }`;
+      }`
       const newOptions = [
         ...(editedField.options || []),
         { label: newLabelName, value: newValueName },
-      ];
-      const updatedField = { ...editedField, options: newOptions };
-      setEditedField(updatedField);
-      saveChanges(updatedField);
+      ]
+      const updatedField = { ...editedField, options: newOptions }
+      setEditedField(updatedField)
+      saveChanges(updatedField)
     }
-  };
+  }
 
   const removeOption = (index: number) => {
     if (editedField && editedField.options) {
-      const newOptions = editedField.options.filter((_, i) => i !== index);
-      const updatedField = { ...editedField, options: newOptions };
-      setEditedField(updatedField);
-      saveChanges(updatedField);
+      const newOptions = editedField.options.filter((_, i) => i !== index)
+      const updatedField = { ...editedField, options: newOptions }
+      setEditedField(updatedField)
+      saveChanges(updatedField)
     }
-  };
+  }
 
   const saveChanges = (updatedField: FormField) => {
     const updatedFields = currentFormSchema.fields.map((field) =>
       field.constantId === updatedField.constantId ? updatedField : field
-    );
+    )
 
     setCurrentFormSchema({
       ...currentFormSchema,
       fields: updatedFields,
-    });
-  };
+    })
+  }
 
   if (!editedField) {
     return (
       <section
-        className={`${
-          editFormSideBarOpen.isEditFormSideBarOpen
-            ? "min-w-[30%] max-w-[30%] bg-primary/5 ml-3 rounded-md"
-            : "min-w-0 ml-0 max-w-0"
-        } flex flex-col transition-all duration-300 overflow-hidden`}
+        className={`min-w-[35%] max-w-[35%] bg-[#ffff] border ml-3 rounded-md flex flex-col transition-all duration-300 overflow-hidden`}
       >
-        <div className="flex justify-between items-center py-3 px-3 border-b">
-          <div>
+        <div className="flex justify-between items-center py-2 px-3">
+          <div className="flex items-center gap-2">
             <div>
-              <Edit className="h-4 w-4" />
+              <Edit className="h-5 w-5" />
             </div>
             <span className="text-lg font-semibold">Edit Selected Field</span>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() =>
-              setIsEditFormSideBarOpen({
-                isEditFormSideBarOpen: false,
-                fieldConstantId: 0,
-              })
-            }
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </div>
+        <section className="py-4 mx-4">
+          <div className="w-full min-h-[70svh] flex flex-col items-center justify-center gap-2">
+            <h3 className="text-gray-500">No Field Left to Edit</h3>
+            <p className="text-gray-500">Create a new field to edit</p>
+          </div>
+        </section>
       </section>
-    );
+    )
   }
 
   return (
     <section
-      className={`${
-        editFormSideBarOpen.isEditFormSideBarOpen
-          ? "min-w-[30%] max-w-[30%] bg-[#ffff] border ml-3 rounded-md"
-          : "min-w-0 ml-0 max-w-0"
-      } flex flex-col transition-all duration-300 overflow-hidden`}
+      className={`min-w-[35%] max-w-[35%] bg-[#ffff] border ml-3 rounded-md
+       flex flex-col transition-all duration-300 overflow-hidden`}
     >
       <div className="flex justify-between items-center py-2 px-3">
         <div className="flex items-center gap-2">
@@ -153,33 +142,17 @@ const EditFormField = () => {
           </div>
           <span className="text-lg font-semibold">Edit Selected Field</span>
         </div>
-        <div
-          onClick={() =>
-            setIsEditFormSideBarOpen({
-              isEditFormSideBarOpen: false,
-              fieldConstantId: 0,
-            })
-          }
-          className="p-1 cursor-pointer rounded-md border outline-none"
-        >
-          <X className="h-4 w-4" />
-        </div>
       </div>
       <section className="flex max-w-full overflow-x-auto gap-3 py-4 mx-4 hide-scrollbar">
         {currentFormSchema?.fields.map((field, index) => (
           <div
             key={field.serialId}
             className={`flex gap-2 text-sm px-3 py-1 ${
-              editFormSideBarOpen.fieldConstantId === field.constantId
+              selectedFieldConstantId === field.constantId
                 ? "bg-blue-200 text-light-spirablue border-light-spirablue"
                 : ""
             } cursor-pointer border rounded-md`}
-            onClick={() =>
-              setIsEditFormSideBarOpen({
-                isEditFormSideBarOpen: true,
-                fieldConstantId: field.constantId,
-              })
-            }
+            onClick={() => setSelectedFieldConstantId(field.constantId)}
           >
             <span>Field</span>
             <span> {field.serialId}</span>
@@ -347,7 +320,7 @@ const EditFormField = () => {
         )}
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default EditFormField;
+export default EditFormField

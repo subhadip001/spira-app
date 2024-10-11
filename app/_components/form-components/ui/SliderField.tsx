@@ -1,13 +1,13 @@
-import React from "react";
-import { Label } from "@/components/ui/label";
-import { Required } from "./Required";
-import { FormField } from "@/types/FormSchema";
-import { LabelComponent } from "./LabelComponent";
+import React from "react"
+import { Label } from "@/components/ui/label"
+import { Required } from "./Required"
+import { FormField } from "@/types/FormSchema"
+import { LabelComponent } from "./LabelComponent"
 
 interface SliderFieldProps {
-  field: FormField;
-  value: number;
-  onChange: (value: number) => void;
+  field: FormField
+  value: number
+  onChange: (value: number) => void
 }
 
 const SliderField: React.FC<SliderFieldProps> = ({
@@ -16,12 +16,14 @@ const SliderField: React.FC<SliderFieldProps> = ({
   onChange,
 }) => {
   const percentage =
-    ((value - (field.min ?? 0)) / ((field.max ?? 100) - (field.min ?? 0))) *
-    100;
+    ((value - (field.min ?? 0)) / ((field.max ?? 100) - (field.min ?? 0))) * 100
 
   return (
     <div className="flex flex-col gap-4">
       <LabelComponent field={field} />
+      {field.description && (
+        <p className="text-sm text-gray-500">{field.description}</p>
+      )}
       <div className="relative w-full h-10">
         <div className="absolute top-0 left-0 w-full h-10 rounded-md bg-gray-300"></div>
         <div
@@ -47,7 +49,7 @@ const SliderField: React.FC<SliderFieldProps> = ({
         <span>{field.max}</span>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SliderField;
+export default SliderField
