@@ -21,6 +21,7 @@ import React, { useState } from "react"
 import { HexColorPicker } from "react-colorful"
 import { useForm } from "react-hook-form"
 import { FormFieldComponent } from "./FormFields"
+import AddFieldSelector from "./ui/add-new-field"
 
 interface FormBuilderProps {
   initialSchema: FormSchema
@@ -154,135 +155,44 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     setFormData(formDetails, newFormData, initialSchema)
   }
 
-  const addNewField = (
-    constantId: number,
-    serialId: number,
-    type: FieldType
-  ) => {
+  const addNewField = (type: FieldType) => {
     if (!editable) return
-    let newField: FormSchemaField
+    const newConstantId =
+      Math.max(...initialSchema.fields.map((f) => f.constantId), 0) + 1
+    const newSerialId = initialSchema.fields.length + 1
+    let newField: FormSchemaField = {
+      constantId: newConstantId,
+      serialId: newSerialId,
+      type,
+      label: `New ${type} Field`,
+      description: `Edit description of this field`,
+      name: `new_${type.toLowerCase()}_field_${newConstantId}`,
+      placeholder: `Edit placeholder of this field`,
+      required: false,
+    }
+
     switch (type) {
-      case FieldType.TEXT || FieldType.TEL:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-        }
-        break
-      case FieldType.EMAIL:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-        }
-        break
-      case FieldType.TEXTAREA:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-        }
-        break
       case FieldType.SELECT:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-          options: [],
-        }
-        break
       case FieldType.CHECKBOX:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-          options: [],
-        }
-        break
       case FieldType.RADIO:
         newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-          options: [],
+          ...newField,
+          options: [{ label: "Option 1", value: "value-1" }],
         }
         break
       case FieldType.RANGE:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-          min: 0,
-          max: 100,
-          step: 1,
-        }
+        newField = { ...newField, min: 0, max: 100, step: 1 }
         break
       case FieldType.FILE:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-          accept: "",
-          maxSize: "",
-        }
-        break
-      default:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-        }
+        newField = { ...newField, accept: ".pdf,.doc,.docx", maxSize: "" }
         break
     }
+
     setCurrentFormSchema({
       ...initialSchema,
       fields: [...initialSchema.fields, newField],
     })
+    setSelectedFieldConstantId(newConstantId)
   }
 
   const handleColorChange = (color: string) => {
@@ -500,6 +410,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                   </div>
                 </div>
               ))}
+              {editable && <AddFieldSelector onAddField={addNewField} />}
             </section>
           </div>
           <div>
