@@ -305,7 +305,9 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                 <FormDescription>{initialSchema?.description}</FormDescription>
               </section>
             )}
-            <section className="flex flex-col gap-0 pb-3">
+            <section
+              className={`flex flex-col ${!editable ? "gap-5" : "gap-0"} pb-3`}
+            >
               {initialSchema?.fields?.map((field, index) => (
                 <Fragment key={index}>
                   {editable && index === 0 && (
