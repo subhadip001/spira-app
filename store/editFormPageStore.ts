@@ -11,13 +11,14 @@ type EditFormPageStore = {
 
 const useEditFormPageStore = create<EditFormPageStore>()((set) => ({
   selectedFieldConstantId: 1,
-  setSelectedFieldConstantId: (selectedFieldConstantId) =>
+  setSelectedFieldConstantId: (selectedFieldConstantId: number) => {
     set((state) => ({
       ...state,
       selectedFieldConstantId,
-    })),
+    }))
+  },
   isViewAsPublished: false,
-  setIsViewAsPublished: (isViewAsPublished) =>
+  setIsViewAsPublished: (isViewAsPublished: boolean) =>
     set((state) => {
       return {
         ...state,
@@ -26,10 +27,7 @@ const useEditFormPageStore = create<EditFormPageStore>()((set) => ({
     }),
   resetStore: () =>
     set(() => ({
-      editFormSideBarOpen: {
-        isEditFormSideBarOpen: true,
-        fieldConstantId: 1,
-      },
+      selectedFieldConstantId: 1,
       isViewAsPublished: false,
     })),
 }))

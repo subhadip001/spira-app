@@ -93,6 +93,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   }
 
   const moveField = (index: number, direction: "up" | "down") => {
+    if (!editable) return
     const newFields = [...initialSchema.fields]
     if (direction === "up" && index > 0) {
       const temp = newFields[index - 1].serialId
@@ -115,6 +116,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   }
 
   const deleteField = (constantId: number) => {
+    if (!editable) return
     const fieldToDelete = initialSchema.fields.find(
       (field) => field.constantId === constantId
     )
@@ -124,7 +126,6 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       (field) => field.constantId !== constantId
     )
 
-    // Update serialIds for remaining fields
     newFields.forEach((field, index) => {
       if (field.serialId > fieldToDelete.serialId) {
         field.serialId -= 1
@@ -135,7 +136,6 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     const newFormData = formData.filter(
       (field) => field.formFieldId !== constantId
     )
-    // Find the nearest field after deletion
     const nearestField =
       newFields.length > 0
         ? newFields.reduce((nearest, field) => {
@@ -146,8 +146,11 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
               : nearest
           })
         : null
-    // Set the selected field to the nearest one, or null if no fields remain
-    setSelectedFieldConstantId(nearestField ? nearestField.constantId : 0)
+
+    setTimeout(() => {
+      setSelectedFieldConstantId(nearestField?.constantId ?? 0)
+    }, 0)
+
     setFormData(formDetails, newFormData, initialSchema)
   }
 
@@ -156,6 +159,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     serialId: number,
     type: FieldType
   ) => {
+    if (!editable) return
     let newField: FormSchemaField
     switch (type) {
       case FieldType.TEXT || FieldType.TEL:
@@ -290,6 +294,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   }
 
   const handleAddFieldForEditing = (fieldConstantId: number): void => {
+    if (!editable) return
     setSelectedFieldConstantId(fieldConstantId)
   }
 

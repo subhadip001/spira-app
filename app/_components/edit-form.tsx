@@ -11,15 +11,22 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { addNewFormVersion, QueryKeys } from "@/lib/queries"
+import { AddNewFormVersionVariables } from "@/lib/types"
 import useAppStore from "@/store/appStore"
 import useEditFormPageStore from "@/store/editFormPageStore"
 import useFormStore from "@/store/formStore"
 import useFormVersionStore from "@/store/formVersions"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   Eye,
   Monitor,
-  Pencil,
   Save,
   Smartphone,
   Sparkles,
@@ -29,19 +36,9 @@ import {
 } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import React, { useState } from "react"
-import GenerateForm from "./generate-form"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { AddNewFormVersionVariables } from "@/lib/types"
 import toast from "react-hot-toast"
+import GenerateForm from "./generate-form"
 import VersionDropdown from "./version-dropdown"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import FormBuilder from "./form-components/FormBuilder"
 
 type EditFormProps = {
   baseQuery: string
@@ -126,35 +123,23 @@ const EditForm: React.FC<EditFormProps> = ({
         <div className="flex flex-col sm:flex-row gap-5 items-center">
           <VersionDropdown />
           <div className="bg-white h-full border rounded-md flex gap-2 p-1">
-            <Dialog>
-              <DialogTrigger>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div
-                        className={`p-2 cursor-pointer rounded border border-gray-200 ${
-                          isViewAsPublished ? "bg-gray-200" : ""
-                        }`}
-                      >
-                        <div>
-                          <Eye className="h-4 w-4" />
-                        </div>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>View as Published</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </DialogTrigger>
-              <DialogContent className="max-w-[80vw]">
-                <div className="w-full h-[80svh] overflow-y-auto">
-                  <FormBuilder
-                    initialSchema={currentFormSchema}
-                    published={true}
-                    editable={false}
-                  />
-                </div>
-              </DialogContent>
-            </Dialog>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div
+                    className={`p-2 cursor-pointer rounded border border-gray-200 ${
+                      isViewAsPublished ? "bg-gray-200" : ""
+                    }`}
+                    onClick={() => setIsViewAsPublished(!isViewAsPublished)}
+                  >
+                    <div>
+                      <Eye className="h-4 w-4" />
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>View as Published</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <div className="bg-white h-full border rounded-md flex gap-2 p-1">
             <div
