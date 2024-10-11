@@ -85,12 +85,19 @@ const AddFieldSelector: React.FC<AddFieldSelectorProps> = ({ onAddField }) => {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
-          <Plus className="h-4 w-4 mr-2" />
-          Add New Field
-        </Button>
-      </DialogTrigger>
+      <div className="flex flex-col items-center justify-center w-full">
+        <div className="h-[4vh] border-l border-dashed"></div>
+        <DialogTrigger asChild>
+          <div className="border cursor-pointer border-dashed rounded-md p-2 flex items-center gap-2 hover:bg-gray-100">
+            <div className="">
+              <Plus className="h-4 w-4" />
+            </div>
+            <span className="text-sm">Add New Field</span>
+          </div>
+        </DialogTrigger>
+        <div className="h-[4vh] border-l border-dashed"></div>
+      </div>
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Select Field Type</DialogTitle>
