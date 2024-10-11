@@ -1,26 +1,10 @@
-import { validateForm } from "@/lib/form-lib/validation";
-import { sampleFormSchema } from "@/schema/formSchema";
-import {
-  TFormData,
-  TFormDetails,
-  TFormErrors,
-  TFormValues,
-} from "@/types/form";
-import { FormSchema } from "@/types/FormSchema";
-import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { FormSchema } from "@/types/FormSchema"
+import { create } from "zustand"
 
 interface FormStore {
-  currentFormSchema: FormSchema;
-  setCurrentFormSchema: (formSchema: FormSchema) => void;
-  formData: TFormData;
-  setFormData: (
-    details: TFormDetails,
-    values: TFormValues,
-    formSchema: FormSchema
-  ) => void;
-  formErrors: TFormErrors;
-  resetStore: () => void;
+  currentFormSchema: FormSchema
+  setCurrentFormSchema: (formSchema: FormSchema) => void
+  resetStore: () => void
 }
 
 const useFormStore = create<FormStore>((set) => ({
@@ -33,37 +17,13 @@ const useFormStore = create<FormStore>((set) => ({
           ...formSchema,
           headerBackground: "#ffffff",
         },
-      };
+      }
     }),
-  formData: {
-    details: {
-      title: "",
-      description: "",
-      headerBackground: "#ffffff",
-    },
-    values: [],
-  },
-  formErrors: [],
-  setFormData: (details, values, formSchema) =>
-    set((state) => {
-      return {
-        ...state,
-        formData: {
-          details: details,
-          values: values,
-        },
-        formErrors: validateForm(formSchema, values),
-      };
-    }),
+
   resetStore: () =>
     set(() => ({
       currentFormSchema: {} as FormSchema,
-      formData: {
-        details: { title: "", description: "", headerBackground: "#ffffff" },
-        values: [],
-      },
-      formErrors: [],
     })),
-}));
+}))
 
-export default useFormStore;
+export default useFormStore

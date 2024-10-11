@@ -64,13 +64,15 @@ const PromptBox = () => {
   const handleSubmit = async (formData: FormData) => {
     const data = Object.fromEntries(formData.entries()) as TQueryData
     const prompt = data.prompt
-    const uuid = uuidv4()
-    startTransition(async () => {
-      resetFormVersionStore()
-      resetEditFormPageStore()
-      await addFormQueryToDb(uuid, prompt)
-      router.push(`/form/${uuid}`)
-    })
+    if (prompt) {
+      const uuid = uuidv4()
+      startTransition(async () => {
+        resetFormVersionStore()
+        resetEditFormPageStore()
+        await addFormQueryToDb(uuid, prompt)
+        router.push(`/form/${uuid}`)
+      })
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
