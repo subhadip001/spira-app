@@ -149,7 +149,7 @@ const EditFormField = () => {
             key={field.serialId}
             className={`flex gap-2 text-sm px-3 py-1 ${
               selectedFieldConstantId === field.constantId
-                ? "bg-blue-200 text-light-spirablue border-light-spirablue"
+                ? "bg-blue-200 text-spirablue border-spirablue"
                 : ""
             } cursor-pointer border rounded-md`}
             onClick={() => setSelectedFieldConstantId(field.constantId)}
@@ -181,6 +181,19 @@ const EditFormField = () => {
               name="name"
               placeholder="Enter a name without spaces"
               value={editedField.name}
+              onChange={handleInputChange}
+            />
+          </div>
+        )}
+        {Object.keys(editedField).includes("placeholder") && (
+          <div>
+            <Label className="text-gray-500" htmlFor="description">
+              Description
+            </Label>
+            <Input
+              id="description"
+              name="description"
+              value={editedField.description}
               onChange={handleInputChange}
             />
           </div>

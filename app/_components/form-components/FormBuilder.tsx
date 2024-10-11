@@ -17,10 +17,11 @@ import {
   FormField as FormSchemaField,
 } from "@/types/FormSchema"
 import { ArrowDown, ArrowUp, Edit, Plus, Trash2 } from "lucide-react"
-import React, { useState } from "react"
+import React, { Fragment, useState } from "react"
 import { HexColorPicker } from "react-colorful"
 import { useForm } from "react-hook-form"
 import { FormFieldComponent } from "./FormFields"
+import AddFieldSelector from "./ui/add-new-field"
 
 interface FormBuilderProps {
   initialSchema: FormSchema
@@ -155,134 +156,62 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   }
 
   const addNewField = (
-    constantId: number,
-    serialId: number,
-    type: FieldType
+    type: FieldType,
+    position: "top" | "bottom" = "bottom",
+    serialId?: number
   ) => {
     if (!editable) return
-    let newField: FormSchemaField
+    const newConstantId =
+      Math.max(...initialSchema.fields.map((f) => f.constantId), 0) + 1
+    const newSerialId =
+      position === "top"
+        ? 1
+        : serialId
+          ? serialId + 1
+          : initialSchema.fields.length + 1
+    let newField: FormSchemaField = {
+      constantId: newConstantId,
+      serialId: newSerialId,
+      type,
+      label: `New ${type} Field`,
+      description: `Edit description of this field`,
+      name: `new_${type.toLowerCase()}_field_${newConstantId}`,
+      placeholder: `Edit placeholder of this field`,
+      required: false,
+    }
+    console.log(newField)
+
     switch (type) {
-      case FieldType.TEXT || FieldType.TEL:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-        }
-        break
-      case FieldType.EMAIL:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-        }
-        break
-      case FieldType.TEXTAREA:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-        }
-        break
       case FieldType.SELECT:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-          options: [],
-        }
-        break
       case FieldType.CHECKBOX:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-          options: [],
-        }
-        break
       case FieldType.RADIO:
         newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-          options: [],
+          ...newField,
+          options: [{ label: "Option 1", value: "value-1" }],
         }
         break
       case FieldType.RANGE:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-          min: 0,
-          max: 100,
-          step: 1,
-        }
+        newField = { ...newField, min: 0, max: 100, step: 1 }
         break
       case FieldType.FILE:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-          accept: "",
-          maxSize: "",
-        }
-        break
-      default:
-        newField = {
-          constantId,
-          serialId,
-          type,
-          label: "",
-          description: "",
-          name: "",
-          placeholder: "",
-          required: false,
-        }
+        newField = { ...newField, accept: ".pdf,.doc,.docx", maxSize: "" }
         break
     }
+
+    const updatedFields = initialSchema.fields.map((field) => {
+      if (position === "top" || (serialId && field.serialId > serialId)) {
+        return { ...field, serialId: field.serialId + 1 }
+      }
+      return field
+    })
+
     setCurrentFormSchema({
       ...initialSchema,
-      fields: [...initialSchema.fields, newField],
+      fields: [...updatedFields, newField].sort(
+        (a, b) => a.serialId - b.serialId
+      ),
     })
+    setSelectedFieldConstantId(newConstantId)
   }
 
   const handleColorChange = (color: string) => {
@@ -376,129 +305,148 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                 <FormDescription>{initialSchema?.description}</FormDescription>
               </section>
             )}
-            <section className="flex flex-col gap-6 pb-3">
+            <section className="flex flex-col gap-0 pb-3">
               {initialSchema?.fields?.map((field, index) => (
-                <div
-                  key={index}
-                  className={`relative border rounded-md ${
-                    editable ? "hover:bg-gray-50" : "cursor-default"
-                  } ${
-                    selectedFieldConstantId === field.constantId && editable
-                      ? "ring-2 ring-blue-300 bg-gray-50"
-                      : ""
-                  }`}
-                  style={{ cursor: editable ? "pointer" : "default" }}
-                  onMouseEnter={() => setHoveredField(index)}
-                  onMouseLeave={() => setHoveredField(null)}
-                  onClick={() => handleAddFieldForEditing(field.constantId)}
-                >
-                  {editable && hoveredField === index && (
-                    <div className="absolute z-50 right-5 -top-5 bg-white border p-2 rounded-md flex gap-4">
-                      <button
-                        onClick={() => moveField(index, "up")}
-                        disabled={index === 0}
-                        className={`p-1 rounded-full border outline-none ${
-                          index === 0 ? "text-gray-400 cursor-not-allowed" : ""
-                        }`}
-                        type="button"
-                      >
-                        <div>
-                          <ArrowUp className="h-3 w-3" />
-                        </div>
-                      </button>
-                      <button
-                        onClick={() => moveField(index, "down")}
-                        disabled={index === initialSchema.fields.length - 1}
-                        className={`p-1 rounded-full border outline-none ${
-                          index === initialSchema.fields.length - 1
-                            ? "text-gray-400 cursor-not-allowed"
-                            : ""
-                        }`}
-                        type="button"
-                      >
-                        <div>
-                          <ArrowDown className="h-3 w-3" />
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          handleAddFieldForEditing(field.constantId)
-                        }}
-                        type="button"
-                        className="p-1 rounded-full border outline-none"
-                      >
-                        <div>
-                          <Edit className="h-3 w-3" />
-                        </div>
-                      </button>
-                      <button
-                        onClick={() => deleteField(field.constantId)}
-                        type="button"
-                        className="p-1 rounded-full border outline-none"
-                      >
-                        <div>
-                          <Trash2 className="h-3 w-3" color="red" />
-                        </div>
-                      </button>
-                    </div>
-                  )}
-                  <div className="p-6">
-                    <FormField
-                      control={form.control}
-                      name={field.name}
-                      render={({ field: controllerField }) => (
-                        <FormItem>
-                          <FormControl>
-                            <FormFieldComponent
-                              field={field}
-                              value={controllerField.value}
-                              onChange={(value: string) => {
-                                controllerField.onChange(value)
-                                const newFormData = [...formData]
-                                const fieldIndex = newFormData.findIndex(
-                                  (f) => f.formFieldId === field.constantId
-                                )
-                                if (fieldIndex !== -1) {
-                                  newFormData[fieldIndex].formFieldValue = value
-                                } else {
-                                  newFormData.push({
-                                    formFieldId: field.constantId,
-                                    formFieldName: field.name,
-                                    formFieldLabel: field.label,
-                                    formFieldValue: value,
-                                  })
-                                }
-                                setFormData(
-                                  formDetails,
-                                  newFormData,
-                                  initialSchema
-                                )
-                              }}
-                              accept={
-                                field.type === "file" ? field.accept : undefined
-                              }
-                              maxSize={
-                                field.type === "file"
-                                  ? field.maxSize
-                                  : undefined
-                              }
-                            />
-                          </FormControl>
-                          {!editable && (
-                            <FormMessage>
-                              {
-                                formErrors.find(
-                                  (e) => e.formFieldId === field.constantId
-                                )?.error
-                              }
-                            </FormMessage>
-                          )}
-                        </FormItem>
-                      )}
+                <Fragment key={index}>
+                  {editable && index === 0 && (
+                    <AddFieldSelector
+                      onAddField={(type) => addNewField(type, "top")}
                     />
+                  )}
+                  <div
+                    key={index}
+                    className={`relative border rounded-md ${
+                      editable ? "hover:bg-gray-50" : "cursor-default"
+                    } ${
+                      selectedFieldConstantId === field.constantId && editable
+                        ? "ring-2 ring-blue-300 bg-gray-50"
+                        : ""
+                    }`}
+                    style={{ cursor: editable ? "pointer" : "default" }}
+                    onMouseEnter={() => setHoveredField(index)}
+                    onMouseLeave={() => setHoveredField(null)}
+                    onClick={() => handleAddFieldForEditing(field.constantId)}
+                  >
+                    {editable && hoveredField === index && (
+                      <div className="absolute z-50 right-5 -top-5 bg-white border p-2 rounded-md flex gap-4">
+                        <button
+                          onClick={() => moveField(index, "up")}
+                          disabled={index === 0}
+                          className={`p-1 rounded-full border outline-none ${
+                            index === 0
+                              ? "text-gray-400 cursor-not-allowed"
+                              : ""
+                          }`}
+                          type="button"
+                        >
+                          <div>
+                            <ArrowUp className="h-3 w-3" />
+                          </div>
+                        </button>
+                        <button
+                          onClick={() => moveField(index, "down")}
+                          disabled={index === initialSchema.fields.length - 1}
+                          className={`p-1 rounded-full border outline-none ${
+                            index === initialSchema.fields.length - 1
+                              ? "text-gray-400 cursor-not-allowed"
+                              : ""
+                          }`}
+                          type="button"
+                        >
+                          <div>
+                            <ArrowDown className="h-3 w-3" />
+                          </div>
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            handleAddFieldForEditing(field.constantId)
+                          }}
+                          type="button"
+                          className="p-1 rounded-full border outline-none"
+                        >
+                          <div>
+                            <Edit className="h-3 w-3" />
+                          </div>
+                        </button>
+                        <button
+                          onClick={() => deleteField(field.constantId)}
+                          type="button"
+                          className="p-1 rounded-full border outline-none"
+                        >
+                          <div>
+                            <Trash2 className="h-3 w-3" color="red" />
+                          </div>
+                        </button>
+                      </div>
+                    )}
+                    <div className="p-6">
+                      <FormField
+                        control={form.control}
+                        name={field.name}
+                        render={({ field: controllerField }) => (
+                          <FormItem>
+                            <FormControl>
+                              <FormFieldComponent
+                                field={field}
+                                value={controllerField.value}
+                                onChange={(value: string) => {
+                                  controllerField.onChange(value)
+                                  const newFormData = [...formData]
+                                  const fieldIndex = newFormData.findIndex(
+                                    (f) => f.formFieldId === field.constantId
+                                  )
+                                  if (fieldIndex !== -1) {
+                                    newFormData[fieldIndex].formFieldValue =
+                                      value
+                                  } else {
+                                    newFormData.push({
+                                      formFieldId: field.constantId,
+                                      formFieldName: field.name,
+                                      formFieldLabel: field.label,
+                                      formFieldValue: value,
+                                    })
+                                  }
+                                  setFormData(
+                                    formDetails,
+                                    newFormData,
+                                    initialSchema
+                                  )
+                                }}
+                                accept={
+                                  field.type === "file"
+                                    ? field.accept
+                                    : undefined
+                                }
+                                maxSize={
+                                  field.type === "file"
+                                    ? field.maxSize
+                                    : undefined
+                                }
+                              />
+                            </FormControl>
+                            {!editable && (
+                              <FormMessage>
+                                {
+                                  formErrors.find(
+                                    (e) => e.formFieldId === field.constantId
+                                  )?.error
+                                }
+                              </FormMessage>
+                            )}
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
-                </div>
+                  {editable && (
+                    <AddFieldSelector
+                      onAddField={(type) =>
+                        addNewField(type, "bottom", field.serialId)
+                      }
+                    />
+                  )}
+                </Fragment>
               ))}
             </section>
           </div>
