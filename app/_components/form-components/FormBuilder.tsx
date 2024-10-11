@@ -10,13 +10,13 @@ import {
 import { cn } from "@/lib/utils"
 import useEditFormPageStore from "@/store/editFormPageStore"
 import useFormStore from "@/store/formStore"
-import { TFormValues } from "@/types/form"
+import { TFormData, TFormDetails, TFormErrors, TFormValues } from "@/types/form"
 import {
   FieldType,
   FormSchema,
   FormField as FormSchemaField,
 } from "@/types/FormSchema"
-import { ArrowDown, ArrowUp, Edit, Plus, Trash2 } from "lucide-react"
+import { ArrowDown, ArrowUp, Edit, Trash2 } from "lucide-react"
 import React, { Fragment, useState } from "react"
 import { HexColorPicker } from "react-colorful"
 import { useForm } from "react-hook-form"
@@ -40,13 +40,22 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   const [showColorPicker, setShowColorPicker] = useState(editable)
   const [hoveredField, setHoveredField] = useState<number | null>(null)
   const [backgroundColor, setBackgroundColor] = useState("#ffffff")
-  // const [schema, setCurrentFormSchema] = useState<FormSchema>(initialSchema);
 
-  const formData = useFormStore((state) => state.formData.values)
-  const formDetails = useFormStore((state) => state.formData.details)
-  const setFormData = useFormStore((state) => state.setFormData)
-  const formErrors = useFormStore((state) => state.formErrors)
-  // const currentFormSchema = useFormStore((state) => state.currentFormSchema);
+  const [formDetails, setFormDetails] = useState<TFormDetails>({
+    title: "",
+    description: "",
+    headerBackground: "#ffffff",
+  })
+  const [formErrors, setFormErrors] = useState<TFormErrors>([])
+  const [formData, setFormData] = useState<TFormData>({
+    details: {
+      title: "",
+      description: "",
+      headerBackground: "#ffffff",
+    },
+    values: [],
+  })
+
   const setCurrentFormSchema = useFormStore(
     (state) => state.setCurrentFormSchema
   )
@@ -73,7 +82,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   // }, []);
 
   const form = useForm<Record<string, string>>({
-    defaultValues: formData.reduce(
+    defaultValues: formData?.values.reduce(
       (acc, field) => {
         acc[field.formFieldName] = field.formFieldValue
         return acc
@@ -89,7 +98,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       formFieldLabel: field.label,
       formFieldValue: data[field.name] || "",
     }))
-    setFormData(formDetails, newFormData, initialSchema)
+    setFormData({ details: formDetails, values: newFormData })
     console.log("Form submitted:", JSON.stringify(newFormData, null, 2))
   }
 
@@ -134,7 +143,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     })
 
     setCurrentFormSchema({ ...initialSchema, fields: newFields })
-    const newFormData = formData.filter(
+    const newFormData = formData.values.filter(
       (field) => field.formFieldId !== constantId
     )
     const nearestField =
@@ -152,7 +161,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       setSelectedFieldConstantId(nearestField?.constantId ?? 0)
     }, 0)
 
-    setFormData(formDetails, newFormData, initialSchema)
+    setFormData({ details: formDetails, values: newFormData })
   }
 
   const addNewField = (
@@ -251,14 +260,13 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                         ...initialSchema,
                         title: e.target.value,
                       })
-                      setFormData(
-                        {
+                      setFormData({
+                        details: {
                           ...formDetails,
                           title: e.target.value,
                         },
-                        formData,
-                        initialSchema
-                      )
+                        values: formData.values,
+                      })
                     }}
                   />
                   <FormDescription>
@@ -274,14 +282,13 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                           ...initialSchema,
                           description: e.target.value,
                         })
-                        setFormData(
-                          {
+                        setFormData({
+                          details: {
                             ...formDetails,
                             description: e.target.value,
                           },
-                          formData,
-                          initialSchema
-                        )
+                          values: formData.values,
+                        })
                       }}
                     />
                   </FormDescription>
@@ -316,7 +323,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                     />
                   )}
                   <div
-                    key={index}
+                    key={field.constantId + index}
                     className={`relative border rounded-md ${
                       editable ? "hover:bg-gray-50" : "cursor-default"
                     } ${
@@ -394,7 +401,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                                 value={controllerField.value}
                                 onChange={(value: string) => {
                                   controllerField.onChange(value)
-                                  const newFormData = [...formData]
+                                  const newFormData = [...formData.values]
                                   const fieldIndex = newFormData.findIndex(
                                     (f) => f.formFieldId === field.constantId
                                   )
@@ -409,11 +416,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                                       formFieldValue: value,
                                     })
                                   }
-                                  setFormData(
-                                    formDetails,
-                                    newFormData,
-                                    initialSchema
-                                  )
+                                  setFormData({
+                                    details: formDetails,
+                                    values: newFormData,
+                                  })
                                 }}
                                 accept={
                                   field.type === "file"
