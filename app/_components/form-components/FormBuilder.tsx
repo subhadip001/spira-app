@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -6,28 +6,28 @@ import {
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import { cn } from "@/lib/utils";
-import useEditFormPageStore from "@/store/editFormPageStore";
-import useFormStore from "@/store/formStore";
-import { TFormValues } from "@/types/form";
+} from "@/components/ui/form"
+import { cn } from "@/lib/utils"
+import useEditFormPageStore from "@/store/editFormPageStore"
+import useFormStore from "@/store/formStore"
+import { TFormValues } from "@/types/form"
 import {
   FieldType,
   FormSchema,
   FormField as FormSchemaField,
-} from "@/types/FormSchema";
-import { ArrowDown, ArrowUp, Edit, Plus, Trash2 } from "lucide-react";
-import React, { useState } from "react";
-import { HexColorPicker } from "react-colorful";
-import { useForm } from "react-hook-form";
-import { FormFieldComponent } from "./FormFields";
+} from "@/types/FormSchema"
+import { ArrowDown, ArrowUp, Edit, Plus, Trash2 } from "lucide-react"
+import React, { useState } from "react"
+import { HexColorPicker } from "react-colorful"
+import { useForm } from "react-hook-form"
+import { FormFieldComponent } from "./FormFields"
 
 interface FormBuilderProps {
-  initialSchema: FormSchema;
-  published?: boolean;
-  editable: boolean;
-  className?: string;
-  formStatus?: "live" | "draft" | "closed";
+  initialSchema: FormSchema
+  published?: boolean
+  editable: boolean
+  className?: string
+  formStatus?: "live" | "draft" | "closed"
 }
 
 const FormBuilder: React.FC<FormBuilderProps> = ({
@@ -36,25 +36,25 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   editable,
   className,
 }) => {
-  const [showColorPicker, setShowColorPicker] = useState(editable);
-  const [hoveredField, setHoveredField] = useState<number | null>(null);
-  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
+  const [showColorPicker, setShowColorPicker] = useState(editable)
+  const [hoveredField, setHoveredField] = useState<number | null>(null)
+  const [backgroundColor, setBackgroundColor] = useState("#ffffff")
   // const [schema, setCurrentFormSchema] = useState<FormSchema>(initialSchema);
 
-  const formData = useFormStore((state) => state.formData.values);
-  const formDetails = useFormStore((state) => state.formData.details);
-  const setFormData = useFormStore((state) => state.setFormData);
-  const formErrors = useFormStore((state) => state.formErrors);
+  const formData = useFormStore((state) => state.formData.values)
+  const formDetails = useFormStore((state) => state.formData.details)
+  const setFormData = useFormStore((state) => state.setFormData)
+  const formErrors = useFormStore((state) => state.formErrors)
   // const currentFormSchema = useFormStore((state) => state.currentFormSchema);
   const setCurrentFormSchema = useFormStore(
     (state) => state.setCurrentFormSchema
-  );
-  const editFormSideBarOpen = useEditFormPageStore(
-    (state) => state.editFormSideBarOpen
-  );
-  const setIsEditFormSideBarOpen = useEditFormPageStore(
-    (state) => state.setIsEditFormSideBarOpen
-  );
+  )
+  const selectedFieldConstantId = useEditFormPageStore(
+    (state) => state.selectedFieldConstantId
+  )
+  const setSelectedFieldConstantId = useEditFormPageStore(
+    (state) => state.setSelectedFieldConstantId
+  )
 
   // console.table(formData);
   // console.table(formDetails);
@@ -72,11 +72,14 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   // }, []);
 
   const form = useForm<Record<string, string>>({
-    defaultValues: formData.reduce((acc, field) => {
-      acc[field.formFieldName] = field.formFieldValue;
-      return acc;
-    }, {} as Record<string, string>),
-  });
+    defaultValues: formData.reduce(
+      (acc, field) => {
+        acc[field.formFieldName] = field.formFieldValue
+        return acc
+      },
+      {} as Record<string, string>
+    ),
+  })
 
   const onSubmit = (data: Record<string, string>) => {
     const newFormData: TFormValues = initialSchema.fields.map((field) => ({
@@ -84,50 +87,76 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       formFieldName: field.name,
       formFieldLabel: field.label,
       formFieldValue: data[field.name] || "",
-    }));
-    setFormData(formDetails, newFormData, initialSchema);
-    console.log("Form submitted:", JSON.stringify(newFormData, null, 2));
-  };
+    }))
+    setFormData(formDetails, newFormData, initialSchema)
+    console.log("Form submitted:", JSON.stringify(newFormData, null, 2))
+  }
 
   const moveField = (index: number, direction: "up" | "down") => {
-    const newFields = [...initialSchema.fields];
+    const newFields = [...initialSchema.fields]
     if (direction === "up" && index > 0) {
-      const temp = newFields[index - 1].serialId;
-      newFields[index - 1].serialId = newFields[index].serialId;
-      newFields[index].serialId = temp;
-      [newFields[index - 1], newFields[index]] = [
+      const temp = newFields[index - 1].serialId
+      newFields[index - 1].serialId = newFields[index].serialId
+      newFields[index].serialId = temp
+      ;[newFields[index - 1], newFields[index]] = [
         newFields[index],
         newFields[index - 1],
-      ];
+      ]
     } else if (direction === "down" && index < newFields.length - 1) {
-      const temp = newFields[index + 1].serialId;
-      newFields[index + 1].serialId = newFields[index].serialId;
-      newFields[index].serialId = temp;
-      [newFields[index], newFields[index + 1]] = [
+      const temp = newFields[index + 1].serialId
+      newFields[index + 1].serialId = newFields[index].serialId
+      newFields[index].serialId = temp
+      ;[newFields[index], newFields[index + 1]] = [
         newFields[index + 1],
         newFields[index],
-      ];
+      ]
     }
-    setCurrentFormSchema({ ...initialSchema, fields: newFields });
-  };
+    setCurrentFormSchema({ ...initialSchema, fields: newFields })
+  }
 
   const deleteField = (constantId: number) => {
+    const fieldToDelete = initialSchema.fields.find(
+      (field) => field.constantId === constantId
+    )
+    if (!fieldToDelete) return
+
     const newFields = initialSchema.fields.filter(
       (field) => field.constantId !== constantId
-    );
-    setCurrentFormSchema({ ...initialSchema, fields: newFields });
+    )
+
+    // Update serialIds for remaining fields
+    newFields.forEach((field, index) => {
+      if (field.serialId > fieldToDelete.serialId) {
+        field.serialId -= 1
+      }
+    })
+
+    setCurrentFormSchema({ ...initialSchema, fields: newFields })
     const newFormData = formData.filter(
       (field) => field.formFieldId !== constantId
-    );
-    setFormData(formDetails, newFormData, initialSchema);
-  };
+    )
+    // Find the nearest field after deletion
+    const nearestField =
+      newFields.length > 0
+        ? newFields.reduce((nearest, field) => {
+            if (!nearest) return field
+            return Math.abs(field.serialId - fieldToDelete.serialId) <
+              Math.abs(nearest.serialId - fieldToDelete.serialId)
+              ? field
+              : nearest
+          })
+        : null
+    // Set the selected field to the nearest one, or null if no fields remain
+    setSelectedFieldConstantId(nearestField ? nearestField.constantId : 0)
+    setFormData(formDetails, newFormData, initialSchema)
+  }
 
   const addNewField = (
     constantId: number,
     serialId: number,
     type: FieldType
   ) => {
-    let newField: FormSchemaField;
+    let newField: FormSchemaField
     switch (type) {
       case FieldType.TEXT || FieldType.TEL:
         newField = {
@@ -139,8 +168,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           name: "",
           placeholder: "",
           required: false,
-        };
-        break;
+        }
+        break
       case FieldType.EMAIL:
         newField = {
           constantId,
@@ -151,8 +180,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           name: "",
           placeholder: "",
           required: false,
-        };
-        break;
+        }
+        break
       case FieldType.TEXTAREA:
         newField = {
           constantId,
@@ -163,8 +192,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           name: "",
           placeholder: "",
           required: false,
-        };
-        break;
+        }
+        break
       case FieldType.SELECT:
         newField = {
           constantId,
@@ -176,8 +205,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           placeholder: "",
           required: false,
           options: [],
-        };
-        break;
+        }
+        break
       case FieldType.CHECKBOX:
         newField = {
           constantId,
@@ -189,8 +218,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           placeholder: "",
           required: false,
           options: [],
-        };
-        break;
+        }
+        break
       case FieldType.RADIO:
         newField = {
           constantId,
@@ -202,8 +231,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           placeholder: "",
           required: false,
           options: [],
-        };
-        break;
+        }
+        break
       case FieldType.RANGE:
         newField = {
           constantId,
@@ -217,8 +246,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           min: 0,
           max: 100,
           step: 1,
-        };
-        break;
+        }
+        break
       case FieldType.FILE:
         newField = {
           constantId,
@@ -231,8 +260,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           required: false,
           accept: "",
           maxSize: "",
-        };
-        break;
+        }
+        break
       default:
         newField = {
           constantId,
@@ -243,36 +272,26 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           name: "",
           placeholder: "",
           required: false,
-        };
-        break;
+        }
+        break
     }
     setCurrentFormSchema({
       ...initialSchema,
       fields: [...initialSchema.fields, newField],
-    });
-  };
+    })
+  }
 
   const handleColorChange = (color: string) => {
-    setBackgroundColor(color);
+    setBackgroundColor(color)
     setCurrentFormSchema({
       ...initialSchema,
       headerBackground: color,
-    });
-  };
+    })
+  }
 
-  const handleAddFieldForEditing = (fieldConstantId: number) => {
-    if (editFormSideBarOpen.fieldConstantId === fieldConstantId) {
-      setIsEditFormSideBarOpen({
-        isEditFormSideBarOpen: false,
-        fieldConstantId: 0,
-      });
-    } else {
-      setIsEditFormSideBarOpen({
-        isEditFormSideBarOpen: true,
-        fieldConstantId,
-      });
-    }
-  };
+  const handleAddFieldForEditing = (fieldConstantId: number): void => {
+    setSelectedFieldConstantId(fieldConstantId)
+  }
 
   return (
     <Form {...form}>
@@ -292,12 +311,12 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                     placeholder="Add Form Title"
                     className="mb-4 text-3xl w-full outline-none bg-transparent"
                     onChange={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                      e.preventDefault()
+                      e.stopPropagation()
                       setCurrentFormSchema({
                         ...initialSchema,
                         title: e.target.value,
-                      });
+                      })
                       setFormData(
                         {
                           ...formDetails,
@@ -305,7 +324,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                         },
                         formData,
                         initialSchema
-                      );
+                      )
                     }}
                   />
                   <FormDescription>
@@ -315,12 +334,12 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                       placeholder="Add Form Description"
                       className="mb-4 w-full outline-none bg-transparent"
                       onChange={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                        e.preventDefault()
+                        e.stopPropagation()
                         setCurrentFormSchema({
                           ...initialSchema,
                           description: e.target.value,
-                        });
+                        })
                         setFormData(
                           {
                             ...formDetails,
@@ -328,7 +347,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                           },
                           formData,
                           initialSchema
-                        );
+                        )
                       }}
                     />
                   </FormDescription>
@@ -356,9 +375,17 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
               {initialSchema?.fields?.map((field, index) => (
                 <div
                   key={index}
-                  className=" relative border rounded-md"
+                  className={`relative border rounded-md ${
+                    editable ? "hover:bg-gray-50" : "cursor-default"
+                  } ${
+                    selectedFieldConstantId === field.constantId && editable
+                      ? "ring-2 ring-blue-300 bg-gray-50"
+                      : ""
+                  }`}
+                  style={{ cursor: editable ? "pointer" : "default" }}
                   onMouseEnter={() => setHoveredField(index)}
                   onMouseLeave={() => setHoveredField(null)}
+                  onClick={() => handleAddFieldForEditing(field.constantId)}
                 >
                   {editable && hoveredField === index && (
                     <div className="absolute z-50 right-5 -top-5 bg-white border p-2 rounded-md flex gap-4">
@@ -388,21 +415,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                           <ArrowDown className="h-3 w-3" />
                         </div>
                       </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                        type="button"
-                        className="p-1 rounded-full border outline-none"
-                      >
-                        <div>
-                          <Plus className="h-3 w-3" />
-                        </div>
-                      </button>
 
                       <button
                         onClick={() => {
-                          handleAddFieldForEditing(field.constantId);
+                          handleAddFieldForEditing(field.constantId)
                         }}
                         type="button"
                         className="p-1 rounded-full border outline-none"
@@ -422,7 +438,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                       </button>
                     </div>
                   )}
-                  <div className="p-3">
+                  <div className="p-6">
                     <FormField
                       control={form.control}
                       name={field.name}
@@ -433,27 +449,26 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                               field={field}
                               value={controllerField.value}
                               onChange={(value: string) => {
-                                controllerField.onChange(value);
-                                const newFormData = [...formData];
+                                controllerField.onChange(value)
+                                const newFormData = [...formData]
                                 const fieldIndex = newFormData.findIndex(
                                   (f) => f.formFieldId === field.constantId
-                                );
+                                )
                                 if (fieldIndex !== -1) {
-                                  newFormData[fieldIndex].formFieldValue =
-                                    value;
+                                  newFormData[fieldIndex].formFieldValue = value
                                 } else {
                                   newFormData.push({
                                     formFieldId: field.constantId,
                                     formFieldName: field.name,
                                     formFieldLabel: field.label,
                                     formFieldValue: value,
-                                  });
+                                  })
                                 }
                                 setFormData(
                                   formDetails,
                                   newFormData,
                                   initialSchema
-                                );
+                                )
                               }}
                               accept={
                                 field.type === "file" ? field.accept : undefined
@@ -492,7 +507,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         </div>
       </form>
     </Form>
-  );
-};
+  )
+}
 
-export default FormBuilder;
+export default FormBuilder

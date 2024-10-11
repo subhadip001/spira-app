@@ -1,20 +1,20 @@
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import React from "react";
-import FileInput from "./file-input";
-import { Required } from "./Required";
-import { FormField } from "@/types/FormSchema";
-import { LabelComponent } from "./LabelComponent";
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
+import React from "react"
+import FileInput from "./file-input"
+import { Required } from "./Required"
+import { FormField } from "@/types/FormSchema"
+import { LabelComponent } from "./LabelComponent"
 
 type InputComponentProps = {
-  field: FormField;
-  value?: string;
-  onChange: (value: string) => void;
-  className?: string;
-  accept?: string;
-  maxSize?: string;
-};
+  field: FormField
+  value?: string
+  onChange: (value: string) => void
+  className?: string
+  accept?: string
+  maxSize?: string
+}
 
 const InputComponent: React.FC<InputComponentProps> = ({
   field,
@@ -27,6 +27,9 @@ const InputComponent: React.FC<InputComponentProps> = ({
   return (
     <div className={cn(className, "flex flex-col gap-4")}>
       <LabelComponent field={field} />
+      {field.description && (
+        <p className="text-sm text-gray-500">{field.description}</p>
+      )}
       {field.type === "file" ? (
         <FileInput
           name={field.name}
@@ -51,7 +54,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default InputComponent;
+export default InputComponent

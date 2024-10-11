@@ -1,40 +1,63 @@
-import EditForm from "@/app/_components/edit-form";
-import FormPage from "@/app/_components/formPage";
-import Header from "@/app/_components/header";
-import HistorySidebar from "@/app/_components/history-sidebar";
-import { createClient } from "@/utils/supabase/server";
-import React from "react";
+import EditForm from "@/app/_components/edit-form"
+import FormPage from "@/app/_components/formPage"
+import Header from "@/app/_components/header"
+import { createClient } from "@/utils/supabase/server"
+import { Metadata } from "next"
+import React from "react"
+
+export const generateMetadata = async ({
+  params,
+}: {
+  params: { formId: string }
+}): Promise<Metadata> => {
+  const supabase = createClient()
+  const { data: baseForm, error: baseFormError } = await supabase
+    .from("forms")
+    .select("query")
+    .eq("id", params.formId)
+    .single()
+
+  if (baseFormError || !baseForm) {
+    return {
+      title: "Edit your form",
+    }
+  }
+
+  return {
+    title: `Edit form - ${baseForm.query}`,
+  }
+}
 
 type TSearchParams = {
-  q: string;
-};
+  q: string
+}
 
 export default async function EditFormHome({
   searchParams,
   params,
 }: {
-  searchParams: TSearchParams;
-  params: { formId: string };
+  searchParams: TSearchParams
+  params: { formId: string }
 }) {
-  const baseformId = params?.formId;
-  if (!baseformId) return null;
+  const baseformId = params?.formId
+  if (!baseformId) return null
 
-  const supabase = createClient();
+  const supabase = createClient()
   const { data: formVersions, error } = await supabase
     .from("form_versions")
     .select()
-    .eq("form_id", baseformId);
+    .eq("form_id", baseformId)
   if (error) {
-    return null;
+    return null
   }
-  let baseQuery = "";
+  let baseQuery = ""
 
   const { data: baseForm, error: baseFormError } = await supabase
     .from("forms")
     .select("*")
-    .eq("id", baseformId);
+    .eq("id", baseformId)
   if (baseFormError) {
-    return null;
+    return null
   }
 
   return (
@@ -48,5 +71,5 @@ export default async function EditFormHome({
         />
       </main>
     </div>
-  );
+  )
 }

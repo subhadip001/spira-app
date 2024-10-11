@@ -1,24 +1,23 @@
-"use client";
-import { fetchFormVersions, QueryKeys } from "@/lib/queries";
-import useFormVersionStore from "@/store/formVersions";
-import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
-import EditForm from "./edit-form";
-import EditFormField from "./edit-form-field";
-import HistorySidebar from "./history-sidebar";
+"use client"
+import { fetchFormVersions, QueryKeys } from "@/lib/queries"
+import useFormVersionStore from "@/store/formVersions"
+import { useQuery } from "@tanstack/react-query"
+import React, { useEffect, useState } from "react"
+import EditForm from "./edit-form"
+import EditFormField from "./edit-form-field"
 
 type FormPageProps = {
-  baseQuery: string;
-  baseFormId: string;
+  baseQuery: string
+  baseFormId: string
   formVersions: {
-    created_at: string;
-    form_id: string;
-    form_schema_string: string;
-    id: string;
-    query: string;
-    version_number: number;
-  }[];
-};
+    created_at: string
+    form_id: string
+    form_schema_string: string
+    id: string
+    query: string
+    version_number: number
+  }[]
+}
 
 const FormPage: React.FC<FormPageProps> = ({
   baseQuery,
@@ -27,7 +26,7 @@ const FormPage: React.FC<FormPageProps> = ({
 }) => {
   const setFormVersionsData = useFormVersionStore(
     (state) => state.setFormVersionsData
-  );
+  )
 
   const { data } = useQuery({
     queryKey: [QueryKeys.GetFormVersions, baseFormId],
@@ -35,20 +34,19 @@ const FormPage: React.FC<FormPageProps> = ({
     initialData: formVersions,
     enabled: !!baseFormId,
     refetchOnWindowFocus: false,
-  });
+  })
 
   useEffect(() => {
     if (data && data?.length > 0) {
       const sortedData = data.sort((a, b) =>
         b.created_at.localeCompare(a.created_at)
-      );
-      setFormVersionsData(sortedData);
+      )
+      setFormVersionsData(sortedData)
     }
-  }, [data]);
+  }, [data])
 
   return (
     <>
-      <HistorySidebar />
       {data && data?.length > 0 ? (
         <EditForm
           baseQuery={baseQuery}
@@ -76,7 +74,7 @@ const FormPage: React.FC<FormPageProps> = ({
 
       <EditFormField />
     </>
-  );
-};
+  )
+}
 
-export default FormPage;
+export default FormPage
