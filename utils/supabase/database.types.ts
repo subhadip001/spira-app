@@ -97,7 +97,7 @@ export type Database = {
         }
         Relationships: []
       }
-      "published-forms": {
+      published_forms: {
         Row: {
           created_at: string
           form_base_id: string

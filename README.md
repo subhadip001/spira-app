@@ -12,5 +12,19 @@
 ### SUPABASE DB TYPE GENERATION COMMAND
 
 ```bash
+pnpm i supabase@">=1.8.1" --save-dev
+```
+
+```bash
+pnpm supabase login
+```
+
+```bash
+pnpm supabase init
+```
+
+Select 'N' for both questions.
+
+```bash
 pnpx supabase gen types --lang=typescript --project-id "$SUPABASE_PROJECT_ID" --schema public > ./utils/supabase/database.types.ts
 ```
