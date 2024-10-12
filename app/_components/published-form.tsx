@@ -7,27 +7,40 @@ import useFormStore from "@/store/formStore";
 // import FormBuilder from "./form-components/FormBuilder";
 import { devopsForm } from "@/schema/testSchema";
 import dynamic from "next/dynamic";
+
 const FormBuilder = dynamic(() => import("./form-components/FormBuilder"), {
   ssr: false,
 });
 
-type PublishedFormProps = {};
+interface PublishedFormProps {
+  publishedForm: {
+    id: number;
+    form_versions: {
+      id: string;
+      created_at: string;
+      form_id: string;
+      form_schema_string: string;
+      query: string;
+      status: "DRAFT" | "PUBLISHED" | "DELETED" | "UNPUBLISHED";
+      version_number: number;
+    } | null;
+  };
+}
 
-const PublishedForm: React.FC<PublishedFormProps> = () => {
+
+const PublishedForm: React.FC<PublishedFormProps> = ({ publishedForm }) => {
   const [selectedViewport, setSelectedViewport] = useState<
     "phone" | "tablet" | "desktop"
   >("desktop");
+    const formSchema = JSON.parse(publishedForm?.form_versions?.form_schema_string || "{}");
+    if (!formSchema) {
+        return null;
+    }
 
-  const currentFormSchema = useFormStore((state) => state.currentFormSchema);
-
-  const handlePublish = () => {
-    console.log("Publishing form...");
-    console.log(currentFormSchema);
-  };
   return (
     <section className="relative flex-grow flex overflow-y-auto flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 rounded-md min-w-0">
       <FormBuilder
-        initialSchema={devopsForm}
+        initialSchema={formSchema}
         className=""
         published={true}
         editable={false}

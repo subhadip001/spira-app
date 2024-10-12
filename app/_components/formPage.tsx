@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 import React, { useEffect, useState } from "react"
 import EditForm from "./edit-form"
 import EditFormField from "./edit-form-field"
+import { TFormVersionData } from "@/lib/types"
 
 type FormPageProps = {
   baseQuery: string
@@ -41,7 +42,7 @@ const FormPage: React.FC<FormPageProps> = ({
       const sortedData = data.sort((a, b) =>
         b.created_at.localeCompare(a.created_at)
       )
-      setFormVersionsData(sortedData)
+      setFormVersionsData(sortedData as TFormVersionData[])
     }
   }, [data])
 

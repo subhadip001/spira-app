@@ -86,23 +86,35 @@ const EditForm: React.FC<EditFormProps> = ({
     (state) => state.formVersionsData
   )
 
+
+
   const handlePublish = async () => {
     if (!user) {
       router.push(`/login?${formId ? `formId=${formId}` : ""}`)
       return
     }
-    router.push(`/form/published`)
-    console.log("Publishing form...")
-    console.log(currentFormSchema)
+    
+
     const supabase = createClient()
     if (!selectedFormVersion) return
+    if(selectedFormVersion?.status==="PUBLISHED"){
+      toast.error("Form already published")
+      return
+    }
     const { data: updatedFormVersion, error } = await supabase
       .from("form_versions")
       .update({
         status: EFormVersionStatus.PUBLISHED,
       })
       .eq("id", selectedFormVersion?.id)
-    if (error) {
+      const {data:published,error:publishError}= await supabase.from("published_forms").insert({
+        user_id:user.id,
+        form_version_id:selectedFormVersion.id,
+        form_base_id:baseFormId,
+      }).select() .single()
+   
+    
+    if (error||publishError||!published?.id) {
       console.error("Error publishing form", error)
       toast.error("Error publishing form")
       return
@@ -110,6 +122,7 @@ const EditForm: React.FC<EditFormProps> = ({
     queryClient.invalidateQueries({
       queryKey: [QueryKeys.GetFormVersions, baseFormId],
     })
+    router.push(`/published/${published?.id}`)
     toast.success("Form published successfully")
   }
 
@@ -237,8 +250,9 @@ const EditForm: React.FC<EditFormProps> = ({
             type="button"
             className="flex items-center gap-2"
             onClick={handlePublish}
+            disabled={selectedFormVersion?.status === EFormVersionStatus.PUBLISHED}
           >
-            Publish
+           {selectedFormVersion?.status==="PUBLISHED"?"Published":"Publish"}
             <div>
               <SquareArrowUpRight className="h-4 w-4" />
             </div>

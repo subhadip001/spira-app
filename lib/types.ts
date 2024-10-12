@@ -11,6 +11,7 @@ export type TFormVersionData = {
   id: string
   query: string
   version_number: number
+  status: EFormVersionStatus
 }
 
 export type AddNewFormVersionVariables = {
@@ -20,10 +21,12 @@ export type AddNewFormVersionVariables = {
   version: number
 }
 
+
 export enum EFormVersionStatus {
   DRAFT = "DRAFT",
   PUBLISHED = "PUBLISHED",
   UNPUBLISHED = "UNPUBLISHED",
+  DELETED="DELETED"
 }
 
 export enum EPublishedFormStatus {
