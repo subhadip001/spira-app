@@ -101,7 +101,6 @@ export type Database = {
         Row: {
           created_at: string
           form_base_id: string
-          form_schema_string: string
           form_version_id: string
           id: number
           status: Database["public"]["Enums"]["PUB_FORM_STATUS"]
@@ -110,7 +109,6 @@ export type Database = {
         Insert: {
           created_at?: string
           form_base_id?: string
-          form_schema_string: string
           form_version_id?: string
           id?: number
           status?: Database["public"]["Enums"]["PUB_FORM_STATUS"]
@@ -119,7 +117,6 @@ export type Database = {
         Update: {
           created_at?: string
           form_base_id?: string
-          form_schema_string?: string
           form_version_id?: string
           id?: number
           status?: Database["public"]["Enums"]["PUB_FORM_STATUS"]
