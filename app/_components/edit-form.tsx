@@ -18,7 +18,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { addNewFormVersion, QueryKeys } from "@/lib/queries"
-import { AddNewFormVersionVariables } from "@/lib/types"
+import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
 import useAppStore from "@/store/appStore"
 import useEditFormPageStore from "@/store/editFormPageStore"
 import useFormStore from "@/store/formStore"
@@ -39,6 +39,7 @@ import React, { useState } from "react"
 import toast from "react-hot-toast"
 import GenerateForm from "./generate-form"
 import VersionDropdown from "./version-dropdown"
+import { createClient } from "@/utils/supabase/client"
 
 type EditFormProps = {
   baseQuery: string
@@ -85,13 +86,31 @@ const EditForm: React.FC<EditFormProps> = ({
     (state) => state.formVersionsData
   )
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     if (!user) {
       router.push(`/login?${formId ? `formId=${formId}` : ""}`)
       return
     }
+    router.push(`/form/published`)
     console.log("Publishing form...")
     console.log(currentFormSchema)
+    const supabase = createClient()
+    if (!selectedFormVersion) return
+    const { data: updatedFormVersion, error } = await supabase
+      .from("form_versions")
+      .update({
+        status: EFormVersionStatus.PUBLISHED,
+      })
+      .eq("id", selectedFormVersion?.id)
+    if (error) {
+      console.error("Error publishing form", error)
+      toast.error("Error publishing form")
+      return
+    }
+    queryClient.invalidateQueries({
+      queryKey: [QueryKeys.GetFormVersions, baseFormId],
+    })
+    toast.success("Form published successfully")
   }
 
   const addNewFormversionMutation = useMutation({

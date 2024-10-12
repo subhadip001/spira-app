@@ -105,3 +105,31 @@ html {
   display: none;
   width: 0;
 }
+
+.gradientText {
+  background: linear-gradient(
+    300deg,
+    #ff6b6b,
+    #4ecdc4,
+    #45b7d1,
+    #8a2be2,
+    #ff69b4
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
