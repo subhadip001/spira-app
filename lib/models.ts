@@ -16,5 +16,6 @@ export const models = {
   },
   openai_models: {
     GPT_4: "gpt-4-turbo-preview",
+    GPT_4O: "chatgpt-4o-latest",
   },
-};
+}

@@ -79,7 +79,9 @@ const PromptBox = () => {
     if (e.key === "Tab" && suggestion) {
       e.preventDefault()
       setQuery((prevQuery) => {
-        const newQuery = prevQuery + suggestion
+        const newQuery = prevQuery.endsWith(" ")
+          ? prevQuery + suggestion
+          : prevQuery + " " + suggestion
         return newQuery.endsWith(" ") ? newQuery : newQuery + " "
       })
       setSuggestion("")

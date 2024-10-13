@@ -1,4 +1,5 @@
 "use client"
+import Confetti from "@/components/magicui/confetti"
 import { RainbowButton } from "@/components/magicui/rainbow-button"
 import {
   AlertDialog,
@@ -18,13 +19,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { addNewFormVersion, QueryKeys } from "@/lib/queries"
-import { AddNewFormVersionVariables } from "@/lib/types"
+import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
 import useAppStore from "@/store/appStore"
 import useEditFormPageStore from "@/store/editFormPageStore"
 import useFormStore from "@/store/formStore"
 import useFormVersionStore from "@/store/formVersions"
+import { createClient } from "@/utils/supabase/client"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
+  ArrowUpRight,
+  Check,
+  CheckCircle,
   Eye,
   Monitor,
   Save,
@@ -37,8 +42,10 @@ import {
 import { usePathname, useRouter } from "next/navigation"
 import React, { useState } from "react"
 import toast from "react-hot-toast"
+import ShortUniqueId from "short-unique-id"
 import GenerateForm from "./generate-form"
 import VersionDropdown from "./version-dropdown"
+import { Button } from "@/components/ui/button"
 
 type EditFormProps = {
   baseQuery: string
@@ -54,6 +61,9 @@ const EditForm: React.FC<EditFormProps> = ({
   const [selectedViewport, setSelectedViewport] = useState<
     "phone" | "tablet" | "desktop"
   >("desktop")
+  const [publishedShortId, setPublishedShortId] = useState<string | null>(null)
+  const [isPublishing, setIsPublishing] = useState(false)
+  const [showConfetti, setShowConfetti] = useState(false)
 
   const currentFormSchema = useFormStore((state) => state.currentFormSchema)
   const user = useAppStore((state) => state.user)
@@ -85,13 +95,62 @@ const EditForm: React.FC<EditFormProps> = ({
     (state) => state.formVersionsData
   )
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     if (!user) {
       router.push(`/login?${formId ? `formId=${formId}` : ""}`)
       return
     }
-    console.log("Publishing form...")
-    console.log(currentFormSchema)
+
+    setIsPublishing(true)
+
+    const { randomUUID } = new ShortUniqueId({ length: 10 })
+    const shortId = randomUUID()
+
+    const supabase = createClient()
+    if (!selectedFormVersion) return
+    if (selectedFormVersion?.status === "PUBLISHED") {
+      toast.error("Form already published")
+      setIsPublishing(false)
+      return
+    }
+
+    try {
+      const { data: updatedFormVersion, error } = await supabase
+        .from("form_versions")
+        .update({
+          status: EFormVersionStatus.PUBLISHED,
+        })
+        .eq("id", selectedFormVersion?.id)
+        .select()
+        .single()
+      const { data: published, error: publishError } = await supabase
+        .from("published_forms")
+        .insert({
+          user_id: user.id,
+          form_version_id: selectedFormVersion.id,
+          form_base_id: baseFormId,
+          short_id: shortId,
+        })
+        .select()
+        .single()
+
+      if (error || publishError || !published?.id) {
+        throw new Error("Error publishing form")
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.GetFormVersions, baseFormId],
+      })
+      setPublishedShortId(shortId)
+      toast.success("Form published successfully")
+
+      setShowConfetti(true)
+    } catch (error) {
+      console.error("Error publishing form", error)
+      toast.error("Error publishing form")
+    } finally {
+      setIsPublishing(false)
+    }
   }
 
   const addNewFormversionMutation = useMutation({
@@ -105,6 +164,7 @@ const EditForm: React.FC<EditFormProps> = ({
     },
     onError: (error: Error) => {
       console.error("Error adding new form version", error)
+      toast.error("Error adding new form version")
     },
   })
   return (
@@ -218,8 +278,16 @@ const EditForm: React.FC<EditFormProps> = ({
             type="button"
             className="flex items-center gap-2"
             onClick={handlePublish}
+            disabled={
+              selectedFormVersion?.status === EFormVersionStatus.PUBLISHED ||
+              isPublishing
+            }
           >
-            Publish
+            {isPublishing
+              ? "Publishing..."
+              : selectedFormVersion?.status === "PUBLISHED"
+                ? "Published"
+                : "Publish"}
             <div>
               <SquareArrowUpRight className="h-4 w-4" />
             </div>
@@ -251,6 +319,61 @@ const EditForm: React.FC<EditFormProps> = ({
           />
         </div>
       </div>
+      <AlertDialog
+        open={!!publishedShortId}
+        onOpenChange={() => setPublishedShortId(null)}
+      >
+        <AlertDialogContent className="max-w-[60%]">
+          <div>
+            {showConfetti && (
+              <Confetti
+                className="absolute w-full h-full pointer-events-none top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%]"
+                options={{
+                  spread: 70,
+                  particleCount: 400,
+                }}
+              />
+            )}
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex flex-col items-center gap-2">
+                <div className="bg-green-200 rounded-full p-5">
+                  <Check className="text-green-500" size={40} />
+                </div>
+                <div>
+                  <span className="text-lg font-medium">
+                    Form Published Successfully
+                  </span>
+                </div>
+              </div>
+              <div className="bg-gray-100 relative px-4 py-2 rounded-md text-center font-mono text-lg">
+                {publishedShortId}
+              </div>
+              <div className="flex gap-2 items-center mt-6">
+                <Button
+                  onClick={() => {
+                    router.push("/dashboard")
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <span>Go to Dashboard</span>
+                  <div>
+                    <ArrowUpRight className="h-4 w-4" />
+                  </div>
+                </Button>
+                <Button
+                  onClick={() => {
+                    setPublishedShortId(null)
+                    setShowConfetti(false)
+                  }}
+                  variant="outline"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   )
 }

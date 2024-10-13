@@ -1,21 +1,19 @@
-"use client";
-import React from "react";
-import WordRotate from "@/components/magicui/word-rotate";
+"use client"
 
 const IntroSection = () => {
   return (
     <div className="">
       <div className="flex flex-col">
-        <span className="text-4xl text-center">
-          Create forms with Spira for
-          <WordRotate
-            className="text-4xl text-center"
-            words={["Market Research", "User Feedback", "Hiring", "Quizzes"]}
-          />
+        <span className="text-5xl font-bold text-center">
+          Create forms in seconds
         </span>
+        <p className="text-center text-gray-500">
+          With Spira AI, you can create forms, analyze their responses in
+          natural language with AI.
+        </p>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default IntroSection;
+export default IntroSection
