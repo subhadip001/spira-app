@@ -102,43 +102,46 @@ export type Database = {
           created_at: string
           form_base_id: string
           form_version_id: string
-          id: number
-          status: Database["public"]["Enums"]["PUB_FORM_STATUS"]
+          id: string
+          short_id: string
+          status: Database["public"]["Enums"]["pub_form_status"]
           user_id: string
         }
         Insert: {
           created_at?: string
-          form_base_id?: string
-          form_version_id?: string
-          id?: number
-          status?: Database["public"]["Enums"]["PUB_FORM_STATUS"]
-          user_id?: string
+          form_base_id: string
+          form_version_id: string
+          id?: string
+          short_id?: string
+          status?: Database["public"]["Enums"]["pub_form_status"]
+          user_id: string
         }
         Update: {
           created_at?: string
           form_base_id?: string
           form_version_id?: string
-          id?: number
-          status?: Database["public"]["Enums"]["PUB_FORM_STATUS"]
+          id?: string
+          short_id?: string
+          status?: Database["public"]["Enums"]["pub_form_status"]
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "published-forms_form_base_id_fkey"
+            foreignKeyName: "published_forms_form_base_id_fkey"
             columns: ["form_base_id"]
             isOneToOne: false
             referencedRelation: "forms"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "published-forms_form_version_id_fkey"
+            foreignKeyName: "published_forms_form_version_id_fkey"
             columns: ["form_version_id"]
             isOneToOne: false
             referencedRelation: "form_versions"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "published-forms_user_id_fkey"
+            foreignKeyName: "published_forms_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -155,6 +158,7 @@ export type Database = {
     }
     Enums: {
       FORM_VERSION_STATUS: "DRAFT" | "PUBLISHED" | "DELETED" | "UNPUBLISHED"
+      pub_form_status: "ACTIVE" | "CLOSED" | "UNPUBLISHED"
       PUB_FORM_STATUS: "ACTIVE" | "CLOSED" | "UNPUBLISHED"
     }
     CompositeTypes: {

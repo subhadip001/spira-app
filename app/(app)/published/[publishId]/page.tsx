@@ -6,14 +6,15 @@ type TSearchParams = {
 }
 
 export default async function PublishedFormHome({
- params,
+  params,
 }: {
   params: { publishId: string }
 }) {
-  const supabase = createClient();
+  const supabase = createClient()
   const { data: publishedForm, error: formError } = await supabase
-  .from("published_forms")
-  .select(`
+    .from("published_forms")
+    .select(
+      `
     id,
     form_versions (
       id,
@@ -24,25 +25,25 @@ export default async function PublishedFormHome({
       status,
       version_number
     )
-  `)
-  .eq("id", params.publishId)
-  .single()
+  `
+    )
+    .eq("id", params.publishId)
+    .single()
 
-if (formError) {
-  return (
-    <div className="bg-white w-[100vw] min-h-[100svh]">
-      <Header />
-      <main className="flex px-2">
-        <div className="w-full h-full flex items-center justify-center">
-          <h1 className="text-2xl font-bold">Form not found</h1>
-        </div>
-      </main>
-    </div>
-  )
-}
+  if (formError) {
+    return (
+      <div className="bg-white w-[100vw] min-h-[100svh]">
+        <Header />
+        <main className="flex px-2">
+          <div className="w-full h-full flex items-center justify-center">
+            <h1 className="text-2xl font-bold">Form not found</h1>
+          </div>
+        </main>
+      </div>
+    )
+  }
 
-
-  if(publishedForm?.form_versions?.status!=="PUBLISHED"){
+  if (publishedForm?.form_versions?.status !== "PUBLISHED") {
     return (
       <div className="bg-white w-[100vw] min-h-[100svh]">
         <Header />
@@ -54,7 +55,7 @@ if (formError) {
       </div>
     )
   }
-  
+
   return (
     <div className="bg-white w-[100vw] min-h-[100svh]">
       <Header />
