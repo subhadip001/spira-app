@@ -1,3 +1,4 @@
+import { Icons } from "@/app/_components/icons"
 import PublishedForm from "@/app/_components/published-form"
 import { EFormVersionStatus } from "@/lib/types"
 import { createClient } from "@/utils/supabase/server"
@@ -85,10 +86,32 @@ export default async function PublishedFormHome({
   }
 
   return (
-    <div className="bg-white w-[100vw] overflow-y-auto h-[100svh]">
-      <main className="flex px-2">
-        <PublishedForm publishedForm={publishedForm} />
+    <>
+      <main className="flex flex-col bg-white w-[100vw] overflow-y-auto h-[100svh]">
+        <header className="relative">
+          <div className="h-[35vh]">
+            <div className="h-[20vh] bg-spirablue"></div>
+            <div className="absolute flex items-center justify-center left-1/4 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-gray-100 overflow-hidden">
+              <Icons.logo className="w-24 h-24" />
+            </div>
+          </div>
+        </header>
+        <div className="relative w-[85%] mx-auto md:w-[60%]">
+          <PublishedForm publishedForm={publishedForm} />
+        </div>
+        <footer className="inline-flex items-center justify-center w-full py-2 mt-auto">
+          <div className="text-sm inline-flex items-center gap-1 text-gray-500">
+            Powered by{" "}
+            <a
+              href={process.env.NEXT_PUBLIC_SITE_URL}
+              className="flex items-center cursor-pointer gap-[0.1rem]"
+            >
+              <Icons.logo className="w-4 h-4" />
+              <span className="text-spirablue">Spira</span>
+            </a>
+          </div>
+        </footer>
       </main>
-    </div>
+    </>
   )
 }
