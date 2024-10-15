@@ -16,7 +16,7 @@ import {
   FormSchema,
   FormField as FormSchemaField,
 } from "@/types/FormSchema"
-import { ArrowDown, ArrowUp, Edit, Trash2 } from "lucide-react"
+import { ArrowDown, ArrowUp, CircleCheckBig, Edit, Trash2 } from "lucide-react"
 import React, { Fragment, useState } from "react"
 import { HexColorPicker } from "react-colorful"
 import { useForm } from "react-hook-form"
@@ -458,10 +458,17 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
               ))}
             </section>
           </div>
-          <div>
+          <div className="flex justify-end">
             {published && (
-              <Button variant="outline" type="submit">
-                Submit
+              <Button
+                className="gap-2 flex items-center"
+                variant="outline"
+                type="submit"
+              >
+                <span>Submit</span>
+                <div>
+                  <CircleCheckBig className="h-4 w-4" />
+                </div>
               </Button>
             )}
           </div>

@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 import {
   Tooltip,
   TooltipContent,
@@ -34,7 +35,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   Check,
-  CheckCircle,
   Copy,
   Eye,
   Monitor,
@@ -51,7 +51,6 @@ import toast from "react-hot-toast"
 import ShortUniqueId from "short-unique-id"
 import GenerateForm from "./generate-form"
 import VersionDropdown from "./version-dropdown"
-import { Button } from "@/components/ui/button"
 
 type EditFormProps = {
   baseQuery: string
@@ -105,8 +104,12 @@ const EditForm: React.FC<EditFormProps> = ({
       QueryKeys.GetPublishedFormByFormVersionId,
       selectedFormVersion?.id,
     ],
-    queryFn: () =>
-      getPublishedFormByFormVersionId(selectedFormVersion?.id || ""),
+    queryFn: () => {
+      if (selectedFormVersion?.status !== EFormVersionStatus.PUBLISHED) {
+        return null
+      }
+      return getPublishedFormByFormVersionId(selectedFormVersion?.id || "")
+    },
     enabled: !!selectedFormVersion?.id,
     refetchOnWindowFocus: false,
   })
@@ -123,7 +126,7 @@ const EditForm: React.FC<EditFormProps> = ({
 
     const supabase = createClient()
     if (!selectedFormVersion) return
-    if (selectedFormVersion?.status === "PUBLISHED") {
+    if (selectedFormVersion?.status === EFormVersionStatus.PUBLISHED) {
       if (publishedForm?.error) {
         console.error("Error getting published form", publishedForm?.error)
         toast.error("Error getting published form")
@@ -304,7 +307,11 @@ const EditForm: React.FC<EditFormProps> = ({
 
           <RainbowButton
             type="button"
-            className="flex items-center gap-2"
+            className={`flex items-center gap-2 ${
+              selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
+                ? "bg-green-500"
+                : "bg-white"
+            }`}
             onClick={handlePublish}
             disabled={isPublishing}
           >
@@ -348,7 +355,7 @@ const EditForm: React.FC<EditFormProps> = ({
         open={!!publishedShortId}
         onOpenChange={() => setPublishedShortId(null)}
       >
-        <AlertDialogContent className="max-w-[60%]">
+        <AlertDialogContent className="max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[50%]">
           <div>
             {showConfetti && (
               <Confetti
@@ -371,11 +378,18 @@ const EditForm: React.FC<EditFormProps> = ({
                 </div>
               </div>
               <div className="flex gap-2 items-center">
-                <div className="bg-gray-100 relative px-3 py-1 rounded-md text-center font-mono text-lg flex items-center gap-2">
-                  <span className="flex-grow">
+                <div className="bg-gray-100 border w-[90%] relative px-2 py-1 rounded-md text-center font-mono flex items-center gap-2">
+                  <span className="line-clamp-1">
                     {`${process.env.NEXT_PUBLIC_SITE_URL}/f/${publishedShortId}`}
                   </span>
-                  <div>
+                  <div
+                    onClick={() => {
+                      const url = `${process.env.NEXT_PUBLIC_SITE_URL}/f/${publishedShortId}`
+                      navigator.clipboard.writeText(url)
+                      toast.success("URL copied to clipboard")
+                    }}
+                    className="cursor-pointer hover:bg-gray-200 p-1 rounded border"
+                  >
                     <Copy className="h-4 w-4" />
                   </div>
                 </div>
@@ -383,7 +397,7 @@ const EditForm: React.FC<EditFormProps> = ({
                   onClick={() => {
                     window.open(`/f/${publishedShortId}`, "_blank")
                   }}
-                  className="flex items-center gap-1 border rounded-md px-2 py-1 cursor-pointer"
+                  className="flex items-center gap-1 border hover:border-spirablue hover:text-spirablue hover:bg-blue-200 transition-all duration-300 rounded-md px-2 py-1 cursor-pointer"
                 >
                   <span>Open</span>
                   <div>

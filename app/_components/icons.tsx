@@ -1,9 +1,10 @@
-import { LucideProps } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
+import { LucideProps } from "lucide-react"
+import { FcGoogle } from "react-icons/fc"
 
 export const Icons = {
   logo: ({ ...props }: LucideProps) => (
     <svg
+      {...props}
       width="40"
       height="40"
       viewBox="0 0 45 45"
@@ -40,4 +41,4 @@ export const Icons = {
       color="currentColor"
     />
   ),
-};
+}
