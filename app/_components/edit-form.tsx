@@ -18,18 +18,24 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { addNewFormVersion, QueryKeys } from "@/lib/queries"
+import {
+  addNewFormVersion,
+  getPublishedFormByFormVersionId,
+  QueryKeys,
+} from "@/lib/queries"
 import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
 import useAppStore from "@/store/appStore"
 import useEditFormPageStore from "@/store/editFormPageStore"
 import useFormStore from "@/store/formStore"
 import useFormVersionStore from "@/store/formVersions"
 import { createClient } from "@/utils/supabase/client"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
+  ArrowRight,
   ArrowUpRight,
   Check,
   CheckCircle,
+  Copy,
   Eye,
   Monitor,
   Save,
@@ -94,7 +100,16 @@ const EditForm: React.FC<EditFormProps> = ({
   const formVersionsData = useFormVersionStore(
     (state) => state.formVersionsData
   )
-
+  const { data: publishedForm } = useQuery({
+    queryKey: [
+      QueryKeys.GetPublishedFormByFormVersionId,
+      selectedFormVersion?.id,
+    ],
+    queryFn: () =>
+      getPublishedFormByFormVersionId(selectedFormVersion?.id || ""),
+    enabled: !!selectedFormVersion?.id,
+    refetchOnWindowFocus: false,
+  })
   const handlePublish = async () => {
     if (!user) {
       router.push(`/login?${formId ? `formId=${formId}` : ""}`)
@@ -109,8 +124,16 @@ const EditForm: React.FC<EditFormProps> = ({
     const supabase = createClient()
     if (!selectedFormVersion) return
     if (selectedFormVersion?.status === "PUBLISHED") {
-      toast.error("Form already published")
+      if (publishedForm?.error) {
+        console.error("Error getting published form", publishedForm?.error)
+        toast.error("Error getting published form")
+      }
+
       setIsPublishing(false)
+      window.open(
+        `${process.env.NEXT_PUBLIC_SITE_URL}/f/${publishedForm?.data?.short_id}`,
+        "_blank"
+      )
       return
     }
 
@@ -123,6 +146,11 @@ const EditForm: React.FC<EditFormProps> = ({
         .eq("id", selectedFormVersion?.id)
         .select()
         .single()
+
+      if (error) {
+        throw new Error("Error updating form version")
+      }
+
       const { data: published, error: publishError } = await supabase
         .from("published_forms")
         .insert({
@@ -278,14 +306,11 @@ const EditForm: React.FC<EditFormProps> = ({
             type="button"
             className="flex items-center gap-2"
             onClick={handlePublish}
-            disabled={
-              selectedFormVersion?.status === EFormVersionStatus.PUBLISHED ||
-              isPublishing
-            }
+            disabled={isPublishing}
           >
             {isPublishing
               ? "Publishing..."
-              : selectedFormVersion?.status === "PUBLISHED"
+              : selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
                 ? "Published"
                 : "Publish"}
             <div>
@@ -345,9 +370,28 @@ const EditForm: React.FC<EditFormProps> = ({
                   </span>
                 </div>
               </div>
-              <div className="bg-gray-100 relative px-4 py-2 rounded-md text-center font-mono text-lg">
-                {publishedShortId}
+              <div className="flex gap-2 items-center">
+                <div className="bg-gray-100 relative px-3 py-1 rounded-md text-center font-mono text-lg flex items-center gap-2">
+                  <span className="flex-grow">
+                    {`${process.env.NEXT_PUBLIC_SITE_URL}/f/${publishedShortId}`}
+                  </span>
+                  <div>
+                    <Copy className="h-4 w-4" />
+                  </div>
+                </div>
+                <div
+                  onClick={() => {
+                    window.open(`/f/${publishedShortId}`, "_blank")
+                  }}
+                  className="flex items-center gap-1 border rounded-md px-2 py-1 cursor-pointer"
+                >
+                  <span>Open</span>
+                  <div>
+                    <ArrowUpRight className="h-4 w-4" />
+                  </div>
+                </div>
               </div>
+
               <div className="flex gap-2 items-center mt-6">
                 <Button
                   onClick={() => {
@@ -357,7 +401,7 @@ const EditForm: React.FC<EditFormProps> = ({
                 >
                   <span>Go to Dashboard</span>
                   <div>
-                    <ArrowUpRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4" />
                   </div>
                 </Button>
                 <Button

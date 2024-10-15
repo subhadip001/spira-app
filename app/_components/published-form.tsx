@@ -39,7 +39,7 @@ const PublishedForm: React.FC<PublishedFormProps> = ({ publishedForm }) => {
   }
 
   return (
-    <section className="relative flex-grow flex overflow-y-auto flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 rounded-md min-w-0">
+    <section className="relative flex-grow flex flex-col items-center gap-2 h-full py-2 px-3 rounded-md min-w-0">
       <FormBuilder
         initialSchema={formSchema}
         className=""

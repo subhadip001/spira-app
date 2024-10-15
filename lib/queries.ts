@@ -1,9 +1,10 @@
-import { createClient } from "@/utils/supabase/client";
-import { TQueryData, AddNewFormVersionVariables } from "./types";
+import { createClient } from "@/utils/supabase/client"
+import { TQueryData, AddNewFormVersionVariables } from "./types"
 
 export enum QueryKeys {
   GetSpiraResponse = "getSpiraResponse",
   GetFormVersions = "getFormVersions",
+  GetPublishedFormByFormVersionId = "getPublishedFormByFormVersionId",
 }
 
 export const generateFormSchema = async (data: TQueryData) => {
@@ -13,31 +14,30 @@ export const generateFormSchema = async (data: TQueryData) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-  });
+  })
 
   if (!response.ok) {
-    throw new Error("Failed to generate form schema");
+    throw new Error("Failed to generate form schema")
   }
 
-  return response.json();
-};
+  return response.json()
+}
 
 export const generateTypeSuggestion = async (data: TQueryData) => {
-
   const response = await fetch("/api/ai-type-recommender", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-  });
+  })
 
   if (!response.ok) {
-    throw new Error("Failed to generate type suggestion");
+    throw new Error("Failed to generate type suggestion")
   }
 
-  return response.json();
-};
+  return response.json()
+}
 
 // export const generateFormSchema = async (data: TQueryData): Promise<ReadableStream<Uint8Array>> => {
 //   const response = await fetch("/api/generate-form-schema", {
@@ -65,16 +65,16 @@ export const addNewFormVersion = async ({
   query,
   version,
 }: AddNewFormVersionVariables) => {
-  const supabase = createClient();
+  const supabase = createClient()
 
   const { data: existingVersion } = await supabase
     .from("form_versions")
     .select()
     .eq("form_id", baseFormId)
     .eq("version_number", version)
-    .single();
+    .single()
 
-  let response;
+  let response
 
   if (existingVersion) {
     response = await supabase
@@ -85,7 +85,7 @@ export const addNewFormVersion = async ({
       })
       .eq("form_id", baseFormId)
       .eq("version_number", version)
-      .select();
+      .select()
   } else {
     response = await supabase
       .from("form_versions")
@@ -95,17 +95,31 @@ export const addNewFormVersion = async ({
         query: query,
         version_number: version,
       })
-      .select();
+      .select()
   }
 
-  return response;
-};
+  return response
+}
 
 export const fetchFormVersions = async (baseFormId: string) => {
-  const supabase = createClient();
+  const supabase = createClient()
   const { data } = await supabase
     .from("form_versions")
     .select()
-    .eq("form_id", baseFormId);
-  return data;
-};
+    .eq("form_id", baseFormId)
+  return data
+}
+
+export const getPublishedFormByFormVersionId = async (
+  formVersionId: string
+) => {
+  if (!formVersionId)
+    return { data: null, error: "Form version ID is required" }
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("published_forms")
+    .select()
+    .eq("form_version_id", formVersionId)
+    .single()
+  return { data, error }
+}
