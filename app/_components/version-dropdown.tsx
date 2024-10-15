@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import useEditFormPageStore from "@/store/editFormPageStore"
 
 const VersionDropdown = () => {
   const formVersionsData = useFormVersionStore(
@@ -21,11 +22,21 @@ const VersionDropdown = () => {
     })
   )
 
+  const setSelectedFieldConstantId = useEditFormPageStore(
+    (state) => state.setSelectedFieldConstantId
+  )
+
   useEffect(() => {
     if (formVersionsData && formVersionsData.length > 0) {
       setSelectedFormVersion(formVersionsData[0])
     }
   }, [formVersionsData, setSelectedFormVersion])
+
+  const getConstantIdForFirstField = (formSchemaString: string) => {
+    const jsonFormSchema = JSON.parse(formSchemaString as string)
+    const constantId = jsonFormSchema.fields[0].constantId
+    return constantId
+  }
 
   const handleVersionChange = (value: string) => {
     const selectedVersion = formVersionsData.find(
@@ -33,6 +44,9 @@ const VersionDropdown = () => {
     )
     if (selectedVersion) {
       setSelectedFormVersion(selectedVersion)
+      setSelectedFieldConstantId(
+        getConstantIdForFirstField(selectedVersion.form_schema_string)
+      )
     }
   }
 
