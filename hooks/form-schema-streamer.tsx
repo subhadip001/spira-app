@@ -61,6 +61,7 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
   const queryClient = useQueryClient()
   const [currentStreamedFormSchema, setCurrentStreamedFormSchema] =
     useState<Partial<FormSchema> | null>(null)
+  const [isStreamStarting, setIsStreamStarting] = useState(false)
 
   const addNewFormversionMutation = useMutation({
     mutationFn: (variables: AddNewFormVersionVariables) =>
@@ -77,10 +78,13 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
   })
 
   const formSchemaStreamMutation = useMutation({
-    mutationFn: (prompt: string) =>
-      generateFormSchemaStreaming(prompt, (partialSchema) => {
+    mutationFn: (prompt: string) => {
+      setIsStreamStarting(true)
+      return generateFormSchemaStreaming(prompt, (partialSchema) => {
+        setIsStreamStarting(false)
         setCurrentStreamedFormSchema(partialSchema)
-      }),
+      })
+    },
     onSuccess: async (data, variables) => {
       // The full schema is now in 'data'
       setCurrentStreamedFormSchema(data)
@@ -104,5 +108,6 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
     formSchemaStreamMutation,
     currentStreamedFormSchema,
     addNewFormversionMutation,
+    isStreamStarting,
   }
 }

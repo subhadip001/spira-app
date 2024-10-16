@@ -1,8 +1,8 @@
-import React from "react"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import { Required } from "./Required"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { FormField, FormFieldOption } from "@/types/FormSchema"
+import { CircleCheck } from "lucide-react"
+import React from "react"
 import { LabelComponent } from "./LabelComponent"
 
 interface RadioFieldProps {
@@ -30,7 +30,8 @@ const RadioField: React.FC<RadioFieldProps> = ({ field, value, onChange }) => {
               htmlFor={`${field.name}-${option.value}`}
               className={`flex items-center justify-between p-4 rounded-lg border-2 border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-all`}
             >
-              {option.label}
+              <span className="text-sm">{option.label}</span>
+              {value === option.value && <CircleCheck className="w-4 h-4" />}
             </Label>
           </div>
         ))}

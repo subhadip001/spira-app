@@ -133,6 +133,12 @@ const EditForm: React.FC<EditFormProps> = ({
       }
 
       setIsPublishing(false)
+      queryClient.invalidateQueries({
+        queryKey: [
+          QueryKeys.GetPublishedFormByFormVersionId,
+          selectedFormVersion?.id,
+        ],
+      })
       window.open(
         `${process.env.NEXT_PUBLIC_SITE_URL}/f/${publishedForm?.data?.short_id}`,
         "_blank"
@@ -420,6 +426,12 @@ const EditForm: React.FC<EditFormProps> = ({
                 </Button>
                 <Button
                   onClick={() => {
+                    queryClient.invalidateQueries({
+                      queryKey: [
+                        QueryKeys.GetPublishedFormByFormVersionId,
+                        selectedFormVersion?.id,
+                      ],
+                    })
                     setPublishedShortId(null)
                     setShowConfetti(false)
                   }}

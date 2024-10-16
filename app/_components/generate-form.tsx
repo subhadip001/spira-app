@@ -9,9 +9,10 @@ import useFormVersionStore from "@/store/formVersions"
 import { FormSchema } from "@/types/FormSchema"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import dynamic from "next/dynamic"
-import React, { useEffect } from "react"
+import React, { useEffect, useRef } from "react"
 import FormBuilder from "./form-components/FormBuilder"
 import StreamingFormBuilder from "./form-components/streaming-formbuilder"
+import { Loader2 } from "lucide-react"
 
 const HorizontalResizableComponent = dynamic(
   () => import("./resizable-component"),
@@ -32,6 +33,8 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   needToGenerateFormSchema,
 }) => {
   const currentFormSchema = useFormStore((state) => state.currentFormSchema)
+  const streamingFormRef = useRef<HTMLDivElement>(null)
+
   const setCurrentFormSchema = useFormStore(
     (state) => state.setCurrentFormSchema
   )
@@ -45,28 +48,29 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
     formSchemaStreamMutation,
     currentStreamedFormSchema,
     addNewFormversionMutation,
+    isStreamStarting,
   } = useFormSchemaGenerator(baseFormId)
 
   const seletedFormVersion = useFormVersionStore(
     (state) => state.selectedFormVersion
   )
 
-  const formSchemaGenerateMutation = useMutation({
-    mutationFn: generateFormSchema,
-    onSuccess: async (data) => {
-      const extractedFormSchema = jsonExtractor(data.message)
-      setCurrentFormSchema(extractedFormSchema)
-      addNewFormversionMutation.mutate({
-        formSchemaString: JSON.stringify(extractedFormSchema),
-        baseFormId: baseFormId,
-        query: formData.prompt,
-        version: 1,
-      })
-    },
-    onError: (error: Error) => {
-      console.error("Error generating form schema", error)
-    },
-  })
+  // const formSchemaGenerateMutation = useMutation({
+  //   mutationFn: generateFormSchema,
+  //   onSuccess: async (data) => {
+  //     const extractedFormSchema = jsonExtractor(data.message)
+  //     setCurrentFormSchema(extractedFormSchema)
+  //     addNewFormversionMutation.mutate({
+  //       formSchemaString: JSON.stringify(extractedFormSchema),
+  //       baseFormId: baseFormId,
+  //       query: formData.prompt,
+  //       version: 1,
+  //     })
+  //   },
+  //   onError: (error: Error) => {
+  //     console.error("Error generating form schema", error)
+  //   },
+  // })
   useEffect(() => {
     if (needToGenerateFormSchema) {
       // formSchemaGenerateMutation.mutate(formData)
@@ -99,6 +103,12 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   //   },
   // })
 
+  useEffect(() => {
+    if (formSchemaStreamMutation.isPending && streamingFormRef.current) {
+      streamingFormRef.current.scrollTop = streamingFormRef.current.scrollHeight
+    }
+  }, [currentStreamedFormSchema, formSchemaStreamMutation.isPending])
+
   return (
     <HorizontalResizableComponent
       initialWidth={
@@ -109,13 +119,24 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
             : 400
       }
     >
-      <div className="mx-3 w-full  mmd:w-auto  bg-white border shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto">
-        {formSchemaStreamMutation.isPending ? (
+      <div
+        className="mx-3 w-full  mmd:w-auto  bg-white border shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto"
+        ref={streamingFormRef}
+      >
+        {isStreamStarting ? (
+          <div className="flex items-center justify-center h-full">
+            <Loader2 className="h-4 w-4 animate-spin" />
+          </div>
+        ) : formSchemaStreamMutation.isPending ? (
           <StreamingFormBuilder
             initialSchema={currentStreamedFormSchema as Partial<FormSchema>}
             className="px-4 py-3 mmd:px-10 mmd:py-8"
             published={false}
           />
+        ) : addNewFormversionMutation.isPending ? (
+          <div className="flex items-center justify-center h-full">
+            <Loader2 className="h-4 w-4 animate-spin" />
+          </div>
         ) : currentFormSchema ? (
           <FormBuilder
             initialSchema={currentFormSchema}
