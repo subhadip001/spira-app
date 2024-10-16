@@ -19,15 +19,20 @@ export const RecentForms = ({
     return null
   }
 
-  const { data: recentForms, error: recentFormsError } = useQuery({
+  const {
+    data: recentForms,
+    error: recentFormsError,
+    isLoading: recentFormsLoading,
+  } = useQuery({
     queryKey: [QueryKeys.GetRecentFormsByUserId, user.id],
     queryFn: () => getRecentFormsByUserId(user.id),
     enabled: !!user,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0,
   })
 
-  if (recentFormsError || !recentForms) {
-    console.error(recentFormsError)
+  if (recentForms?.data?.length === 0 || recentFormsLoading) {
     return null
   }
 
