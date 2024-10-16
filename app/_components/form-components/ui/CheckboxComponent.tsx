@@ -32,6 +32,9 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   return (
     <div className="flex flex-col gap-4">
       <LabelComponent field={field} />
+      {field.description && (
+        <p className="text-sm text-gray-500">{field.description}</p>
+      )}
       <div className="space-y-1">
         {field.options?.map((option: FormFieldOption) => (
           <div key={option.value} className="relative">
