@@ -66,6 +66,7 @@ const UserDropdown = () => {
       if (pathName !== "/" || !pathName.startsWith("/form")) {
         router.push("/")
       }
+      router.refresh()
     } catch (error) {
       console.error("Logout error:", error)
       toast.error("Failed to log out. Please try again.")

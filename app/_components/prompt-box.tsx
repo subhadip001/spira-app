@@ -30,7 +30,11 @@ const PromptBox = () => {
 
   useEffect(() => {
     const generateSuggestion = async () => {
-      if (query.length > 3 && !isGeneratingSuggestion.current) {
+      if (
+        query.length > 3 &&
+        !isGeneratingSuggestion.current &&
+        query.endsWith(" ")
+      ) {
         isGeneratingSuggestion.current = true
         try {
           const response = await generateTypeSuggestion({ prompt: query })
