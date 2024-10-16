@@ -150,7 +150,7 @@ const PromptBox = () => {
           </div>
         </form>
       </ShineBorder>
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex items-center justify-center gap-2 flex-wrap">
         {quickStartQueries.map((data, index) => (
           <Fragment key={index}>
             <Badge

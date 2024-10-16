@@ -1,8 +1,8 @@
-import React from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import { Required } from "./Required"
 import { FormField, FormFieldOption } from "@/types/FormSchema"
+import { SquareCheck } from "lucide-react"
+import React from "react"
 import { LabelComponent } from "./LabelComponent"
 
 interface CheckboxFieldProps {
@@ -50,7 +50,11 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
               htmlFor={`${field.name}-${option.value}`}
               className="flex items-center justify-between p-4 rounded-lg border-2 border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-all"
             >
-              {option.label}
+              <span className="text-sm">{option.label}</span>
+
+              {value?.split(",").includes(option.value) && (
+                <SquareCheck className="w-4 h-4" />
+              )}
             </Label>
           </div>
         ))}
