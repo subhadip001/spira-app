@@ -3,12 +3,10 @@
 import { Button } from "@/components/ui/button"
 import { CreditCard, LucideIcon, Settings } from "lucide-react"
 import { FileText } from "lucide-react"
-import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
 
 export default function Sidebar() {
   const pathname = usePathname()
-  const [activeTab, setActiveTab] = useState("forms")
 
   const NavItem = ({
     icon: Icon,
@@ -25,8 +23,8 @@ export default function Sidebar() {
       onClick={onClick}
       className={`flex items-center space-x-3 w-full px-3 py-2 rounded-md transition-colors ${
         isActive
-          ? "bg-primary text-primary-foreground"
-          : "text-muted-foreground hover:bg-muted"
+          ? "bg-gray-200 text-black"
+          : "text-muted-foreground hover:bg-gray-200"
       }`}
     >
       <Icon className="h-5 w-5" />
@@ -34,33 +32,35 @@ export default function Sidebar() {
     </button>
   )
 
+  const router = useRouter()
+
   return (
     <aside className="w-64 bg-card border-r border-border flex flex-col justify-between">
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-2 space-y-2">
         <NavItem
           icon={FileText}
           label="Forms"
-          isActive={activeTab === "forms"}
-          onClick={() => setActiveTab("forms")}
+          isActive={pathname === "/dashboard"}
+          onClick={() => router.push("/dashboard")}
         />
         <NavItem
           icon={FileText}
           label="Responses"
-          isActive={activeTab === "responses"}
-          onClick={() => setActiveTab("responses")}
+          isActive={pathname === "/responses"}
+          onClick={() => router.push("/responses")}
         />
         <NavItem
           icon={Settings}
           label="Settings"
-          isActive={activeTab === "settings"}
-          onClick={() => setActiveTab("settings")}
+          isActive={pathname === "/settings"}
+          onClick={() => router.push("/settings")}
         />
 
         <NavItem
           icon={CreditCard}
           label="Plans"
-          isActive={activeTab === "plans"}
-          onClick={() => setActiveTab("plans")}
+          isActive={pathname === "/plans"}
+          onClick={() => router.push("/plans")}
         />
       </nav>
       <div className="px-4 py-2 border-t border-border bg-[#f5f5f5]">
