@@ -121,7 +121,9 @@ const PromptBox = () => {
             {suggestion && (
               <span className="absolute top-0 left-0 w-full pointer-events-none px-3 py-1 text-lg">
                 <span className="invisible">{query}</span>
-                <span className="text-gray-400">{suggestion}</span>
+                <span className="text-gray-400">
+                  {query.endsWith(" ") ? suggestion : " " + suggestion}
+                </span>
               </span>
             )}
           </div>
