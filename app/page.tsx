@@ -36,6 +36,8 @@ export default async function Home() {
             <div className="flex flex-col gap-5 font-bricolage_grotesque">
               <IntroSection />
               <PromptBox />
+            </div>
+            <div className="mt-auto">
               {user.user && (
                 <RecentForms user={user?.user} userError={userError as Error} />
               )}

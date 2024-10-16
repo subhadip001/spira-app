@@ -12,7 +12,8 @@ import dynamic from "next/dynamic"
 import React, { useEffect, useRef } from "react"
 import FormBuilder from "./form-components/FormBuilder"
 import StreamingFormBuilder from "./form-components/streaming-formbuilder"
-import { Loader2 } from "lucide-react"
+import { Loader2, RefreshCw, ThumbsDown, ThumbsUp } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 const HorizontalResizableComponent = dynamic(
   () => import("./resizable-component"),
@@ -120,7 +121,7 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
       }
     >
       <div
-        className="mx-3 w-full  mmd:w-auto  bg-white border shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto"
+        className="mx-3 w-full  mmd:w-auto  bg-[#ffff] border shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto"
         ref={streamingFormRef}
       >
         {isStreamStarting ? (
@@ -156,6 +157,24 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
             </div>
           </>
         )}
+        <div className="w-[90%] mx-auto flex justify-end">
+          <div className="border inline-flex items-center justify-center gap-2 p-1 rounded-md mb-3">
+            <div className="cursor-pointer hover:bg-gray-100 rounded-md p-2 border">
+              <ThumbsUp className="h-4 w-4" />
+            </div>
+            <div className="cursor-pointer hover:bg-gray-100 rounded-md p-2 border">
+              <ThumbsDown className="h-4 w-4" />
+            </div>
+            <div
+              onClick={() => {
+                formSchemaStreamMutation.mutate(formData.prompt)
+              }}
+              className="cursor-pointer hover:bg-gray-100 rounded-md p-2 border"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </div>
+          </div>
+        </div>
       </div>
     </HorizontalResizableComponent>
   )
