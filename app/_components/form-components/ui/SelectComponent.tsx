@@ -41,9 +41,9 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
           {field.options?.map((option, index) => (
             <SelectItem
               key={index}
-              value={option.value.length > 0 ? option.value : `-${index}-`}
+              value={option?.value ? option.value : `-${index}-`}
             >
-              {option.label}
+              {option?.label}
             </SelectItem>
           ))}
         </SelectContent>
