@@ -1,12 +1,19 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { CreditCard, LucideIcon, Settings } from "lucide-react"
-import { FileText } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import useAppStore from "@/store/appStore"
+import {
+  ChevronsUpDown,
+  CreditCard,
+  FileText,
+  LucideIcon,
+  Settings,
+} from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const user = useAppStore((state) => state.user)
 
   const NavItem = ({
     icon: Icon,
@@ -63,15 +70,21 @@ export default function Sidebar() {
           onClick={() => router.push("/dashboard/plans")}
         />
       </nav>
-      <div className="px-4 py-2 border-t border-border bg-[#f5f5f5]">
-        <div className="flex items-center space-x-3">
-          <div className="flex-1">
-            <p className="font-medium">Sam User</p>
-            <p className="text-sm text-muted-foreground">Pro Plan</p>
+      <div className="w-[92%] mx-auto my-4 cursor-pointer">
+        <div className="py-2 border px-3 rounded-md">
+          <div className="flex items-center space-x-3 justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground font-semibold max-w-24 line-clamp-1">
+                {user?.name}
+              </span>
+              {/* <Badge className="text-xs bg-blue-200 text-spirablue hover:bg-blue-300">
+                Pro
+              </Badge> */}
+            </div>
+            <div className="rounded-full p-1">
+              <ChevronsUpDown className="h-3 w-3" />
+            </div>
           </div>
-          <Button variant="ghost" size="icon">
-            <Settings className="h-5 w-5" />
-          </Button>
         </div>
       </div>
     </aside>

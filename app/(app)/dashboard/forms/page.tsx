@@ -27,7 +27,7 @@ export default async function Dashboard() {
         </div>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <h2 className=" text-muted-foreground">All Forms</h2>
+            <h2 className="text-muted-foreground">All Forms</h2>
             <FormsContainer />
           </div>
         </div>

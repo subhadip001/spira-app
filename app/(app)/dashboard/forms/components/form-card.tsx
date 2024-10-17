@@ -22,9 +22,9 @@ export default function FormCard({ form }: FormCardProps) {
       onClick={() => {
         router.push(`/form/${form.id}`)
       }}
-      className="bg-white rounded-md border cursor-pointer p-4"
+      className="bg-white rounded-md border cursor-pointer p-4 w-full"
     >
-      <h2 className="text-lg">{form.query}</h2>
+      <span className="text-lg line-clamp-1 max-w-48">{form.query}</span>
       <p className="text-xs text-gray-400 capitalize">
         {formatRelativeTime(new Date(form.created_at))}
       </p>

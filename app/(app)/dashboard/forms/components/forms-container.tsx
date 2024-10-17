@@ -18,7 +18,7 @@ export default function FormsContainer() {
   }
 
   return (
-    <section className="flex flex-wrap gap-2">
+    <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 h-[65svh] gap-2 overflow-y-auto">
       {data?.data?.map((form) => <FormCard key={form.id} form={form} />)}
     </section>
   )
