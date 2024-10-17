@@ -4,6 +4,8 @@ import "./globals.css"
 import { cn } from "@/lib/utils"
 import ReactQueryProvider from "@/app/_components/react-query-provider"
 import { Toaster } from "react-hot-toast"
+import { ThemeProvider } from "@/components/theme-provider"
+
 export const metadata: Metadata = {
   title: "Spira - Ai powered form builder",
   description:
@@ -26,12 +28,14 @@ export default function RootLayout({
       <ReactQueryProvider>
         <body
           className={cn(
-            "min-h-screen flex bg-[#F3F3ED] font-sans antialiased",
+            "min-h-screen flex font-sans antialiased",
             fontSans.variable
           )}
         >
-          <div className="flex-grow z-10">{children}</div>
-          <Toaster position="top-right" />
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+            <div className="flex-grow z-10">{children}</div>
+            <Toaster position="top-right" />
+          </ThemeProvider>
         </body>
       </ReactQueryProvider>
     </html>

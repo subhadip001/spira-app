@@ -1,6 +1,6 @@
 "use client"
 import React from "react"
-import Header from "../header"
+import Header from "../../../_components/header"
 import useAppStore from "@/store/appStore"
 import Sidebar from "./sidebar"
 
@@ -15,7 +15,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
       <Header />
       <main className="flex flex-grow w-full border-t">
         <Sidebar />
-        {children}
+        <section className="flex-grow p-4">{children}</section>
       </main>
     </div>
   )

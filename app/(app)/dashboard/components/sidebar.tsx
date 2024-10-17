@@ -21,46 +21,46 @@ export default function Sidebar() {
   }) => (
     <button
       onClick={onClick}
-      className={`flex items-center space-x-3 w-full px-3 py-2 rounded-md transition-colors ${
+      className={`flex items-center space-x-3 w-full px-3 py-[0.3rem] rounded-sm transition-colors ${
         isActive
-          ? "bg-gray-200 text-black"
+          ? "bg-blue-200 text-spirablue"
           : "text-muted-foreground hover:bg-gray-200"
       }`}
     >
-      <Icon className="h-5 w-5" />
-      <span className="font-medium">{label}</span>
+      <Icon className="h-4 w-4" />
+      <span className="text-sm">{label}</span>
     </button>
   )
 
   const router = useRouter()
 
   return (
-    <aside className="w-64 bg-card border-r border-border flex flex-col justify-between">
-      <nav className="flex-1 p-2 space-y-2">
+    <aside className="min-w-48 bg-card border-r border-border flex flex-col justify-between">
+      <nav className="flex flex-col gap-2 w-[92%] mx-auto my-4">
         <NavItem
           icon={FileText}
           label="Forms"
-          isActive={pathname === "/dashboard"}
-          onClick={() => router.push("/dashboard")}
+          isActive={pathname === "/dashboard/forms"}
+          onClick={() => router.push("/dashboard/forms")}
         />
         <NavItem
           icon={FileText}
           label="Responses"
-          isActive={pathname === "/responses"}
-          onClick={() => router.push("/responses")}
+          isActive={pathname === "/dashboard/responses"}
+          onClick={() => router.push("/dashboard/responses")}
         />
         <NavItem
           icon={Settings}
           label="Settings"
-          isActive={pathname === "/settings"}
-          onClick={() => router.push("/settings")}
+          isActive={pathname === "/dashboard/settings"}
+          onClick={() => router.push("/dashboard/settings")}
         />
 
         <NavItem
           icon={CreditCard}
           label="Plans"
-          isActive={pathname === "/plans"}
-          onClick={() => router.push("/plans")}
+          isActive={pathname === "/dashboard/plans"}
+          onClick={() => router.push("/dashboard/plans")}
         />
       </nav>
       <div className="px-4 py-2 border-t border-border bg-[#f5f5f5]">

@@ -6,6 +6,7 @@ export enum QueryKeys {
   GetFormVersions = "getFormVersions",
   GetPublishedFormByFormVersionId = "getPublishedFormByFormVersionId",
   GetRecentFormsByUserId = "getRecentFormsByUserId",
+  GetFormsByUserId = "getFormsByUserId",
 }
 
 export const generateFormSchema = async (data: TQueryData) => {
@@ -122,6 +123,16 @@ export const getPublishedFormByFormVersionId = async (
     .select()
     .eq("form_version_id", formVersionId)
     .single()
+  return { data, error }
+}
+
+export const getFormsByUserId = async (userId: string) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("forms")
+    .select()
+    .order("created_at", { ascending: false })
+    .eq("user_id", userId)
   return { data, error }
 }
 

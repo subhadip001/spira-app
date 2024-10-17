@@ -77,7 +77,6 @@ const UserDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger>
         <div className="rounded-full h-10 w-10 flex items-center justify-center border">
-          {/* <UserRound size={16} /> */}
           {user?.name ? (
             <Avvvatars size={40} value={user.name} />
           ) : (
