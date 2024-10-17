@@ -1,9 +1,7 @@
-import { Button } from "@/components/ui/button"
-import { Select, SelectValue, SelectTrigger } from "@/components/ui/select"
+import { Select, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus } from "lucide-react"
-import FormsContainer from "./components/forms-container"
-import { redirect } from "next/navigation"
 import Link from "next/link"
+import FormsContainer from "./components/forms-container"
 
 export default async function Dashboard() {
   return (
