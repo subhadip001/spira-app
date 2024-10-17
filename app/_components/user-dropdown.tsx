@@ -95,12 +95,12 @@ const UserDropdown = () => {
                 <span className="text-sm text-gray-500">{user.email}</span>
               </div>
             </DropdownMenuItem>
-            <DropdownMenuItem>Profile</DropdownMenuItem>
+            {/* <DropdownMenuItem>Profile</DropdownMenuItem> */}
             <DropdownMenuItem onClick={() => router.push("/dashboard")}>
               Dashboard
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            {/* <DropdownMenuItem>Settings</DropdownMenuItem> */}
             <DropdownMenuItem>Help</DropdownMenuItem>
             <DropdownMenuItem onClick={logOut}>Logout</DropdownMenuItem>
           </>
