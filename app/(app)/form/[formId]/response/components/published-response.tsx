@@ -12,6 +12,11 @@ import { useQuery } from "@tanstack/react-query"
 import { BotMessageSquare, CircleDashed, Sheet } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useParams, usePathname, useRouter } from "next/navigation"
+import { jsonArrayToXml } from "@/app/transformations/json-to-xml"
+import { useFormResponseChatGenerator } from "@/hooks/form-response-chat-streamer"
+import { Button } from "@/components/ui/button"
+import { Parser } from "htmlparser2"
+import parse from "html-react-parser"
 
 type ResponseData = {
   [key: string]: {
@@ -89,6 +94,12 @@ export default function PublishedResponse() {
     router.push(`${pathname}#${tab}`)
   }
 
+  const {
+    formResponseChatMutation,
+    currentStreamedResponse,
+    isStreamStarting,
+  } = useFormResponseChatGenerator()
+
   const renderSubmittedTab = () => {
     return (
       <div className="max-w-full overflow-x-auto">
@@ -130,8 +141,92 @@ export default function PublishedResponse() {
     return <div>In progress</div>
   }
 
+  const [extractedContent, setExtractedContent] = useState("")
+
+  useEffect(() => {
+    const extractSingleDivFromStreamingHtml = (
+      html: string,
+      className: string
+    ) => {
+      return new Promise((resolve) => {
+        let depth = 0
+        let capturing = false
+        let capturedContent = ""
+
+        const parser = new Parser({
+          onopentag(name, attributes) {
+            if (name === "div" && attributes.class?.includes(className)) {
+              capturing = true
+            }
+            if (capturing) {
+              depth++
+              capturedContent += `<${name}`
+              for (const [key, value] of Object.entries(attributes)) {
+                capturedContent += ` ${key}="${value}"`
+              }
+              capturedContent += ">"
+            }
+          },
+          ontext(text) {
+            if (capturing) {
+              capturedContent += text
+            }
+          },
+          onclosetag(tagname) {
+            if (capturing) {
+              depth--
+              capturedContent += `</${tagname}>`
+              if (depth === 0) {
+                capturing = false
+                resolve(capturedContent)
+              }
+            }
+          },
+        })
+
+        parser.write(html)
+        parser.end()
+      })
+    }
+
+    extractSingleDivFromStreamingHtml(currentStreamedResponse, "analysis")
+      .then((content) => setExtractedContent(content as string))
+      .catch(console.error)
+  }, [currentStreamedResponse])
+
   const renderAdvancedInsightsTab = () => {
-    return <div>Advanced Insights</div>
+    const xml = jsonArrayToXml(publishedFormResponse?.data || [])
+
+    return (
+      <div>
+        <span className="text-xl font-medium">Advanced Insights</span>
+        <div className="mt-4 p-4 bg-gray-100 rounded-md min-h-[100px]">
+          {extractedContent.length > 0 ? (
+            <div>{parse(extractedContent)}</div>
+          ) : (
+            <div>Response will appear here...</div>
+          )}
+        </div>
+        {isStreamStarting && (
+          <div className="mt-2 text-blue-500">Generating response...</div>
+        )}
+        <section className="mt-4">
+          <Button
+            type="button"
+            onClick={() =>
+              formResponseChatMutation.mutate({
+                xml,
+                prompt:
+                  "How many rows and columns are there? List all column point wise",
+              })
+            }
+            disabled={isStreamStarting}
+          >
+            Get Started
+          </Button>
+        </section>
+      </div>
+    )
   }
 
   const renderTab = (tab: TabType) => {
