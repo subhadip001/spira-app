@@ -1,6 +1,6 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge"
+import { Icons } from "@/app/_components/icons"
 import useAppStore from "@/store/appStore"
 import {
   ChevronsUpDown,
@@ -43,33 +43,44 @@ export default function Sidebar() {
 
   return (
     <aside className="min-w-48 bg-card border-r border-border flex flex-col justify-between">
-      <nav className="flex flex-col gap-2 w-[92%] mx-auto my-4">
-        <NavItem
-          icon={FileText}
-          label="Forms"
-          isActive={pathname === "/dashboard/forms"}
-          onClick={() => router.push("/dashboard/forms")}
-        />
-        <NavItem
-          icon={FileText}
-          label="Responses"
-          isActive={pathname === "/dashboard/responses"}
-          onClick={() => router.push("/dashboard/responses")}
-        />
-        <NavItem
-          icon={Settings}
-          label="Settings"
-          isActive={pathname === "/dashboard/settings"}
-          onClick={() => router.push("/dashboard/settings")}
-        />
+      <div className="flex flex-col gap-4 w-[92%] mx-auto my-4 ">
+        <div className="inline-flex items-center gap-2">
+          <div
+            className="inline-flex cursor-pointer"
+            onClick={() => router.push("/")}
+          >
+            <Icons.logo className="h-8 w-8" />
+          </div>
+          <span className="text-lg font-semibold">Dashboard</span>
+        </div>
+        <nav className="flex flex-col gap-2 w-full">
+          <NavItem
+            icon={FileText}
+            label="Forms"
+            isActive={pathname === "/dashboard/forms"}
+            onClick={() => router.push("/dashboard/forms")}
+          />
+          <NavItem
+            icon={FileText}
+            label="Responses"
+            isActive={pathname === "/dashboard/responses"}
+            onClick={() => router.push("/dashboard/responses")}
+          />
+          <NavItem
+            icon={Settings}
+            label="Settings"
+            isActive={pathname === "/dashboard/settings"}
+            onClick={() => router.push("/dashboard/settings")}
+          />
 
-        <NavItem
-          icon={CreditCard}
-          label="Plans"
-          isActive={pathname === "/dashboard/plans"}
-          onClick={() => router.push("/dashboard/plans")}
-        />
-      </nav>
+          <NavItem
+            icon={CreditCard}
+            label="Plans"
+            isActive={pathname === "/dashboard/plans"}
+            onClick={() => router.push("/dashboard/plans")}
+          />
+        </nav>
+      </div>
       <div className="w-[92%] mx-auto my-4 cursor-pointer">
         <div className="py-2 border px-3 rounded-md">
           <div className="flex items-center space-x-3 justify-between">

@@ -15,18 +15,24 @@ import React, { Fragment, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { FormFieldComponent } from "./FormFields"
+import { convertFormResponseArrayToObject } from "@/lib/form-lib/utils"
+import { useMutation } from "@tanstack/react-query"
+import { createNewResponseForPublishedForm } from "@/lib/queries"
+import ThankYouPage from "./thank-you-component"
 
 interface FormBuilderProps {
   initialSchema: FormSchema
   className?: string
-  formStatus?: "live" | "draft" | "closed"
+  publishedFormId: string
 }
 
 const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
   initialSchema,
+  publishedFormId,
   className,
 }) => {
   const [backgroundColor, setBackgroundColor] = useState("#ffffff")
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   const [formErrors, setFormErrors] = useState<TFormErrors>([])
   const [formResponse, setFormResponse] = useState<TFormData>({
@@ -39,13 +45,29 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
   })
 
   const form = useForm<Record<string, string>>({
-    defaultValues: formResponse?.values.reduce(
+    defaultValues: initialSchema.fields.reduce(
       (acc, field) => {
-        acc[field.formFieldName] = field.formFieldValue
+        acc[field.name] = ""
         return acc
       },
       {} as Record<string, string>
     ),
+  })
+
+  const createNewResponseForPublishedFormMutation = useMutation({
+    mutationFn: (responseDataArray: TFormValues) =>
+      createNewResponseForPublishedForm(responseDataArray, publishedFormId),
+    onSuccess: (data) => {
+      if (data?.error) {
+        toast.error(data?.error.message)
+      } else {
+        toast.success("Form submitted successfully")
+        setIsSubmitted(true)
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
   })
 
   const onSubmit = (data: Record<string, string>) => {
@@ -64,8 +86,11 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
     })
     setFormErrors(errors)
     if (errors.length === 0) {
-      console.log("Form submitted:", JSON.stringify(newformResponse, null, 2))
-      toast.success("Form submitted successfully")
+      console.log(
+        "Form submitted:",
+        convertFormResponseArrayToObject(newformResponse)
+      )
+      createNewResponseForPublishedFormMutation.mutate(newformResponse)
     }
   }
 
@@ -92,6 +117,24 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
     setFormErrors((prevErrors) =>
       prevErrors.filter((e) => e.formFieldId !== field.serialId)
     )
+  }
+
+  const handleReset = () => {
+    setIsSubmitted(false)
+    form.reset()
+    setFormErrors([])
+    setFormResponse({
+      details: {
+        title: "",
+        description: "",
+        headerBackground: "#ffffff",
+      },
+      values: [],
+    })
+  }
+
+  if (isSubmitted) {
+    return <ThankYouPage onReset={handleReset} />
   }
 
   return (

@@ -1,9 +1,4 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+import { TFormValues } from "@/types/form"
 
 export const fileSizeConverter = (bytes: number): string => {
   const megabytes = bytes / (1024 * 1024)
@@ -48,24 +43,30 @@ export function formatRelativeTime(date: Date): string {
   return `${Math.floor(diffInSeconds / 31536000)} years ago`
 }
 
-// export const jsonExtractor = (jsonString: string) => {
-//   try {
-//     const jsonRegex = /```json\n([\s\S]*?\n)```/;
-//     const match = jsonString.match(jsonRegex);
+type FormResponseForStorage = {
+  fields: {
+    [key: string]: {
+      label: string
+      value: string
+      name: string
+    }
+  }
+}
 
-//     if (match && match[1]) {
-//       const jsonContent = match[1].trim();
-//       console.log("Extracted JSON content:", jsonContent);
-//       const requiredJson = JSON.parse(jsonContent);
-//       return requiredJson;
-//     } else {
-//       console.log("No JSON content found in the string");
-//       return null;
-//     }
-//   } catch (error) {
-//     console.error("Error parsing JSON:", error);
-//     return {
-//       error: "Error parsing JSON",
-//     };
-//   }
-// };
+export function convertFormResponseArrayToObject(
+  formResponse: TFormValues
+): FormResponseForStorage {
+  return {
+    fields: formResponse.reduce(
+      (acc, field) => {
+        acc[field.formFieldId] = {
+          label: field.formFieldLabel,
+          value: field.formFieldValue,
+          name: field.formFieldName,
+        }
+        return acc
+      },
+      {} as FormResponseForStorage["fields"]
+    ),
+  }
+}

@@ -1,5 +1,7 @@
 import { createClient } from "@/utils/supabase/client"
 import { TQueryData, AddNewFormVersionVariables } from "./types"
+import { TFormValues } from "@/types/form"
+import { convertFormResponseArrayToObject } from "./form-lib/utils"
 
 export enum QueryKeys {
   GetSpiraResponse = "getSpiraResponse",
@@ -144,5 +146,24 @@ export const getRecentFormsByUserId = async (userId: string) => {
     .limit(3)
     .order("created_at", { ascending: false })
     .eq("user_id", userId)
+  return { data, error }
+}
+
+export const createNewResponseForPublishedForm = async (
+  responseDataArray: TFormValues,
+  publishedFormId: string
+) => {
+  const supabase = createClient()
+
+  const responseDataObject = convertFormResponseArrayToObject(responseDataArray)
+
+  const { data, error } = await supabase
+    .from("form_responses")
+    .insert({
+      response_data: responseDataObject.fields,
+      published_form_id: publishedFormId,
+    })
+    .select()
+
   return { data, error }
 }

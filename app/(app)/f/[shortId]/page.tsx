@@ -101,13 +101,13 @@ export default async function PublishedFormHome({
         </div>
         <footer className="inline-flex items-center justify-center w-full py-2 mt-auto">
           <div className="text-sm inline-flex items-center gap-1 text-gray-500">
-            Powered by{" "}
+            Made with{" "}
             <a
               href={process.env.NEXT_PUBLIC_SITE_URL}
               className="flex items-center cursor-pointer gap-[0.1rem]"
             >
               <Icons.logo className="w-4 h-4" />
-              <span className="text-spirablue">Spira</span>
+              <span className="text-spirablue">Spira AI</span>
             </a>
           </div>
         </footer>
