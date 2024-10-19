@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import ReactQueryProvider from "@/app/_components/react-query-provider"
 import { Toaster } from "react-hot-toast"
 import { ThemeProvider } from "@/components/theme-provider"
+import RouteResetStore from "./_components/route-reset-store"
 
 export const metadata: Metadata = {
   title: "Spira - Ai powered form builder",
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
+      <RouteResetStore />
       <ReactQueryProvider>
         <body
           className={cn(

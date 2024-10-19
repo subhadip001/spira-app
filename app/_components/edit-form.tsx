@@ -37,7 +37,9 @@ import {
   Check,
   Copy,
   Eye,
+  Loader,
   Monitor,
+  MousePointerClick,
   Save,
   Smartphone,
   Sparkles,
@@ -92,9 +94,6 @@ const EditForm: React.FC<EditFormProps> = ({
   )
   const selectedFormVersion = useFormVersionStore(
     (state) => state.selectedFormVersion
-  )
-  const setSelectedFormVersion = useFormVersionStore(
-    (state) => state.setSelectedFormVersion
   )
   const formVersionsData = useFormVersionStore(
     (state) => state.formVersionsData
@@ -310,27 +309,36 @@ const EditForm: React.FC<EditFormProps> = ({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-
-          <RainbowButton
-            type="button"
-            className={`flex items-center gap-2 ${
-              selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
-                ? "bg-green-500"
-                : "bg-white"
-            }`}
-            onClick={handlePublish}
-            disabled={isPublishing}
-          >
-            {isPublishing
-              ? "Publishing..."
-              : selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
-                ? "Published"
-                : "Publish"}
-            <div>
-              <SquareArrowUpRight className="h-4 w-4" />
-            </div>
-          </RainbowButton>
         </div>
+        <button
+          type="button"
+          className={`flex items-center h-10 px-4 py-2 rounded-md gap-2 justify-center ${
+            selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
+              ? "bg-white text-primary border"
+              : "bg-primary text-white"
+          }`}
+          onClick={handlePublish}
+          disabled={isPublishing}
+        >
+          {isPublishing
+            ? "Publishing..."
+            : selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
+              ? "Published"
+              : "Publish"}
+          {isPublishing ? (
+            <div>
+              <Loader className="h-4 w-4 animate-spin" />
+            </div>
+          ) : selectedFormVersion?.status === EFormVersionStatus.PUBLISHED ? (
+            <div>
+              <Check className="h-4 w-4" />
+            </div>
+          ) : (
+            <div>
+              <MousePointerClick className="h-4 w-4" />
+            </div>
+          )}
+        </button>
       </div>
       <div className="flex w-full justify-center items-center h-[calc(90svh-128px)]">
         <GenerateForm

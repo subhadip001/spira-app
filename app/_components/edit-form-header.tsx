@@ -1,23 +1,20 @@
 "use client"
 import { cn } from "@/lib/utils"
-import dynamic from "next/dynamic"
+import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
 import React from "react"
 import { Icons } from "./icons"
-import { useRouter, usePathname } from "next/navigation"
-import Link from "next/link"
+import UserDropdown from "./user-dropdown"
 
 type HeaderProps = {
   formId: string
   className?: string
 }
 
-const UserDropdown = dynamic(() => import("./user-dropdown"), {
-  ssr: false,
-})
-
 const Header: React.FC<HeaderProps> = ({ formId, className }) => {
   const router = useRouter()
   const pathname = usePathname()
+
   const navigationItems = [
     {
       label: "Editor",
@@ -41,20 +38,23 @@ const Header: React.FC<HeaderProps> = ({ formId, className }) => {
       <div className="cursor-pointer" onClick={() => router.push("/")}>
         <Icons.logo />
       </div>
-      <div className="flex gap-3 items-center rounded-md">
-        {navigationItems.map((item) => (
-          <Link
-            href={item.href}
-            className={cn(
-              "px-3 py-1 rounded-md",
-              pathname === item.href
-                ? "bg-blue-200 text-spirablue"
-                : "hover:bg-gray-100"
-            )}
-          >
-            <span>{item.label}</span>
-          </Link>
-        ))}
+      <div>
+        <div className="flex gap-3 items-center rounded-md">
+          {navigationItems.map((item, index) => (
+            <div
+              key={index}
+              onClick={() => router.push(item.href)}
+              className={cn(
+                "px-3 py-1 rounded-md cursor-pointer",
+                pathname === item.href
+                  ? "bg-blue-200 text-spirablue"
+                  : "hover:bg-gray-100"
+              )}
+            >
+              <span>{item.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
       <UserDropdown />
     </div>

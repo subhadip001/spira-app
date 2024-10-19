@@ -1,17 +1,13 @@
 "use client"
 import { cn } from "@/lib/utils"
-import dynamic from "next/dynamic"
+import { useRouter } from "next/navigation"
 import React from "react"
 import { Icons } from "./icons"
-import { useRouter } from "next/navigation"
+import UserDropdown from "./user-dropdown"
 
 type HeaderProps = {
   className?: string
 }
-
-const UserDropdown = dynamic(() => import("./user-dropdown"), {
-  ssr: false,
-})
 
 const Header: React.FC<HeaderProps> = ({ className }) => {
   const router = useRouter()

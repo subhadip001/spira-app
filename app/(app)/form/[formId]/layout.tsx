@@ -1,8 +1,6 @@
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { createClient } from "@/utils/supabase/server"
-import { redirect } from "next/navigation"
-import React from "react"
 import EditFormHeader from "@/app/_components/edit-form-header"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import React from "react"
 
 export default async function Layout({
   children,
@@ -11,14 +9,6 @@ export default async function Layout({
   children: React.ReactNode
   params: { formId: string }
 }) {
-  const supabase = createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-
-  if (error || !data?.user) {
-    redirect("/login")
-  }
-
   return (
     <TooltipProvider>
       <div className="bg-white w-[100vw] min-h-[100svh]">

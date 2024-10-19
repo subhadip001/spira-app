@@ -4,11 +4,13 @@ import { TFormValues } from "@/types/form"
 import { convertFormResponseArrayToObject } from "./form-lib/utils"
 
 export enum QueryKeys {
+  GetUserProfile = "getUserProfile",
   GetSpiraResponse = "getSpiraResponse",
   GetFormVersions = "getFormVersions",
   GetPublishedFormByFormVersionId = "getPublishedFormByFormVersionId",
   GetRecentFormsByUserId = "getRecentFormsByUserId",
   GetFormsByUserId = "getFormsByUserId",
+  GetPublishedFormResponseByPublishedFormId = "getPublishedFormResponseByPublishedFormId",
 }
 
 export const generateFormSchema = async (data: TQueryData) => {
@@ -43,25 +45,17 @@ export const generateTypeSuggestion = async (data: TQueryData) => {
   return response.json()
 }
 
-// export const generateFormSchema = async (data: TQueryData): Promise<ReadableStream<Uint8Array>> => {
-//   const response = await fetch("/api/generate-form-schema", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   });
-
-//   if (!response.ok) {
-//     throw new Error("Failed to generate form schema");
-//   }
-
-//   if (!response.body) {
-//     throw new Error("Response body is null");
-//   }
-
-//   return response.body;
-// };
+export const getUserProfile = async () => {
+  const supabase = createClient()
+  const { data: user } = await supabase.auth.getUser()
+  if (!user?.user?.id) return { data: null, error: "User ID is required" }
+  const { data, error } = await supabase
+    .from("profiles")
+    .select()
+    .eq("id", user.user.id)
+    .single()
+  return { data, error }
+}
 
 export const addNewFormVersion = async ({
   formSchemaString,
@@ -165,5 +159,17 @@ export const createNewResponseForPublishedForm = async (
     })
     .select()
 
+  return { data, error }
+}
+
+export const getPublishedFormResponseByPublishedFormId = async (
+  publishedFormId: string
+) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("form_responses")
+    .select()
+    .eq("published_form_id", publishedFormId)
+    .order("created_at", { ascending: true })
   return { data, error }
 }
