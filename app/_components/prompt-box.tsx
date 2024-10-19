@@ -74,7 +74,7 @@ const PromptBox = () => {
         resetFormVersionStore()
         resetEditFormPageStore()
         await addFormQueryToDb(uuid, prompt)
-        router.push(`/form/${uuid}`)
+        router.push(`/form/${uuid}/editor`)
       })
     }
   }

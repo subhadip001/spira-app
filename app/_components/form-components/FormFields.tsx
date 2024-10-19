@@ -1,18 +1,18 @@
-import React from "react";
-import InputComponent from "./ui/InputComponent";
-import TextAreaComponent from "./ui/TextAreaComponent";
-import SelectComponent from "./ui/SelectComponent";
-import CheckboxField from "./ui/CheckboxComponent";
-import RadioField from "./ui/RadioField";
-import SliderField from "./ui/SliderField";
-import { FormField } from "@/types/FormSchema";
+import React from "react"
+import InputComponent from "./ui/InputComponent"
+import TextAreaComponent from "./ui/TextAreaComponent"
+import SelectComponent from "./ui/SelectComponent"
+import CheckboxField from "./ui/CheckboxComponent"
+import RadioField from "./ui/RadioField"
+import SliderField from "./ui/SliderField"
+import { FormField } from "@/types/FormSchema"
 
 interface FormFieldProps {
-  field: FormField;
-  value: string;
-  onChange: (value: string) => void;
-  accept?: string;
-  maxSize?: string;
+  field: FormField
+  value: string
+  onChange: (value: string) => void
+  accept?: string
+  maxSize?: string
 }
 
 export const FormFieldComponent: React.FC<FormFieldProps> = ({
@@ -22,11 +22,11 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
   accept,
   maxSize,
 }) => {
-  const safeValue = value ?? "";
+  const safeValue = value ?? ""
 
   const handleChange = (newValue: string | number) => {
-    onChange(newValue?.toString() ?? "");
-  };
+    onChange(newValue?.toString() ?? "")
+  }
 
   switch (field.type) {
     case "text":
@@ -40,7 +40,7 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             onChange={handleChange}
           />
         </div>
-      );
+      )
     case "textarea":
       return (
         <div>
@@ -50,7 +50,7 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             onChange={handleChange}
           />
         </div>
-      );
+      )
     case "select":
       return (
         <div>
@@ -60,7 +60,7 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             onChange={handleChange}
           />
         </div>
-      );
+      )
     case "checkbox":
       return (
         <div>
@@ -70,17 +70,13 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             onChange={handleChange}
           />
         </div>
-      );
+      )
     case "radio":
       return (
         <div>
-          <RadioField
-            field={field}
-            value={safeValue}
-            onChange={handleChange}
-          />
+          <RadioField field={field} value={safeValue} onChange={handleChange} />
         </div>
-      );
+      )
     case "file":
       return (
         <div>
@@ -91,7 +87,7 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             maxSize={maxSize}
           />
         </div>
-      );
+      )
     case "range":
       return (
         <div>
@@ -101,8 +97,8 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             onChange={(newValue: number) => handleChange(newValue)}
           />
         </div>
-      );
+      )
     default:
-      return null;
+      return null
   }
-};
+}

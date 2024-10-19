@@ -27,7 +27,12 @@ const VersionDropdown = () => {
   )
 
   useEffect(() => {
-    if (formVersionsData && formVersionsData.length > 0) {
+    if (
+      formVersionsData &&
+      formVersionsData.length > 0 &&
+      selectedFormVersion?.version_number &&
+      selectedFormVersion.version_number > formVersionsData[0].version_number
+    ) {
       setSelectedFormVersion(formVersionsData[0])
     }
   }, [formVersionsData, setSelectedFormVersion])

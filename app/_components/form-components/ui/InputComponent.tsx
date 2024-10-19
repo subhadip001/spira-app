@@ -35,7 +35,6 @@ const InputComponent: React.FC<InputComponentProps> = ({
           name={field.name}
           id={field.name}
           placeholder={field.placeholder}
-          required={field.required}
           onChange={(e) => onChange(e)}
           className="hidden"
           accept={accept}
@@ -48,7 +47,6 @@ const InputComponent: React.FC<InputComponentProps> = ({
           className={cn("")}
           id={field.name}
           placeholder={field.placeholder}
-          required={field.required}
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />

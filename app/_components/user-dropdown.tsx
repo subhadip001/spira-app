@@ -1,8 +1,7 @@
 "use client"
-import React, { useState, useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
-import { User } from "@supabase/supabase-js"
 import { UserRound } from "lucide-react"
 import { toast } from "react-hot-toast"
 import {
@@ -12,9 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import Image from "next/image"
 import useAppStore from "@/store/appStore"
 import Avvvatars from "avvvatars-react"
+import { getUserProfile, QueryKeys } from "@/lib/queries"
+import { useQuery } from "@tanstack/react-query"
 type UserProfile = {
   created_at: string
   email: string
@@ -30,32 +30,22 @@ const UserDropdown = () => {
   const setAppStoreUser = useAppStore((state) => state.setUser)
   const formId = pathName.split("/")[2]
 
-  // console.log("searchParams", formId);
-  useEffect(() => {
-    const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
+  const { data: userProfileData, isSuccess } = useQuery({
+    queryKey: [QueryKeys.GetUserProfile],
+    queryFn: getUserProfile,
+    refetchOnWindowFocus: false,
+  })
 
-      if (!user) return
-      const { data: userProfile, error } = await supabase
-        .from("profiles")
-        .select()
-        .eq("id", user.id)
-        .single()
-      if (error) {
-        console.error("Error fetching user profile", error)
-        return
-      }
-      setUser(userProfile)
+  useEffect(() => {
+    if (isSuccess && userProfileData?.data) {
+      setUser(userProfileData.data)
       setAppStoreUser({
-        id: userProfile?.id,
-        email: userProfile?.email,
-        name: userProfile?.name,
+        id: userProfileData.data.id,
+        email: userProfileData.data.email,
+        name: userProfileData.data.name,
       })
     }
-    fetchUser()
-  }, [])
+  }, [isSuccess, userProfileData, setAppStoreUser])
 
   const logOut = async () => {
     try {
@@ -77,7 +67,6 @@ const UserDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger>
         <div className="rounded-full h-10 w-10 flex items-center justify-center border">
-          {/* <UserRound size={16} /> */}
           {user?.name ? (
             <Avvvatars size={40} value={user.name} />
           ) : (
@@ -96,12 +85,12 @@ const UserDropdown = () => {
                 <span className="text-sm text-gray-500">{user.email}</span>
               </div>
             </DropdownMenuItem>
-            <DropdownMenuItem>Profile</DropdownMenuItem>
+            {/* <DropdownMenuItem>Profile</DropdownMenuItem> */}
             <DropdownMenuItem onClick={() => router.push("/dashboard")}>
               Dashboard
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            {/* <DropdownMenuItem>Settings</DropdownMenuItem> */}
             <DropdownMenuItem>Help</DropdownMenuItem>
             <DropdownMenuItem onClick={logOut}>Logout</DropdownMenuItem>
           </>

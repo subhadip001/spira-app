@@ -49,31 +49,33 @@ const FormPage: React.FC<FormPageProps> = ({
   return (
     <>
       {data && data?.length > 0 ? (
-        <EditForm
-          baseQuery={baseQuery}
-          baseFormId={baseFormId}
-          needToGenerateFormSchema={false}
-        />
-      ) : baseQuery ? (
-        <EditForm
-          baseQuery={baseQuery}
-          baseFormId={baseFormId}
-          needToGenerateFormSchema={true}
-        />
-      ) : (
         <>
-          <div className="flex flex-col w-full items-center justify-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
-            <div className="text-center">
-              <h1 className="text-2xl font-bold">Form not found</h1>
-              <p className="text-gray-500">
-                The form you are looking for does not exist.
-              </p>
-            </div>
-          </div>
+          <EditForm
+            baseQuery={baseQuery}
+            baseFormId={baseFormId}
+            needToGenerateFormSchema={false}
+          />
+          <EditFormField />
         </>
+      ) : baseQuery ? (
+        <>
+          <EditForm
+            baseQuery={baseQuery}
+            baseFormId={baseFormId}
+            needToGenerateFormSchema={true}
+          />
+          <EditFormField />
+        </>
+      ) : (
+        <div className="flex flex-col w-full items-center justify-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Form not found</h1>
+            <p className="text-gray-500">
+              The form you are looking for does not exist.
+            </p>
+          </div>
+        </div>
       )}
-
-      <EditFormField />
     </>
   )
 }

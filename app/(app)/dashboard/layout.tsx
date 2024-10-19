@@ -2,7 +2,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import React from "react"
-import ClientLayout from "@/app/_components/dashboard-components/client-layout"
+import ClientLayout from "./components/client-layout"
 
 export default async function Layout({
   children,
@@ -16,6 +16,7 @@ export default async function Layout({
   if (error || !data?.user) {
     redirect("/login")
   }
+
   return (
     <TooltipProvider>
       <ClientLayout>{children}</ClientLayout>

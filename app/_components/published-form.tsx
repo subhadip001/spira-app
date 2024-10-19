@@ -28,9 +28,8 @@ const PublishedForm: React.FC<PublishedFormProps> = ({ publishedForm }) => {
   return (
     <PublishedFormBuilder
       initialSchema={formSchema}
+      publishedFormId={publishedForm.id}
       className=""
-      published={true}
-      editable={false}
     />
   )
 }

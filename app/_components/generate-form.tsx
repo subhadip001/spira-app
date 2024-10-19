@@ -79,8 +79,6 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
     }
   }, [needToGenerateFormSchema])
 
-  console.log(currentStreamedFormSchema)
-
   useEffect(() => {
     if (!needToGenerateFormSchema && seletedFormVersion?.form_schema_string) {
       const jsonFormSchema = JSON.parse(

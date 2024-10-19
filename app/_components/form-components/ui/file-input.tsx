@@ -1,15 +1,15 @@
-import { fileSizeConverter } from "@/lib/form-lib/utils";
-import { cn } from "@/lib/utils";
-import { Check, File, TriangleAlert, Upload, X } from "lucide-react";
-import React, { ChangeEvent, useRef, useState } from "react";
+import { fileSizeConverter } from "@/lib/form-lib/utils"
+import { cn } from "@/lib/utils"
+import { Check, File, TriangleAlert, Upload, X } from "lucide-react"
+import React, { ChangeEvent, useRef, useState } from "react"
 
-import { initializeApp } from "firebase/app";
+import { initializeApp } from "firebase/app"
 import {
   getDownloadURL,
   getStorage,
   ref,
   uploadBytesResumable,
-} from "firebase/storage";
+} from "firebase/storage"
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -18,103 +18,102 @@ const firebaseConfig = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
+}
 
 const app = Object.values(firebaseConfig).every(Boolean)
   ? initializeApp(firebaseConfig)
-  : null;
-const storage = app ? getStorage(app) : null;
+  : null
+const storage = app ? getStorage(app) : null
 
 type FileInputProps = {
-  id: string;
-  name: string;
-  placeholder?: string;
-  required?: boolean;
-  onChange: (value: any) => void;
-  className?: string;
-  accept?: string;
-  maxSize: string;
-};
+  id: string
+  name: string
+  placeholder?: string
+  required?: boolean
+  onChange: (value: any) => void
+  className?: string
+  accept?: string
+  maxSize: string
+}
 
 const FileInput: React.FC<FileInputProps> = ({ maxSize, ...props }) => {
-  const hiddenFileInput = useRef<HTMLInputElement>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const hiddenFileInput = useRef<HTMLInputElement>(null)
+  const [file, setFile] = useState<File | null>(null)
+  const [uploadProgress, setUploadProgress] = useState<number>(0)
+  const [uploadError, setUploadError] = useState<string | null>(null)
 
   const handleClick = () => {
     if (file) {
-      return;
+      return
     }
-    hiddenFileInput.current?.click();
-  };
+    hiddenFileInput.current?.click()
+  }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+    const files = event.target.files
     if (files && files.length > 0) {
-      const fileUploaded = files[0];
-      setFile(fileUploaded);
-      uploadFile(fileUploaded);
+      const fileUploaded = files[0]
+      setFile(fileUploaded)
+      uploadFile(fileUploaded)
     }
-  };
+  }
 
   const removeFile = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setFile(null);
-    setUploadProgress(0);
-    setUploadError(null);
-    props.onChange(null);
+    e.stopPropagation()
+    setFile(null)
+    setUploadProgress(0)
+    setUploadError(null)
+    props.onChange(null)
     if (hiddenFileInput.current) {
-      hiddenFileInput.current.value = "";
+      hiddenFileInput.current.value = ""
     }
-  };
+  }
 
   const uploadFile = async (file: File) => {
     if (!file) {
-      return;
+      return
     }
 
     if (file.size > parseInt(maxSize)) {
       const errorMessage = `File size should not exceed ${fileSizeConverter(
         parseInt(maxSize)
-      )}`;
-      setUploadError(errorMessage);
-      return;
+      )}`
+      setUploadError(errorMessage)
+      return
     }
 
     if (!storage) {
       setUploadError(
         "Firebase storage is not initialized. Check your configuration."
-      );
-      return;
+      )
+      return
     }
 
-    const storageRef = ref(storage, `files/${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    const storageRef = ref(storage, `files/${file.name}`)
+    const uploadTask = uploadBytesResumable(storageRef, file)
 
     uploadTask.on(
       "state_changed",
       (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setUploadProgress(progress);
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        setUploadProgress(progress)
       },
       (error) => {
-        console.error("Error uploading file:", error);
-        setUploadError("Failed to upload file. Please try again.");
+        console.error("Error uploading file:", error)
+        setUploadError("Failed to upload file. Please try again.")
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log("File available at", downloadURL);
-          props.onChange(downloadURL);
-        });
+          console.log("File available at", downloadURL)
+          props.onChange(downloadURL)
+        })
       }
-    );
-  };
+    )
+  }
 
   return (
     <div
-      className={`flex flex-col border rounded-md hover:bg-[#F1F5F9] transition-all ${
+      className={`flex flex-col border bg-white rounded-md hover:bg-[#F1F5F9] transition-all ${
         !file ? "cursor-pointer" : ""
       }`}
       onClick={handleClick}
@@ -189,7 +188,7 @@ const FileInput: React.FC<FileInputProps> = ({ maxSize, ...props }) => {
         className={cn(props.className, "hidden")}
       />
     </div>
-  );
-};
+  )
+}
 
-export default FileInput;
+export default FileInput
