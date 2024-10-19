@@ -20,7 +20,7 @@ export default function FormCard({ form }: FormCardProps) {
   return (
     <div
       onClick={() => {
-        router.push(`/form/${form.id}`)
+        router.push(`/form/${form.id}/editor`)
       }}
       className="bg-white rounded-md border cursor-pointer p-4 w-full"
     >

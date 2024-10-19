@@ -43,7 +43,7 @@ export const RecentForms = ({
         {recentForms?.data?.map((form) => (
           <div
             onClick={() => {
-              router.push(`/form/${form.id}`)
+              router.push(`/form/${form.id}/editor`)
             }}
             key={form.id}
             className="p-2 rounded-md flex justify-between items-center gap-2 cursor-pointer border hover:border-gray-300 hover:bg-[#ffffff1a]"

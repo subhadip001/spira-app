@@ -433,15 +433,6 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                                 }
                               />
                             </FormControl>
-                            {!editable && (
-                              <FormMessage>
-                                {
-                                  formErrors.find(
-                                    (e) => e.formFieldId === field.constantId
-                                  )?.error
-                                }
-                              </FormMessage>
-                            )}
                           </FormItem>
                         )}
                       />

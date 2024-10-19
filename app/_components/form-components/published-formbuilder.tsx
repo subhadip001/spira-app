@@ -5,39 +5,31 @@ import {
   FormDescription,
   FormField,
   FormItem,
-  FormMessage,
 } from "@/components/ui/form"
+import { validateForm } from "@/lib/form-lib/validation"
 import { cn } from "@/lib/utils"
-import { TFormData, TFormDetails, TFormErrors, TFormValues } from "@/types/form"
+import { TFormData, TFormErrors, TFormValues } from "@/types/form"
 import { FormSchema } from "@/types/FormSchema"
-import { CircleCheckBig } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import React, { Fragment, useState } from "react"
 import { useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 import { FormFieldComponent } from "./FormFields"
 
 interface FormBuilderProps {
   initialSchema: FormSchema
-  published?: boolean
-  editable: boolean
   className?: string
   formStatus?: "live" | "draft" | "closed"
 }
 
 const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
   initialSchema,
-  published,
-  editable,
   className,
 }) => {
   const [backgroundColor, setBackgroundColor] = useState("#ffffff")
 
-  const [formDetails, setFormDetails] = useState<TFormDetails>({
-    title: "",
-    description: "",
-    headerBackground: "#ffffff",
-  })
   const [formErrors, setFormErrors] = useState<TFormErrors>([])
-  const [formData, setFormData] = useState<TFormData>({
+  const [formResponse, setFormResponse] = useState<TFormData>({
     details: {
       title: "",
       description: "",
@@ -46,23 +38,8 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
     values: [],
   })
 
-  // console.table(formData);
-  // console.table(formDetails);
-
-  // useEffect(() => {
-  //   setFormData(
-  //     {
-  //       title: initialSchema.title,
-  //       description: initialSchema.description,
-  //       headerBackground: initialSchema.headerBackground,
-  //     },
-  //     formData,
-  //     initialSchema
-  //   );
-  // }, []);
-
   const form = useForm<Record<string, string>>({
-    defaultValues: formData?.values.reduce(
+    defaultValues: formResponse?.values.reduce(
       (acc, field) => {
         acc[field.formFieldName] = field.formFieldValue
         return acc
@@ -72,14 +49,49 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
   })
 
   const onSubmit = (data: Record<string, string>) => {
-    const newFormData: TFormValues = initialSchema.fields.map((field) => ({
-      formFieldId: field.constantId,
+    const newformResponse: TFormValues = initialSchema.fields.map((field) => ({
+      formFieldId: field.serialId,
       formFieldName: field.name,
       formFieldLabel: field.label,
       formFieldValue: data[field.name] || "",
     }))
-    setFormData({ details: formDetails, values: newFormData })
-    console.log("Form submitted:", JSON.stringify(newFormData, null, 2))
+    const errors = validateForm(initialSchema, newformResponse)
+    errors.forEach((error, index) => {
+      console.log(error)
+      setTimeout(() => {
+        toast.error(error.error)
+      }, index * 300)
+    })
+    setFormErrors(errors)
+    if (errors.length === 0) {
+      console.log("Form submitted:", JSON.stringify(newformResponse, null, 2))
+      toast.success("Form submitted successfully")
+    }
+  }
+
+  const handleFieldChange = (field: any, value: string) => {
+    const newFormResponse = [...formResponse.values]
+    const fieldIndex = newFormResponse.findIndex(
+      (f) => f.formFieldId === field.serialId
+    )
+    if (fieldIndex !== -1) {
+      newFormResponse[fieldIndex].formFieldValue = value
+    } else {
+      newFormResponse.push({
+        formFieldId: field.serialId,
+        formFieldName: field.name,
+        formFieldLabel: field.label,
+        formFieldValue: value,
+      })
+    }
+    setFormResponse({
+      ...formResponse,
+      values: newFormResponse,
+    })
+
+    setFormErrors((prevErrors) =>
+      prevErrors.filter((e) => e.formFieldId !== field.serialId)
+    )
   }
 
   return (
@@ -100,7 +112,13 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
                 <Fragment key={index}>
                   <div
                     key={field.constantId + index}
-                    className={`relative border rounded-md `}
+                    className={cn(
+                      "relative border rounded-md transition-all duration-800",
+                      !!formErrors.find((e) => e.formFieldId === field.serialId)
+                        ?.error
+                        ? "border-red-500 bg-[#ffe7e75c]"
+                        : ""
+                    )}
                   >
                     <div className="p-6">
                       <FormField
@@ -114,25 +132,7 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
                                 value={controllerField.value}
                                 onChange={(value: string) => {
                                   controllerField.onChange(value)
-                                  const newFormData = [...formData.values]
-                                  const fieldIndex = newFormData.findIndex(
-                                    (f) => f.formFieldId === field.constantId
-                                  )
-                                  if (fieldIndex !== -1) {
-                                    newFormData[fieldIndex].formFieldValue =
-                                      value
-                                  } else {
-                                    newFormData.push({
-                                      formFieldId: field.constantId,
-                                      formFieldName: field.name,
-                                      formFieldLabel: field.label,
-                                      formFieldValue: value,
-                                    })
-                                  }
-                                  setFormData({
-                                    details: formDetails,
-                                    values: newFormData,
-                                  })
+                                  handleFieldChange(field, value)
                                 }}
                                 accept={
                                   field.type === "file"
@@ -146,13 +146,13 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
                                 }
                               />
                             </FormControl>
-                            <FormMessage>
+                            {/* <FormMessage>
                               {
                                 formErrors.find(
-                                  (e) => e.formFieldId === field.constantId
+                                  (e) => e.formFieldId === field.serialId
                                 )?.error
                               }
-                            </FormMessage>
+                            </FormMessage> */}
                           </FormItem>
                         )}
                       />
@@ -164,13 +164,13 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
           </div>
           <div className="flex justify-end">
             <Button
-              className="gap-2 flex items-center"
+              className="gap-2 flex items-center group bg-spirablue hover:bg-spirablue text-white hover:text-white"
               variant="outline"
               type="submit"
             >
               <span>Submit</span>
-              <div>
-                <CircleCheckBig className="h-4 w-4" />
+              <div className="transition-all duration-800 group-hover:translate-x-1">
+                <ArrowRight className="h-4 w-4" />
               </div>
             </Button>
           </div>

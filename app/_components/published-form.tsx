@@ -25,14 +25,7 @@ const PublishedForm: React.FC<PublishedFormProps> = ({ publishedForm }) => {
     return null
   }
 
-  return (
-    <PublishedFormBuilder
-      initialSchema={formSchema}
-      className=""
-      published={true}
-      editable={false}
-    />
-  )
+  return <PublishedFormBuilder initialSchema={formSchema} className="" />
 }
 
 export default PublishedForm
