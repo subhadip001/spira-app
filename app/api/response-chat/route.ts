@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
   try {
     if (streaming) {
-      const stream = await aiApiHandlerStreaming("openai", {
+      const stream = await aiApiHandlerStreaming("groq", {
         system_prompt: RESPONSE_CHAT_SYSTEM_PROMPT,
         user_question: userPrompt,
       })

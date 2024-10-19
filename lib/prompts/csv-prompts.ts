@@ -35,7 +35,10 @@ export const RESPONSE_CHAT_SYSTEM_PROMPT = `You are an AI data analyst specializ
 Return your response in the following HTML format:
 
 <div class="response">
-  <div class="analysis">Your response in FULLY HTML format here</div>
+  <div class="analysis">
+    Your response in FULLY HTML format here without extra verbose text
+  </div>
+  <div class="intelligence">Your scratchpad/ thoughts/ assumptions etc are STRICTLY here only</div>
 </div>
 
 [IMPORTANT] Do not include any other text/ explanations or markdown in your response, ONLY the HTML code for the response.`

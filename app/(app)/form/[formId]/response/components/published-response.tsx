@@ -101,7 +101,10 @@ export default function PublishedResponse() {
   } = useFormResponseChatGenerator()
 
   const renderSubmittedTab = () => {
-    if (!publishedFormResponse?.data) {
+    if (
+      !publishedFormResponse?.data ||
+      publishedFormResponse?.data.length === 0
+    ) {
       return <div>No responses found</div>
     }
     return (
@@ -199,8 +202,10 @@ export default function PublishedResponse() {
 
   const renderAdvancedInsightsTab = () => {
     const xml = jsonArrayToXml(publishedFormResponse?.data || [])
-
-    if (!publishedFormResponse?.data) {
+    if (
+      !publishedFormResponse?.data ||
+      publishedFormResponse?.data.length === 0
+    ) {
       return <div>No responses found</div>
     }
 
@@ -224,7 +229,7 @@ export default function PublishedResponse() {
               formResponseChatMutation.mutate({
                 xml,
                 prompt:
-                  "How many rows and columns are there? List all column point wise",
+                  "Give a short human readable summary highlighting important points of the data in the table.",
               })
             }
             disabled={isStreamStarting}
