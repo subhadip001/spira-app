@@ -101,6 +101,9 @@ export default function PublishedResponse() {
   } = useFormResponseChatGenerator()
 
   const renderSubmittedTab = () => {
+    if (!publishedFormResponse?.data) {
+      return <div>No responses found</div>
+    }
     return (
       <div className="max-w-full overflow-x-auto">
         <table className="min-w-full table-auto divide-y divide-gray-200">
@@ -138,7 +141,7 @@ export default function PublishedResponse() {
   }
 
   const renderInProgressTab = () => {
-    return <div>In progress</div>
+    return <div>Partially submission feature is coming soon</div>
   }
 
   const [extractedContent, setExtractedContent] = useState("")
@@ -196,6 +199,10 @@ export default function PublishedResponse() {
 
   const renderAdvancedInsightsTab = () => {
     const xml = jsonArrayToXml(publishedFormResponse?.data || [])
+
+    if (!publishedFormResponse?.data) {
+      return <div>No responses found</div>
+    }
 
     return (
       <div>

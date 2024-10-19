@@ -30,7 +30,8 @@ const VersionDropdown = () => {
     if (
       formVersionsData &&
       formVersionsData.length > 0 &&
-      !selectedFormVersion
+      selectedFormVersion?.version_number &&
+      selectedFormVersion.version_number > formVersionsData[0].version_number
     ) {
       setSelectedFormVersion(formVersionsData[0])
     }
