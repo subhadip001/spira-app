@@ -21,7 +21,7 @@ export const createGroqChatCompletion = async (
         content: user_question,
       },
     ],
-    model: models.groq_models.LLAMA_3_2_90B,
+    model: models.groq_models.LLAMA_3_2_90B_VISION,
     temperature: 0.3,
     max_tokens: 2048,
     // top_p: 1,
