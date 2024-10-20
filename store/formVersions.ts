@@ -1,6 +1,5 @@
 import { TFormVersionData } from "@/lib/types"
 import { create } from "zustand"
-import { persist, createJSONStorage } from "zustand/middleware"
 
 type FormVersionStore = {
   formVersionsData: TFormVersionData[]
@@ -15,19 +14,11 @@ const initialState = {
   selectedFormVersion: null,
 }
 
-const useFormVersionStore = create<FormVersionStore>()(
-  persist(
-    (set) => ({
-      ...initialState,
-      setFormVersionsData: (formData) => set({ formVersionsData: formData }),
-      setSelectedFormVersion: (form) => set({ selectedFormVersion: form }),
-      resetStore: () => set(initialState),
-    }),
-    {
-      name: "form-version-store",
-      storage: createJSONStorage(() => localStorage),
-    }
-  )
-)
+const useFormVersionStore = create<FormVersionStore>()((set) => ({
+  ...initialState,
+  setFormVersionsData: (formData) => set({ formVersionsData: formData }),
+  setSelectedFormVersion: (form) => set({ selectedFormVersion: form }),
+  resetStore: () => set(initialState),
+}))
 
 export default useFormVersionStore

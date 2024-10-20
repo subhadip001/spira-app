@@ -217,7 +217,7 @@ const EditForm: React.FC<EditFormProps> = ({
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-5 items-center">
-          <VersionDropdown />
+          <VersionDropdown formId={formId} />
           <div className="bg-white h-full border rounded-md flex gap-2 p-1">
             <TooltipProvider>
               <Tooltip>
