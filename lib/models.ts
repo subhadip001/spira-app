@@ -10,6 +10,7 @@ export const models = {
     LLAMA_3_1_8B_INSTANT: "llama-3.1-8b-instant",
     LLAMA_3_1_70B: "llama-3.1-70b-versatile",
     LLAMA_3_2_90B: "llama-3.2-90b-text-preview",
+    LLAMA_3_2_90B_VISION: "llama-3.2-90b-vision-preview",
     MIXTRAL_7B: "mixtral-8x7b-32768",
   },
   anthropic_models: {
