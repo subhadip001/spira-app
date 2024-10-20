@@ -61,12 +61,6 @@ export default function Sidebar() {
             onClick={() => router.push("/dashboard/forms")}
           />
           <NavItem
-            icon={FileText}
-            label="Responses"
-            isActive={pathname === "/dashboard/responses"}
-            onClick={() => router.push("/dashboard/responses")}
-          />
-          <NavItem
             icon={Settings}
             label="Settings"
             isActive={pathname === "/dashboard/settings"}

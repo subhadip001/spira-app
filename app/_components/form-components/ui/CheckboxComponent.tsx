@@ -36,8 +36,8 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
         <p className="text-sm text-gray-500">{field.description}</p>
       )}
       <div className="space-y-1">
-        {field.options?.map((option: FormFieldOption) => (
-          <div key={option.value} className="relative">
+        {field.options?.map((option: FormFieldOption, index: number) => (
+          <div key={index} className="relative">
             <Checkbox
               id={`${field.name}-${option.value}`}
               checked={value?.split(",").includes(option.value)}

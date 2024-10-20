@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select"
 import useEditFormPageStore from "@/store/editFormPageStore"
 
-const VersionDropdown = () => {
+const VersionDropdown = ({ formId }: { formId: string }) => {
   const formVersionsData = useFormVersionStore(
     (state) => state.formVersionsData
   )
@@ -26,17 +26,17 @@ const VersionDropdown = () => {
     (state) => state.setSelectedFieldConstantId
   )
 
-  useEffect(() => {
-    if (formVersionsData?.length === 1) {
-      setSelectedFormVersion(formVersionsData[0])
-    } else if (
-      formVersionsData &&
-      formVersionsData.length > 0 &&
-      selectedFormVersion?.version_number
-    ) {
-      setSelectedFormVersion(formVersionsData[0])
-    }
-  }, [formVersionsData, setSelectedFormVersion])
+  // useEffect(() => {
+  //   if (formVersionsData?.length === 1) {
+  //     setSelectedFormVersion(formVersionsData[0])
+  //   } else if (
+  //     formVersionsData &&
+  //     formVersionsData.length > 0 &&
+  //     !selectedFormVersion?.version_number
+  //   ) {
+  //     setSelectedFormVersion(formVersionsData[0])
+  //   }
+  // }, [formVersionsData, setSelectedFormVersion])
 
   const getConstantIdForFirstField = (formSchemaString: string) => {
     const jsonFormSchema = JSON.parse(formSchemaString as string)
@@ -50,6 +50,9 @@ const VersionDropdown = () => {
     )
     if (selectedVersion) {
       setSelectedFormVersion(selectedVersion)
+      if (typeof window !== "undefined") {
+        localStorage.setItem("form-version", JSON.stringify(selectedVersion))
+      }
       setSelectedFieldConstantId(
         getConstantIdForFirstField(selectedVersion.form_schema_string)
       )

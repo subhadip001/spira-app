@@ -4,7 +4,8 @@ import { QueryKeys } from "@/lib/queries"
 import { toast } from "react-hot-toast"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { parse, Allow } from "partial-json"
-import { useState, useCallback } from "react"
+import { useState } from "react"
+import useFormVersionStore from "@/store/formVersions"
 
 interface FormSchema {
   title?: string
@@ -63,6 +64,10 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
     useState<Partial<FormSchema> | null>(null)
   const [isStreamStarting, setIsStreamStarting] = useState(false)
 
+  const formVersionsData = useFormVersionStore(
+    (state) => state.formVersionsData
+  )
+
   const addNewFormversionMutation = useMutation({
     mutationFn: (variables: AddNewFormVersionVariables) =>
       addNewFormVersion(variables),
@@ -93,7 +98,7 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
         formSchemaString: JSON.stringify(data),
         baseFormId: baseFormId,
         query: variables, // This is the prompt
-        version: 1,
+        version: formVersionsData?.length + 1,
       })
 
       // Optionally invalidate or update any relevant queries

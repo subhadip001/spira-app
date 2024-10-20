@@ -10,7 +10,7 @@ import { validateForm } from "@/lib/form-lib/validation"
 import { cn } from "@/lib/utils"
 import { TFormData, TFormErrors, TFormValues } from "@/types/form"
 import { FormSchema } from "@/types/FormSchema"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Loader2 } from "lucide-react"
 import React, { Fragment, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -212,9 +212,15 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
               type="submit"
             >
               <span>Submit</span>
-              <div className="transition-all duration-800 group-hover:translate-x-1">
-                <ArrowRight className="h-4 w-4" />
-              </div>
+              {createNewResponseForPublishedFormMutation.isPending ? (
+                <div className="">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                </div>
+              ) : (
+                <div className="transition-all duration-800 group-hover:translate-x-1">
+                  <ArrowRight className="h-4 w-4" />
+                </div>
+              )}
             </Button>
           </div>
         </div>
