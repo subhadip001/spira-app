@@ -123,12 +123,14 @@ const FileInput: React.FC<FileInputProps> = ({ maxSize, ...props }) => {
           {file ? (
             <div className="flex flex-col gap-2 relative">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <div className="text-gray-500">
                     <File size={18} />
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-gray-500">{file.name}</span>
+                  <div className="flex items-center gap-1 flex-wrap">
+                    <span className="text-gray-500 line-clamp-2">
+                      {file.name}
+                    </span>
                     <span className="text-blue-400 text-[0.7rem]">
                       {fileSizeConverter(file.size)}
                     </span>
@@ -168,9 +170,11 @@ const FileInput: React.FC<FileInputProps> = ({ maxSize, ...props }) => {
               )}
             </div>
           ) : (
-            <div className="text-gray-500 flex items-center">
-              <div className="flex items-center gap-2">
-                <Upload size={18} />
+            <div className="text-gray-500 flex items-center flex-wrap">
+              <div className="flex items-center gap-2 flex-wrap">
+                <div>
+                  <Upload size={18} />
+                </div>
                 <span>Click to choose a file &nbsp;</span>
               </div>
               <span className="text-gray-500 text-xs font-thin">

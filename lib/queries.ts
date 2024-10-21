@@ -118,6 +118,7 @@ export const getPublishedFormByFormVersionId = async (
     .from("published_forms")
     .select()
     .eq("form_version_id", formVersionId)
+    .limit(1)
     .single()
   return { data, error }
 }

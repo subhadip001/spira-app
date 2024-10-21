@@ -262,6 +262,17 @@ When generating a schema, follow these guidelines:
      "maxSize": "5242880"
    }
 
+   i. Date Field:
+   {
+     "constantId": 9,
+     "serialId": 9,
+     "type": "date",
+     "label": "Date",
+     "description": "Enter the date",
+     "name": "date",
+     "required": true
+   }
+
 3. Guidelines:
    - Assign unique constantId and serialId to each field object.
    - Set 'required' to true for mandatory fields.
@@ -273,6 +284,7 @@ When generating a schema, follow these guidelines:
    - Group related fields together and order them logically.
    - Tailor the fields and options to the specific requirements of the form type requested by the user.
    - Be creative while asking questions and collecting information. Make the form engaging and user-friendly.
+   - If any date related field is present, always use the 'date' field type.
 
 When generating a schema, aim to create a comprehensive and user-friendly form that collects all necessary information while maintaining a good user experience. 
 

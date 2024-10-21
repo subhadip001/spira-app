@@ -17,7 +17,7 @@ const SelectVersion = ({ formId }: { formId: string }) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const formVersion = JSON.parse(
-        localStorage.getItem("form-version") || "{}"
+        localStorage.getItem("selected-form-version") || "{}"
       )
       if (formVersion.form_id !== formId) {
         setSelectedFormVersion(formVersionsData[0])

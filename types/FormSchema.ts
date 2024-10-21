@@ -1,30 +1,30 @@
 export interface FormFieldOption {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 export interface FormField {
-  constantId: number;
-  serialId: number;
-  type: string;
-  label: string;
-  description: string;
-  name: string;
-  placeholder?: string;
-  required?: boolean;
-  options?: FormFieldOption[];
-  min?: number;
-  max?: number;
-  step?: number;
-  accept?: string;
-  maxSize?: string;
+  constantId: number
+  serialId: number
+  type: string
+  label: string
+  description: string
+  name: string
+  placeholder?: string
+  required?: boolean
+  options?: FormFieldOption[]
+  min?: number
+  max?: number
+  step?: number
+  accept?: string
+  maxSize?: string
 }
 
 export interface FormSchema {
-  title: string;
-  description: string;
-  headerBackground: string;
-  fields: FormField[];
+  title: string
+  description: string
+  headerBackground: string
+  fields: FormField[]
 }
 
 export enum FieldType {
@@ -37,4 +37,5 @@ export enum FieldType {
   RADIO = "radio",
   RANGE = "range",
   FILE = "file",
+  DATE = "date",
 }
