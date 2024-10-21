@@ -205,6 +205,9 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       case FieldType.FILE:
         newField = { ...newField, accept: ".pdf,.doc,.docx", maxSize: "" }
         break
+      case FieldType.DATE:
+        newField = { ...newField }
+        break
     }
 
     const updatedFields = initialSchema.fields.map((field) => {
@@ -447,6 +450,11 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                   )}
                 </Fragment>
               ))}
+              {editable && initialSchema.fields.length === 0 && (
+                <AddFieldSelector
+                  onAddField={(type) => addNewField(type, "top")}
+                />
+              )}
             </section>
           </div>
           <div className="flex justify-end">

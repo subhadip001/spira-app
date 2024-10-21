@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect } from "react"
 import useFormVersionStore from "@/store/formVersions"
 import {
   Select,
@@ -51,7 +50,10 @@ const VersionDropdown = ({ formId }: { formId: string }) => {
     if (selectedVersion) {
       setSelectedFormVersion(selectedVersion)
       if (typeof window !== "undefined") {
-        localStorage.setItem("form-version", JSON.stringify(selectedVersion))
+        localStorage.setItem(
+          "selected-form-version",
+          JSON.stringify(selectedVersion)
+        )
       }
       setSelectedFieldConstantId(
         getConstantIdForFirstField(selectedVersion.form_schema_string)
@@ -62,9 +64,11 @@ const VersionDropdown = ({ formId }: { formId: string }) => {
   return (
     <Select
       value={selectedFormVersion?.version_number?.toString() || ""}
-      onValueChange={handleVersionChange}
+      onValueChange={(value) => {
+        handleVersionChange(value)
+      }}
     >
-      <SelectTrigger className=" flex gap-2">
+      <SelectTrigger className="flex gap-2">
         <SelectValue placeholder="Select version" />
       </SelectTrigger>
       <SelectContent>

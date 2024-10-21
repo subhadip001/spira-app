@@ -12,6 +12,7 @@ import {
   ListChecks,
   SquareChevronDown,
   SlidersHorizontal,
+  Calendar,
 } from "lucide-react"
 import {
   Dialog,
@@ -47,6 +48,8 @@ const FieldTypeIcon = ({ type }: { type: FieldType }) => {
       return <File className="h-4 w-4" />
     case FieldType.RANGE:
       return <SlidersHorizontal className="h-4 w-4" />
+    case FieldType.DATE:
+      return <Calendar className="h-4 w-4" />
     default:
       return null
   }
@@ -72,6 +75,8 @@ const FieldTypeLabel = ({ type }: { type: FieldType }) => {
       return "File Upload"
     case FieldType.RANGE:
       return "Slider"
+    case FieldType.DATE:
+      return "Date"
     default:
       return ""
   }

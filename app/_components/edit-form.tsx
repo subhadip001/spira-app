@@ -181,6 +181,13 @@ const EditForm: React.FC<EditFormProps> = ({
       toast.success("Form published successfully")
 
       setShowConfetti(true)
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "selected-form-version",
+          JSON.stringify(updatedFormVersion)
+        )
+      }
     } catch (error) {
       console.error("Error publishing form", error)
       toast.error("Error publishing form")
@@ -203,6 +210,7 @@ const EditForm: React.FC<EditFormProps> = ({
       toast.error("Error adding new form version")
     },
   })
+
   return (
     <section className="relative flex-grow flex flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
       <div className="flex flex-col mmd:flex-row px-3 justify-between mmd:items-center w-full rounded-md mmd:h-[7vh] gap-2 mmd:gap-5">
@@ -331,7 +339,7 @@ const EditForm: React.FC<EditFormProps> = ({
             </div>
           ) : selectedFormVersion?.status === EFormVersionStatus.PUBLISHED ? (
             <div>
-              <Check className="h-4 w-4" />
+              <ArrowUpRight className="h-4 w-4" />
             </div>
           ) : (
             <div>
@@ -370,6 +378,14 @@ const EditForm: React.FC<EditFormProps> = ({
         onOpenChange={() => setPublishedShortId(null)}
       >
         <AlertDialogContent className="max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[50%]">
+          <div className="sr-only">
+            <AlertDialogTitle>Form Published Successfully</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your form has been published successfully. You can now share the
+              form with others.
+            </AlertDialogDescription>
+          </div>
+
           <div>
             {showConfetti && (
               <Confetti

@@ -6,6 +6,7 @@ import CheckboxField from "./ui/CheckboxComponent"
 import RadioField from "./ui/RadioField"
 import SliderField from "./ui/SliderField"
 import { FormField } from "@/types/FormSchema"
+import DateFieldComponent from "./ui/date-field-component"
 
 interface FormFieldProps {
   field: FormField
@@ -95,6 +96,16 @@ export const FormFieldComponent: React.FC<FormFieldProps> = ({
             field={field}
             value={parseFloat(safeValue) || 0}
             onChange={(newValue: number) => handleChange(newValue)}
+          />
+        </div>
+      )
+    case "date":
+      return (
+        <div>
+          <DateFieldComponent
+            field={field}
+            value={safeValue}
+            onChange={handleChange}
           />
         </div>
       )
