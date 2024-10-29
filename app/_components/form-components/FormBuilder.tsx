@@ -450,7 +450,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                   )}
                 </Fragment>
               ))}
-              {editable && initialSchema.fields.length === 0 && (
+              {editable && initialSchema?.fields?.length === 0 && (
                 <AddFieldSelector
                   onAddField={(type) => addNewField(type, "top")}
                 />
