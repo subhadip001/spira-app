@@ -1,14 +1,13 @@
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 
-export default async function SettingsPage({
-  params,
-  searchParams,
-}: {
-  params: { formId: string }
-  searchParams: { [key: string]: string | string[] | undefined }
+export default async function SettingsPage(props: {
+  params: Promise<{ formId: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const supabase = createClient()
+  const searchParams = await props.searchParams
+  const params = await props.params
+  const supabase = await createClient()
   const { data: user } = await supabase.auth.getUser()
   const pathname = `/form/${params.formId}/${Object.keys(searchParams)[0] || ""}`
 

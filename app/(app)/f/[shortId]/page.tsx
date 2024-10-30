@@ -4,12 +4,11 @@ import { EFormVersionStatus } from "@/lib/types"
 import { createClient } from "@/utils/supabase/server"
 import { Metadata } from "next"
 
-export const generateMetadata = async ({
-  params,
-}: {
-  params: { shortId: string }
+export const generateMetadata = async (props: {
+  params: Promise<{ shortId: string }>
 }): Promise<Metadata> => {
-  const supabase = createClient()
+  const params = await props.params
+  const supabase = await createClient()
   const { data: publishedForm, error: formError } = await supabase
     .from("published_forms")
     .select(
@@ -36,12 +35,11 @@ export const generateMetadata = async ({
   }
 }
 
-export default async function PublishedFormHome({
-  params,
-}: {
-  params: { shortId: string }
+export default async function PublishedFormHome(props: {
+  params: Promise<{ shortId: string }>
 }) {
-  const supabase = createClient()
+  const params = await props.params
+  const supabase = await createClient()
   const { data: publishedForm, error: formError } = await supabase
     .from("published_forms")
     .select(
