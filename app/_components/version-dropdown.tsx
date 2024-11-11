@@ -80,6 +80,9 @@ const VersionDropdown = ({ formId }: { formId: string }) => {
             v{version.version_number}
           </SelectItem>
         ))}
+        {formVersionsData.length === 0 && (
+          <SelectItem value="no-version-available">No Version</SelectItem>
+        )}
       </SelectContent>
     </Select>
   )

@@ -1,12 +1,11 @@
 import FormPage from "@/app/_components/formPage"
 import { createClient } from "@/utils/supabase/server"
 import { Metadata } from "next"
-export const generateMetadata = async ({
-  params,
-}: {
-  params: { formId: string }
+export const generateMetadata = async (props: {
+  params: Promise<{ formId: string }>
 }): Promise<Metadata> => {
-  const supabase = createClient()
+  const params = await props.params
+  const supabase = await createClient()
   const { data: baseForm, error: baseFormError } = await supabase
     .from("forms")
     .select("query")
@@ -28,17 +27,15 @@ type TSearchParams = {
   q: string
 }
 
-export default async function EditFormPage({
-  searchParams,
-  params,
-}: {
-  searchParams: TSearchParams
-  params: { formId: string }
+export default async function EditFormPage(props: {
+  searchParams: Promise<TSearchParams>
+  params: Promise<{ formId: string }>
 }) {
+  const params = await props.params
   const baseformId = params?.formId
   if (!baseformId) return null
 
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: formVersions, error } = await supabase
     .from("form_versions")
     .select()

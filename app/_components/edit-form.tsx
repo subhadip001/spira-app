@@ -65,6 +65,7 @@ const EditForm: React.FC<EditFormProps> = ({
   baseFormId,
   needToGenerateFormSchema,
 }) => {
+  console.log("needToGenerateFormSchema", needToGenerateFormSchema)
   const [selectedViewport, setSelectedViewport] = useState<
     "phone" | "tablet" | "desktop"
   >("desktop")
@@ -299,6 +300,7 @@ const EditForm: React.FC<EditFormProps> = ({
                       version: (formVersionsData?.length || 1) + 1,
                     })
                   }}
+                  disabled={formVersionsData?.length === 0}
                 >
                   Save as New Version
                 </AlertDialogAction>
@@ -312,7 +314,9 @@ const EditForm: React.FC<EditFormProps> = ({
                     })
                   }}
                 >
-                  Save as current version
+                  {formVersionsData?.length === 0
+                    ? "Save"
+                    : "Save as current version"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

@@ -4,9 +4,11 @@ import PromptBox from "./_components/prompt-box"
 import Header from "./_components/header"
 import { RecentForms } from "./_components/recent-forms"
 import { createClient } from "@/utils/supabase/server"
+import { BookDashed, Plus } from "lucide-react"
+import TemplateAndScratch from "./_components/template-and-scratch"
 
 export default async function Home() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: user, error: userError } = await supabase.auth.getUser()
   return (
     <>

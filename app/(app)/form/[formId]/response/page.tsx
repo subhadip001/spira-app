@@ -2,14 +2,13 @@ import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import PublishedResponse from "./components/published-response"
 
-export default async function ResponsePage({
-  params,
-  searchParams,
-}: {
-  params: { formId: string }
-  searchParams: { [key: string]: string | string[] | undefined }
+export default async function ResponsePage(props: {
+  params: Promise<{ formId: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const supabase = createClient()
+  const searchParams = await props.searchParams
+  const params = await props.params
+  const supabase = await createClient()
   const { data: user } = await supabase.auth.getUser()
   const pathname = `/form/${params.formId}/${Object.keys(searchParams)[0] || ""}`
 

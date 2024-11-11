@@ -5,8 +5,8 @@ export const Icons = {
   logo: ({ ...props }: LucideProps) => (
     <svg
       {...props}
-      width="40"
-      height="40"
+      width={props.size ?? 40}
+      height={props.size ?? 40}
       viewBox="0 0 45 45"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

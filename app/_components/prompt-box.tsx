@@ -2,18 +2,19 @@
 import ShineBorder from "@/components/magicui/shine-border"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { generateTypeSuggestion } from "@/lib/queries"
 import { TQueryData } from "@/lib/types"
 import { quickStartQueries } from "@/lib/utils"
+import useEditFormPageStore from "@/store/editFormPageStore"
+import useFormVersionStore from "@/store/formVersions"
 import { ArrowRight, ArrowUpRight, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { Fragment, useState, useTransition, useEffect, useRef } from "react"
-import { ReactTyped } from "react-typed"
+import { Fragment, useEffect, useRef, useState, useTransition } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { addFormQueryToDb } from "../_actions/formAction"
-import useFormVersionStore from "@/store/formVersions"
-import useEditFormPageStore from "@/store/editFormPageStore"
-import { generateTypeSuggestion } from "@/lib/queries"
 import AnimatedPlaceholderInput from "./animated-placeholder-input"
+import TemplateAndScratch from "./template-and-scratch"
+import { toast } from "react-hot-toast"
 
 const PromptBox = () => {
   const router = useRouter()
@@ -27,6 +28,9 @@ const PromptBox = () => {
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const isGeneratingSuggestion = useRef(false)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const [isScratchPending, startScratchTransition] = useTransition()
+  const [isTemplatePending, startTemplateTransition] = useTransition()
 
   useEffect(() => {
     const generateSuggestion = async () => {
@@ -104,6 +108,21 @@ const PromptBox = () => {
     "Ask Spira to build form for anything...",
   ]
 
+  const handleTemplateClick = () => {
+    toast.error("Templates are coming soon!")
+  }
+
+  const handleCreateClick = () => {
+    const uuid = uuidv4()
+
+    startScratchTransition(async () => {
+      resetFormVersionStore()
+      resetEditFormPageStore()
+      await addFormQueryToDb(uuid, "CREATED_FROM_SCRATCH")
+      router.push(`/form/${uuid}/editor`)
+    })
+  }
+
   return (
     <div className="flex flex-col gap-3">
       <ShineBorder
@@ -166,6 +185,12 @@ const PromptBox = () => {
           </Fragment>
         ))}
       </div>
+      <TemplateAndScratch
+        onTemplateClick={handleTemplateClick}
+        onCreateClick={handleCreateClick}
+        isScratchPending={isScratchPending}
+        isTemplatePending={isTemplatePending}
+      />
     </div>
   )
 }

@@ -4,6 +4,9 @@ const nextConfig = {
   images: {
     domains: ["lh3.googleusercontent.com"],
   },
-};
+  experimental: {
+    staticGenerationMinPagesPerWorker: 25,
+  },
+}
 
-export default nextConfig;
+export default nextConfig

@@ -62,7 +62,10 @@ const FormPage: React.FC<FormPageProps> = ({
           <EditForm
             baseQuery={baseQuery}
             baseFormId={baseFormId}
-            needToGenerateFormSchema={true}
+            needToGenerateFormSchema={
+              baseQuery !== "CREATED_FROM_SCRATCH" &&
+              baseQuery !== "CREATED_FROM_TEMPLATE"
+            }
           />
           <EditFormField />
         </>
