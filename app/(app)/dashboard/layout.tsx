@@ -3,6 +3,8 @@ import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import React from "react"
 import ClientLayout from "./components/client-layout"
+import { SidebarProvider } from "@/components/ui/sidebar"
+import { cookies } from "next/headers"
 
 export default async function Layout({
   children,
@@ -17,9 +19,14 @@ export default async function Layout({
     redirect("/login")
   }
 
+  const cookieStore = await cookies()
+  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true"
+
   return (
-    <TooltipProvider>
-      <ClientLayout>{children}</ClientLayout>
-    </TooltipProvider>
+    <SidebarProvider defaultOpen={defaultOpen}>
+      <TooltipProvider>
+        <ClientLayout>{children}</ClientLayout>
+      </TooltipProvider>
+    </SidebarProvider>
   )
 }

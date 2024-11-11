@@ -2,6 +2,8 @@
 import React from "react"
 import useAppStore from "@/store/appStore"
 import Sidebar from "./sidebar"
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/ui/app-sidebar"
 
 interface ClientLayoutProps {
   children: React.ReactNode
@@ -12,8 +14,11 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
   return (
     <div className="dashboard-layout bg-white w-[100vw] flex flex-col min-h-[100svh]">
       <main className="flex flex-grow w-full border-t">
-        <Sidebar />
-        <section className="flex-grow p-4">{children}</section>
+        <AppSidebar />
+        <section className="flex-grow p-4">
+          <SidebarTrigger />
+          {children}
+        </section>
       </main>
     </div>
   )

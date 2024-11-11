@@ -76,6 +76,16 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
     if (needToGenerateFormSchema) {
       // formSchemaGenerateMutation.mutate(formData)
       formSchemaStreamMutation.mutate(formData.prompt)
+    } else if (
+      formData.prompt === "CREATED_FROM_SCRATCH" ||
+      formData.prompt === "CREATED_FROM_TEMPLATE"
+    ) {
+      setCurrentFormSchema({
+        title: "",
+        description: "",
+        headerBackground: "#ffffff",
+        fields: [],
+      })
     }
   }, [needToGenerateFormSchema])
 
