@@ -11,22 +11,31 @@ export type Database = {
     Tables: {
       form_responses: {
         Row: {
+          ai_chat_messages: Json | null
+          ai_starter_questions: Json | null
           created_at: string
           id: string
+          is_chat_active: boolean
           published_form_id: string
           response_data: Json
           updated_at: string
         }
         Insert: {
+          ai_chat_messages?: Json | null
+          ai_starter_questions?: Json | null
           created_at?: string
           id?: string
+          is_chat_active?: boolean
           published_form_id?: string
           response_data?: Json
           updated_at?: string
         }
         Update: {
+          ai_chat_messages?: Json | null
+          ai_starter_questions?: Json | null
           created_at?: string
           id?: string
+          is_chat_active?: boolean
           published_form_id?: string
           response_data?: Json
           updated_at?: string

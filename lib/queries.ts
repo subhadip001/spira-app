@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/client"
-import { TQueryData, AddNewFormVersionVariables } from "./types"
+import { TQueryData, AddNewFormVersionVariables, TAiChatMessage } from "./types"
 import { TFormValues } from "@/types/form"
 import { convertFormResponseArrayToObject } from "./form-lib/utils"
 
@@ -11,6 +11,7 @@ export enum QueryKeys {
   GetRecentFormsByUserId = "getRecentFormsByUserId",
   GetFormsByUserId = "getFormsByUserId",
   GetPublishedFormResponseByPublishedFormId = "getPublishedFormResponseByPublishedFormId",
+  GetAiChatMessagesByPublishedFormId = "getAiChatMessagesByPublishedFormId",
 }
 
 export const generateFormSchema = async (data: TQueryData) => {
@@ -173,4 +174,43 @@ export const getPublishedFormResponseByPublishedFormId = async (
     .eq("published_form_id", publishedFormId)
     .order("created_at", { ascending: true })
   return { data, error }
+}
+
+export const addAiChatMessageToDb = async (
+  message: TAiChatMessage,
+  publishedFormId: string
+) => {
+  const supabase = createClient()
+
+  // First get existing messages
+  const { data: existingData } = await supabase
+    .from("form_responses")
+    .select("ai_chat_messages")
+    .eq("published_form_id", publishedFormId)
+
+  const existingMessages =
+    (existingData?.[0]?.ai_chat_messages as TAiChatMessage[]) || []
+
+  // Then update with appended message
+  const { data, error } = await supabase
+    .from("form_responses")
+    .update({
+      ai_chat_messages: [...existingMessages, message],
+    })
+    .eq("published_form_id", publishedFormId)
+
+  return { data, error }
+}
+
+export const getAiChatMessagesByPublishedFormId = async (
+  publishedFormId: string
+) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("form_responses")
+    .select("ai_chat_messages")
+    .eq("published_form_id", publishedFormId)
+
+  const aiChatMessages = data?.[0]?.ai_chat_messages as TAiChatMessage[]
+  return { aiChatMessages, error }
 }

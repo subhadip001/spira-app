@@ -15,10 +15,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
     <div className="dashboard-layout bg-white w-[100vw] flex flex-col min-h-[100svh]">
       <main className="flex flex-grow w-full border-t">
         <AppSidebar />
-        <section className="flex-grow p-4">
-          <SidebarTrigger />
-          {children}
-        </section>
+        <section className="flex-grow p-4">{children}</section>
       </main>
     </div>
   )

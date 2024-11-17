@@ -21,16 +21,21 @@ export type AddNewFormVersionVariables = {
   version: number
 }
 
-
 export enum EFormVersionStatus {
   DRAFT = "DRAFT",
   PUBLISHED = "PUBLISHED",
   UNPUBLISHED = "UNPUBLISHED",
-  DELETED="DELETED"
+  DELETED = "DELETED",
 }
 
 export enum EPublishedFormStatus {
   ACTIVE = "ACTIVE",
   CLOSED = "CLOSED",
   UNPUBLISHED = "UNPUBLISHED",
+}
+
+export type TAiChatMessage = {
+  id: string
+  role: "user" | "assistant"
+  content: string
 }
