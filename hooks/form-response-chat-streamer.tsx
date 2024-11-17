@@ -39,6 +39,7 @@ export const useFormResponseChatGenerator = () => {
   const [currentStreamedResponse, setCurrentStreamedResponse] =
     useState<string>("")
   const [isStreamStarting, setIsStreamStarting] = useState(false)
+  const [isStreamFinished, setIsStreamFinished] = useState(false)
 
   const formResponseChatMutation = useMutation({
     mutationFn: ({ xml, prompt }: { xml: string; prompt: string }) => {
@@ -50,6 +51,7 @@ export const useFormResponseChatGenerator = () => {
     },
     onSuccess: async () => {
       setIsStreamStarting(false)
+      setIsStreamFinished(true)
     },
     onError: (error: Error) => {
       setIsStreamStarting(false)
@@ -62,5 +64,6 @@ export const useFormResponseChatGenerator = () => {
     formResponseChatMutation,
     currentStreamedResponse,
     isStreamStarting,
+    isStreamFinished,
   }
 }

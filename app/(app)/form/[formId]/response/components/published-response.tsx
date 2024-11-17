@@ -23,7 +23,7 @@ import {
 import { EFormVersionStatus, TAiChatMessage } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import useFormVersionStore from "@/store/formVersions"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import parse from "html-react-parser"
 import { Parser } from "htmlparser2"
 import {
@@ -121,6 +121,7 @@ export default function PublishedResponse() {
     formResponseChatMutation,
     currentStreamedResponse,
     isStreamStarting,
+    isStreamFinished,
   } = useFormResponseChatGenerator()
 
   const createAiChatMessageMutation = useMutation({
@@ -150,10 +151,9 @@ export default function PublishedResponse() {
     enabled: !!publishedForm?.data?.id,
   })
 
-  console.log("messages", messages)
-
   const [inputValue, setInputValue] = useState("")
-  const [isChatActive, setIsChatActive] = useState(false)
+  const [isChatActive, setIsChatActive] = useState(true)
+  const queryClient = useQueryClient()
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -168,31 +168,48 @@ export default function PublishedResponse() {
     setInputValue("")
     setIsChatActive(true)
 
-    createAiChatMessageMutation.mutate({
-      message: newMessage,
-      publishedFormId: publishedForm?.data?.id || "",
-    })
+    createAiChatMessageMutation.mutate(
+      {
+        message: newMessage,
+        publishedFormId: publishedForm?.data?.id || "",
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.GetAiChatMessagesByPublishedFormId],
+          })
+        },
+      }
+    )
 
-    // TODO: Implement your chat API call here
-    // For now, just adding a mock response
-    // setTimeout(() => {
-    //   setMessages((prev) => [
-    //     ...prev,
-    //     {
-    //       id: randomUUID(),
-    //       role: "assistant",
-    //       content:
-    //         "This is a mock response. Implement your actual chat logic here.",
-    //     },
-    //   ])
-    // }, 1000)
+    formResponseChatMutation.mutate(
+      {
+        xml: jsonArrayToXml(publishedFormResponse?.data || []),
+        prompt: inputValue,
+      },
+      {
+        onSuccess: () => {
+          createAiChatMessageMutation.mutate(
+            {
+              message: {
+                id: randomUUID(),
+                role: "assistant",
+                content: currentStreamedResponse,
+              },
+              publishedFormId: publishedForm?.data?.id || "",
+            },
+            {
+              onSuccess: () => {
+                queryClient.invalidateQueries({
+                  queryKey: [QueryKeys.GetAiChatMessagesByPublishedFormId],
+                })
+              },
+            }
+          )
+        },
+      }
+    )
   }
-
-  const sampleQuestions = [
-    "What is the total number of responses?",
-    "Show me the most common answers",
-    "Summarize the key findings",
-  ]
 
   const handleSampleQuestionClick = (question: string) => {
     setInputValue(question)
@@ -305,7 +322,11 @@ export default function PublishedResponse() {
                 </span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {sampleQuestions.map((question, index) => (
+                {[
+                  "What is the total number of responses?",
+                  "Show me the most common answers",
+                  "Summarize the key findings",
+                ].map((question, index) => (
                   <Button
                     key={index}
                     variant="secondary"

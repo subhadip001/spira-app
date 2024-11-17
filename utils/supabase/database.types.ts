@@ -9,33 +9,59 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      form_responses: {
+      ai_chat: {
         Row: {
-          ai_chat_messages: Json | null
-          ai_starter_questions: Json | null
+          ai_chat_messages: Json
+          ai_starter_questions: Json
           created_at: string
           id: string
           is_chat_active: boolean
+          published_form_id: string
+        }
+        Insert: {
+          ai_chat_messages?: Json
+          ai_starter_questions?: Json
+          created_at?: string
+          id?: string
+          is_chat_active?: boolean
+          published_form_id?: string
+        }
+        Update: {
+          ai_chat_messages?: Json
+          ai_starter_questions?: Json
+          created_at?: string
+          id?: string
+          is_chat_active?: boolean
+          published_form_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_chat_published_form_id_fkey"
+            columns: ["published_form_id"]
+            isOneToOne: false
+            referencedRelation: "published_forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_responses: {
+        Row: {
+          created_at: string
+          id: string
           published_form_id: string
           response_data: Json
           updated_at: string
         }
         Insert: {
-          ai_chat_messages?: Json | null
-          ai_starter_questions?: Json | null
           created_at?: string
           id?: string
-          is_chat_active?: boolean
           published_form_id?: string
           response_data?: Json
           updated_at?: string
         }
         Update: {
-          ai_chat_messages?: Json | null
-          ai_starter_questions?: Json | null
           created_at?: string
           id?: string
-          is_chat_active?: boolean
           published_form_id?: string
           response_data?: Json
           updated_at?: string

@@ -182,24 +182,37 @@ export const addAiChatMessageToDb = async (
 ) => {
   const supabase = createClient()
 
-  // First get existing messages
-  const { data: existingData } = await supabase
-    .from("form_responses")
-    .select("ai_chat_messages")
+  const { data: existingData, error: existingError } = await supabase
+    .from("ai_chat")
+    .select()
     .eq("published_form_id", publishedFormId)
 
-  const existingMessages =
-    (existingData?.[0]?.ai_chat_messages as TAiChatMessage[]) || []
+  if (existingError) return { data: null, error: existingError }
 
-  // Then update with appended message
-  const { data, error } = await supabase
-    .from("form_responses")
-    .update({
-      ai_chat_messages: [...existingMessages, message],
+  if (existingData.length === 0) {
+    // insert message into ai_chat table
+    const { data, error } = await supabase.from("ai_chat").insert({
+      ai_chat_messages: [message],
+      published_form_id: publishedFormId,
+      is_chat_active: true,
+      ai_starter_questions: [],
     })
-    .eq("published_form_id", publishedFormId)
 
-  return { data, error }
+    return { data, error }
+  } else {
+    // update existing ai_chat table with appended message
+    const { data: updatedData, error: updatedError } = await supabase
+      .from("ai_chat")
+      .update({
+        ai_chat_messages: [
+          ...(existingData[0].ai_chat_messages as TAiChatMessage[]),
+          message,
+        ],
+      })
+      .eq("published_form_id", publishedFormId)
+
+    return { data: updatedData, error: updatedError }
+  }
 }
 
 export const getAiChatMessagesByPublishedFormId = async (
@@ -207,8 +220,8 @@ export const getAiChatMessagesByPublishedFormId = async (
 ) => {
   const supabase = createClient()
   const { data, error } = await supabase
-    .from("form_responses")
-    .select("ai_chat_messages")
+    .from("ai_chat")
+    .select()
     .eq("published_form_id", publishedFormId)
 
   const aiChatMessages = data?.[0]?.ai_chat_messages as TAiChatMessage[]
