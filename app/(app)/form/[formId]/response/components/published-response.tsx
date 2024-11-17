@@ -39,6 +39,9 @@ import { useParams, usePathname, useRouter } from "next/navigation"
 import React, { useEffect, useMemo, useState } from "react"
 import { toast } from "react-hot-toast"
 import ShortUniqueId from "short-unique-id"
+import StreamingAiContent, {
+  extractSingleDivFromHtml,
+} from "./streaming-ai-content"
 const { randomUUID } = new ShortUniqueId({ length: 10 })
 
 type ResponseData = {
@@ -289,9 +292,18 @@ export default function PublishedResponse() {
                       : "bg-muted"
                   )}
                 >
-                  {message.content}
+                  {parse(
+                    message.role === "assistant"
+                      ? extractSingleDivFromHtml(message.content, "analysis")
+                      : message.content
+                  )}
                 </div>
               ))}
+              {isStreamStarting && <div>Loading...</div>}
+              <StreamingAiContent
+                className="mb-4 p-3 rounded-lg max-w-[80%]"
+                currentStreamedResponse={currentStreamedResponse}
+              />
             </ScrollArea>
 
             <form
@@ -410,101 +422,6 @@ export default function PublishedResponse() {
       </div>
     )
   }
-
-  const [extractedContent, setExtractedContent] = useState("")
-
-  useEffect(() => {
-    const extractSingleDivFromStreamingHtml = (
-      html: string,
-      className: string
-    ) => {
-      return new Promise((resolve) => {
-        let depth = 0
-        let capturing = false
-        let capturedContent = ""
-
-        const parser = new Parser({
-          onopentag(name, attributes) {
-            if (name === "div" && attributes.class?.includes(className)) {
-              capturing = true
-            }
-            if (capturing) {
-              depth++
-              capturedContent += `<${name}`
-              for (const [key, value] of Object.entries(attributes)) {
-                capturedContent += ` ${key}="${value}"`
-              }
-              capturedContent += ">"
-            }
-          },
-          ontext(text) {
-            if (capturing) {
-              capturedContent += text
-            }
-          },
-          onclosetag(tagname) {
-            if (capturing) {
-              depth--
-              capturedContent += `</${tagname}>`
-              if (depth === 0) {
-                capturing = false
-                resolve(capturedContent)
-              }
-            }
-          },
-        })
-
-        parser.write(html)
-        parser.end()
-      })
-    }
-
-    extractSingleDivFromStreamingHtml(currentStreamedResponse, "analysis")
-      .then((content) => setExtractedContent(content as string))
-      .catch(console.error)
-  }, [currentStreamedResponse])
-
-  const renderAdvancedInsightsTab = () => {
-    const xml = jsonArrayToXml(publishedFormResponse?.data || [])
-    if (
-      !publishedFormResponse?.data ||
-      publishedFormResponse?.data.length === 0
-    ) {
-      return <div>No responses found</div>
-    }
-
-    return (
-      <div>
-        <span className="text-xl font-medium">Advanced Insights</span>
-        <div className="mt-4 p-4 bg-gray-100 rounded-md min-h-[100px]">
-          {extractedContent.length > 0 ? (
-            <div>{parse(extractedContent)}</div>
-          ) : (
-            <div>Response will appear here...</div>
-          )}
-        </div>
-        {isStreamStarting && (
-          <div className="mt-2 text-blue-500">Generating response...</div>
-        )}
-        <section className="mt-4">
-          <Button
-            type="button"
-            onClick={() =>
-              formResponseChatMutation.mutate({
-                xml,
-                prompt:
-                  "Give a short human readable summary highlighting important points of the data in the table.",
-              })
-            }
-            disabled={isStreamStarting}
-          >
-            Get Started
-          </Button>
-        </section>
-      </div>
-    )
-  }
-
   return (
     <section className="flex flex-col gap-4">
       <Tabs
