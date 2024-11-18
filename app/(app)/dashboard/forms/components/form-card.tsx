@@ -23,24 +23,24 @@ export default function FormCard({ form }: FormCardProps) {
       onClick={() => {
         router.push(`/form/${form.id}/editor`)
       }}
-      className="bg-white flex gap-8 rounded-md border cursor-pointer h-fit p-4"
+      className="bg-white rounded-md border cursor-pointer p-4 flex justify-between w-full hover:border-gray-300 transition-colors"
     >
-      <div>
-        <span className="text-lg line-clamp-1 max-w-48">{form.query}</span>
+      <div className="flex flex-col min-w-0">
+        <span className="text-lg font-medium line-clamp-1">{form.query}</span>
         <span className="text-xs text-gray-400 capitalize">
           {formatRelativeTime(new Date(form.created_at))}
         </span>
       </div>
-      <div className="flex flex-col gap-2">
-        <div
+      <div className="flex items-start ml-2">
+        <button
           onClick={(e) => {
             e.stopPropagation()
             console.log("delete")
           }}
-          className=" rounded-md flex"
+          className="p-1 hover:bg-gray-100 rounded-md"
         >
           <MoreVertical size={16} />
-        </div>
+        </button>
       </div>
     </div>
   )

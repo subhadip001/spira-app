@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/client"
-import { TQueryData, AddNewFormVersionVariables } from "./types"
+import { TQueryData, AddNewFormVersionVariables, TAiChatMessage } from "./types"
 import { TFormValues } from "@/types/form"
 import { convertFormResponseArrayToObject } from "./form-lib/utils"
 
@@ -11,6 +11,7 @@ export enum QueryKeys {
   GetRecentFormsByUserId = "getRecentFormsByUserId",
   GetFormsByUserId = "getFormsByUserId",
   GetPublishedFormResponseByPublishedFormId = "getPublishedFormResponseByPublishedFormId",
+  GetAiChatMessagesByPublishedFormId = "getAiChatMessagesByPublishedFormId",
 }
 
 export const generateFormSchema = async (data: TQueryData) => {
@@ -173,4 +174,58 @@ export const getPublishedFormResponseByPublishedFormId = async (
     .eq("published_form_id", publishedFormId)
     .order("created_at", { ascending: true })
   return { data, error }
+}
+
+export const addAiChatMessageToDb = async (
+  message: TAiChatMessage,
+  publishedFormId: string
+) => {
+  const supabase = createClient()
+
+  const { data: existingData, error: existingError } = await supabase
+    .from("ai_chat")
+    .select()
+    .eq("published_form_id", publishedFormId)
+
+  if (existingError) return { data: null, error: existingError }
+
+  if (existingData.length === 0) {
+    // insert message into ai_chat table
+    const { data, error } = await supabase.from("ai_chat").insert({
+      ai_chat_messages: [message],
+      published_form_id: publishedFormId,
+      is_chat_active: true,
+      ai_starter_questions: [],
+    })
+
+    return { data, error }
+  } else {
+    // update existing ai_chat table with appended message
+    const { data: updatedData, error: updatedError } = await supabase
+      .from("ai_chat")
+      .update({
+        ai_chat_messages: [
+          ...(existingData[0].ai_chat_messages as TAiChatMessage[]),
+          message,
+        ],
+      })
+      .eq("published_form_id", publishedFormId)
+
+    return { data: updatedData, error: updatedError }
+  }
+}
+
+export const getAiChatMessagesByPublishedFormId = async (
+  publishedFormId: string
+) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("ai_chat")
+    .select()
+    .eq("published_form_id", publishedFormId)
+
+  const aiChatMessages = data?.[0]?.ai_chat_messages as TAiChatMessage[]
+  const aiStarterQuestions = data?.[0]?.ai_starter_questions as string[]
+  const isChatActive = data?.[0]?.is_chat_active as boolean
+  return { aiChatMessages, aiStarterQuestions, isChatActive, error }
 }
