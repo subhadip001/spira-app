@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { TAiChat } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import parse from "html-react-parser"
 import { Send } from "lucide-react"
 import { useEffect, useRef } from "react"
 import { extractSingleDivFromHtml } from "./streaming-ai-content"
-import parse from "html-react-parser"
 
 import { Input } from "@/components/ui/input"
 

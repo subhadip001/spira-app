@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useFormResponseChatGenerator } from "@/hooks/form-response-chat-streamer"
 import {
@@ -28,7 +27,6 @@ import {
 } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import parse from "html-react-parser"
 import {
   ArrowRight,
   CircleDashed,
@@ -44,11 +42,8 @@ import { useParams, usePathname, useRouter } from "next/navigation"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "react-hot-toast"
 import ShortUniqueId from "short-unique-id"
-import { extractSingleDivFromHtml } from "./streaming-ai-content"
-import useFormVersionStore from "@/store/formVersions"
-import { Skeleton } from "@/components/ui/skeleton"
-import TableSection from "./table-section"
 import ChatSection from "./chat-section"
+import TableSection from "./table-section"
 const { randomUUID } = new ShortUniqueId({ length: 10 })
 
 type TabType = "submitted" | "in-progress" | "advanced-insights"

@@ -2,7 +2,6 @@
 
 import { TAiChat, TPublishedFormResponse, TResponseData } from "@/lib/types"
 import { cn } from "@/lib/utils"
-import { useState } from "react"
 
 type TableSectionProps = {
   aiChat: TAiChat
