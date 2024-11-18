@@ -225,5 +225,7 @@ export const getAiChatMessagesByPublishedFormId = async (
     .eq("published_form_id", publishedFormId)
 
   const aiChatMessages = data?.[0]?.ai_chat_messages as TAiChatMessage[]
-  return { aiChatMessages, error }
+  const aiStarterQuestions = data?.[0]?.ai_starter_questions as string[]
+  const isChatActive = data?.[0]?.is_chat_active as boolean
+  return { aiChatMessages, aiStarterQuestions, isChatActive, error }
 }

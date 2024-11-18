@@ -22,12 +22,12 @@ import {
 } from "@/lib/queries"
 import { EFormVersionStatus, TAiChatMessage } from "@/lib/types"
 import { cn } from "@/lib/utils"
-import useFormVersionStore from "@/store/formVersions"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import parse from "html-react-parser"
 import {
   ArrowRight,
   CircleDashed,
+  ClipboardX,
   Clock,
   Construction,
   MessageSquarePlus,
@@ -39,6 +39,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "react-hot-toast"
 import ShortUniqueId from "short-unique-id"
 import { extractSingleDivFromHtml } from "./streaming-ai-content"
+import useFormVersionStore from "@/store/formVersions"
 const { randomUUID } = new ShortUniqueId({ length: 10 })
 
 type ResponseData = {
@@ -53,9 +54,15 @@ type TabType = "submitted" | "in-progress" | "advanced-insights"
 
 export default function PublishedResponse() {
   const { formId } = useParams()
-  const selectedFormVersion = useFormVersionStore(
-    (state) => state.selectedFormVersion
-  )
+  // const selectedFormVersion = useFormVersionStore(
+  //   (state) => state.selectedFormVersion
+  // )
+
+  const selectedFormVersion =
+    typeof window !== "undefined"
+      ? JSON.parse(window.localStorage.getItem("selected-form-version") || "{}")
+      : null
+
   const { data: publishedForm, isLoading } = useQuery({
     queryKey: [
       QueryKeys.GetPublishedFormByFormVersionId,
@@ -101,6 +108,18 @@ export default function PublishedResponse() {
   const router = useRouter()
   const pathname = usePathname()
 
+  const [inputValue, setInputValue] = useState("")
+  const queryClient = useQueryClient()
+
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
+
+  const {
+    formResponseChatMutation,
+    currentStreamedResponse,
+    isStreamStarting,
+    isStreamFinished,
+  } = useFormResponseChatGenerator()
+
   useEffect(() => {
     const hash = window.location.hash.replace("#", "") as TabType
     if (
@@ -116,13 +135,6 @@ export default function PublishedResponse() {
     setActiveTab(tab)
     router.push(`${pathname}#${tab}`)
   }
-
-  const {
-    formResponseChatMutation,
-    currentStreamedResponse,
-    isStreamStarting,
-    isStreamFinished,
-  } = useFormResponseChatGenerator()
 
   const createAiChatMessageMutation = useMutation({
     mutationFn: async ({
@@ -141,7 +153,7 @@ export default function PublishedResponse() {
     },
   })
 
-  const { data: messages, error: messagesError } = useQuery({
+  const { data: aiChat, error: aiChatError } = useQuery({
     queryKey: [
       QueryKeys.GetAiChatMessagesByPublishedFormId,
       publishedForm?.data?.id,
@@ -151,17 +163,10 @@ export default function PublishedResponse() {
     enabled: !!publishedForm?.data?.id,
   })
 
-  const [inputValue, setInputValue] = useState("")
-  const [isChatActive, setIsChatActive] = useState(true)
-  const queryClient = useQueryClient()
-
-  const scrollAreaRef = useRef<HTMLDivElement>(null)
-
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!inputValue.trim()) return
 
-    // Add user message
     const newMessage = {
       id: randomUUID(),
       role: "user" as const,
@@ -212,42 +217,46 @@ export default function PublishedResponse() {
     }
   }
 
-  // Handle scroll on messages update
   useEffect(() => {
-    if (messages?.aiChatMessages?.length) {
-      // Add a small delay to ensure content is rendered
-      const timeoutId = setTimeout(scrollToBottom, 100)
-      return () => clearTimeout(timeoutId)
-    }
-  }, [messages?.aiChatMessages])
-
-  // Handle initial scroll when component mounts
-  useEffect(() => {
-    if (messages?.aiChatMessages?.length) {
+    if (aiChat?.aiChatMessages?.length) {
       scrollToBottom()
     }
-  }, [])
+  }, [aiChat?.aiChatMessages])
 
   const renderSubmittedTab = () => {
     if (
       !publishedFormResponse?.data ||
       publishedFormResponse?.data.length === 0
     ) {
-      return <div>No responses found</div>
+      return (
+        <div className="flex flex-col items-center justify-center p-8 text-center">
+          <div className="text-gray-400">
+            <ClipboardX className="w-12 h-12 mx-auto mb-4" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No responses yet
+          </h3>
+          <p className="text-sm text-gray-500 max-w-sm">
+            When users submit responses to your form, they will appear here.
+          </p>
+        </div>
+      )
     }
 
     return (
       <div
         className={cn(
           "flex flex-col min-h-[calc(100vh-12rem)]",
-          isChatActive && "grid grid-cols-2 gap-6"
+          aiChat?.isChatActive && "grid grid-cols-2 gap-6"
         )}
       >
         {/* Table Section - Full width initially, moves to right when chat is active */}
         <div
           className={cn(
             "flex-1",
-            isChatActive ? "h-[calc(100vh-12rem)] overflow-y-auto" : "mb-8"
+            aiChat?.isChatActive
+              ? "h-[calc(100vh-12rem)] overflow-y-auto"
+              : "mb-8"
           )}
         >
           <div className="border rounded-lg overflow-x-auto">
@@ -284,7 +293,7 @@ export default function PublishedResponse() {
           </div>
         </div>
         {/* Chat Section - Shows on left when active */}
-        {isChatActive && (
+        {aiChat?.isChatActive && (
           <div className="flex flex-col h-[calc(100vh-12rem)] border rounded-lg">
             <div className="p-4 border-b">
               <h3 className="font-semibold">Chat with your data</h3>
@@ -295,7 +304,7 @@ export default function PublishedResponse() {
               className="flex-1 p-4"
               data-scroll-container
             >
-              {messages?.aiChatMessages?.map((message, index) => (
+              {aiChat?.aiChatMessages?.map((message, index) => (
                 <div
                   key={index}
                   className={cn(
@@ -337,7 +346,7 @@ export default function PublishedResponse() {
         )}
 
         {/* Initial Chat Input with Sample Questions - Only shows when chat is not active */}
-        {!isChatActive && (
+        {!aiChat?.isChatActive && (
           <div className="sticky bottom-0 bg-background pt-4">
             <div className="mb-4 flex flex-col gap-2 items-center">
               <div className="flex items-center gap-2 mb-3">

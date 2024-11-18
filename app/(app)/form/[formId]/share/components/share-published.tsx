@@ -8,9 +8,17 @@ import { Check, Copy, ExternalLink, Link } from "lucide-react"
 import { useState } from "react"
 
 export default function SharePublished({ formId }: { formId: string }) {
-  const selectedFormVersion = useFormVersionStore(
-    (state) => state.selectedFormVersion
-  )
+  // const selectedFormVersion = useFormVersionStore(
+  //   (state) => state.selectedFormVersion
+  // )
+
+  const selectedFormVersion =
+    typeof window !== "undefined"
+      ? JSON.parse(window.localStorage.getItem("selected-form-version") || "{}")
+      : null
+
+  console.log("selectedFormVersion", selectedFormVersion)
+
   const { data: publishedForm, isLoading } = useQuery({
     queryKey: [
       QueryKeys.GetPublishedFormByFormVersionId,
