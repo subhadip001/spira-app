@@ -1,3 +1,4 @@
+import { PostgrestError } from "@supabase/supabase-js"
 import exp from "constants"
 
 export type TQueryData = {
@@ -38,4 +39,31 @@ export type TAiChatMessage = {
   id: string
   role: "user" | "assistant"
   content: string
+}
+
+export type TAiChat = {
+  aiChatMessages: TAiChatMessage[]
+  aiStarterQuestions: string[]
+  isChatActive: boolean
+  error: PostgrestError | null
+}
+export type TPublishedFormResponse = {
+  data:
+    | {
+        created_at: string
+        id: string
+        published_form_id: string
+        response_data: TResponseData
+        updated_at: string
+      }[]
+    | null
+  error: PostgrestError | null
+}
+
+export type TResponseData = {
+  [key: string]: {
+    name: string
+    label: string
+    value: string
+  }
 }

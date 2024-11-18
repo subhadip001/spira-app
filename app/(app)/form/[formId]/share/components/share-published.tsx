@@ -2,7 +2,6 @@
 
 import { getPublishedFormByFormVersionId, QueryKeys } from "@/lib/queries"
 import { EFormVersionStatus } from "@/lib/types"
-import useFormVersionStore from "@/store/formVersions"
 import { useQuery } from "@tanstack/react-query"
 import { Check, Copy, ExternalLink, Link } from "lucide-react"
 import { useState } from "react"
@@ -16,8 +15,6 @@ export default function SharePublished({ formId }: { formId: string }) {
     typeof window !== "undefined"
       ? JSON.parse(window.localStorage.getItem("selected-form-version") || "{}")
       : null
-
-  console.log("selectedFormVersion", selectedFormVersion)
 
   const { data: publishedForm, isLoading } = useQuery({
     queryKey: [

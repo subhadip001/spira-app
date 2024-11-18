@@ -20,7 +20,12 @@ import {
   getPublishedFormResponseByPublishedFormId,
   QueryKeys,
 } from "@/lib/queries"
-import { EFormVersionStatus, TAiChatMessage } from "@/lib/types"
+import {
+  EFormVersionStatus,
+  TAiChat,
+  TAiChatMessage,
+  TResponseData,
+} from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import parse from "html-react-parser"
@@ -30,6 +35,7 @@ import {
   ClipboardX,
   Clock,
   Construction,
+  Loader2,
   MessageSquarePlus,
   Send,
   Sheet,
@@ -40,15 +46,10 @@ import { toast } from "react-hot-toast"
 import ShortUniqueId from "short-unique-id"
 import { extractSingleDivFromHtml } from "./streaming-ai-content"
 import useFormVersionStore from "@/store/formVersions"
+import { Skeleton } from "@/components/ui/skeleton"
+import TableSection from "./table-section"
+import ChatSection from "./chat-section"
 const { randomUUID } = new ShortUniqueId({ length: 10 })
-
-type ResponseData = {
-  [key: string]: {
-    name: string
-    label: string
-    value: string
-  }
-}
 
 type TabType = "submitted" | "in-progress" | "advanced-insights"
 
@@ -100,7 +101,7 @@ export default function PublishedResponse() {
       return []
     }
     const firstResponse = publishedFormResponse.data[0]
-      .response_data as ResponseData
+      .response_data as TResponseData
     return Object.values(firstResponse).map((field) => field.label)
   }, [publishedFormResponse?.data])
 
@@ -224,9 +225,17 @@ export default function PublishedResponse() {
   }, [aiChat?.aiChatMessages])
 
   const renderSubmittedTab = () => {
+    if (!publishedForm?.data) {
+      return (
+        <div className="flex flex-col items-center justify-center p-8 text-center">
+          Form not published yet
+        </div>
+      )
+    }
+
     if (
-      !publishedFormResponse?.data ||
-      publishedFormResponse?.data.length === 0
+      publishedFormResponse?.data?.length === 0 &&
+      !isPublishedFormResponseLoading
     ) {
       return (
         <div className="flex flex-col items-center justify-center p-8 text-center">
@@ -244,151 +253,91 @@ export default function PublishedResponse() {
     }
 
     return (
-      <div
-        className={cn(
-          "flex flex-col min-h-[calc(100vh-12rem)]",
-          aiChat?.isChatActive && "grid grid-cols-2 gap-6"
-        )}
-      >
-        {/* Table Section - Full width initially, moves to right when chat is active */}
-        <div
-          className={cn(
-            "flex-1",
-            aiChat?.isChatActive
-              ? "h-[calc(100vh-12rem)] overflow-y-auto"
-              : "mb-8"
-          )}
-        >
-          <div className="border rounded-lg overflow-x-auto">
-            <table className="min-w-full table-auto divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  {headers.map((header, index) => (
-                    <th
-                      key={index}
-                      className="px-4 py-2 text-left whitespace-nowrap text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {publishedFormResponse?.data?.map((response, rowIndex) => (
-                  <tr key={rowIndex}>
-                    {Object.values(response.response_data as ResponseData).map(
-                      (field, cellIndex) => (
-                        <td
-                          key={cellIndex}
-                          className="px-4 py-2 text-sm text-gray-500"
-                        >
-                          {field.value}
-                        </td>
-                      )
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <div>
+        {isPublishedFormResponseLoading && (
+          <div className="flex flex-col items-center justify-center min-h-[400px] p-4">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <span className="text-sm text-muted-foreground">
+              Loading responses...
+            </span>
           </div>
-        </div>
-        {/* Chat Section - Shows on left when active */}
-        {aiChat?.isChatActive && (
-          <div className="flex flex-col h-[calc(100vh-12rem)] border rounded-lg">
-            <div className="p-4 border-b">
-              <h3 className="font-semibold">Chat with your data</h3>
-            </div>
+        )}
 
-            <ScrollArea
-              ref={scrollAreaRef}
-              className="flex-1 p-4"
-              data-scroll-container
-            >
-              {aiChat?.aiChatMessages?.map((message, index) => (
-                <div
-                  key={index}
-                  className={cn(
-                    "mb-4 p-3 rounded-lg max-w-[80%]",
-                    message.role === "user"
-                      ? "bg-primary text-primary-foreground ml-auto"
-                      : "bg-muted"
-                  )}
-                >
-                  {parse(
-                    message.role === "assistant"
-                      ? extractSingleDivFromHtml(message.content, "analysis")
-                      : message.content
-                  )}
+        {!isPublishedFormResponseLoading && aiChat?.isChatActive && (
+          <div
+            className={cn(
+              "flex flex-col min-h-[calc(100vh-12rem)]",
+              "grid grid-cols-2 gap-6"
+            )}
+          >
+            <TableSection
+              aiChat={aiChat as TAiChat}
+              publishedFormResponse={{
+                data:
+                  publishedFormResponse?.data?.map((response) => ({
+                    ...response,
+                    response_data: response.response_data as TResponseData,
+                  })) || null,
+                error: publishedFormResponse?.error || null,
+              }}
+              headers={headers}
+            />
+            <ChatSection
+              aiChat={aiChat as TAiChat}
+              handleSendMessageAction={handleSendMessage}
+              inputValue={inputValue}
+              setInputValueAction={setInputValue}
+            />
+          </div>
+        )}
+
+        {!isPublishedFormResponseLoading &&
+          publishedFormResponse?.data?.length &&
+          !aiChat?.isChatActive && (
+            <div>
+              <div className="sticky bottom-0 bg-background pt-4">
+                <div className="mb-4 flex flex-col gap-2 items-center">
+                  <div className="flex items-center gap-2 mb-3">
+                    <MessageSquarePlus className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
+                      Try asking these questions
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      "What is the total number of responses?",
+                      "Show me the most common answers",
+                      "Summarize the key findings",
+                    ].map((question, index) => (
+                      <Button
+                        key={index}
+                        variant="secondary"
+                        className="text-sm"
+                        onClick={() => handleSampleQuestionClick(question)}
+                      >
+                        {question}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
-              ))}
-              {/* {isStreamStarting && <div>Loading...</div>}
-              <StreamingAiContent
-                className="mb-4 p-3 rounded-lg max-w-[80%]"
-                currentStreamedResponse={currentStreamedResponse}
-              /> */}
-            </ScrollArea>
 
-            <form
-              onSubmit={handleSendMessage}
-              className="p-4 border-t flex gap-2"
-            >
-              <Input
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask about your data..."
-                className="flex-1"
-              />
-              <Button type="submit" size="icon">
-                <Send className="h-4 w-4" />
-              </Button>
-            </form>
-          </div>
-        )}
-
-        {/* Initial Chat Input with Sample Questions - Only shows when chat is not active */}
-        {!aiChat?.isChatActive && (
-          <div className="sticky bottom-0 bg-background pt-4">
-            <div className="mb-4 flex flex-col gap-2 items-center">
-              <div className="flex items-center gap-2 mb-3">
-                <MessageSquarePlus className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">
-                  Try asking these questions
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  "What is the total number of responses?",
-                  "Show me the most common answers",
-                  "Summarize the key findings",
-                ].map((question, index) => (
-                  <Button
-                    key={index}
-                    variant="secondary"
-                    className="text-sm"
-                    onClick={() => handleSampleQuestionClick(question)}
-                  >
-                    {question}
+                <form
+                  onSubmit={handleSendMessage}
+                  className="flex gap-2 max-w-2xl mx-auto"
+                >
+                  <Input
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Ask about your data..."
+                    className="flex-1"
+                  />
+                  <Button type="submit" size="icon">
+                    <Send className="h-4 w-4" />
                   </Button>
-                ))}
+                </form>
               </div>
             </div>
-
-            <form
-              onSubmit={handleSendMessage}
-              className="flex gap-2 max-w-2xl mx-auto"
-            >
-              <Input
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask about your data..."
-                className="flex-1"
-              />
-              <Button type="submit" size="icon">
-                <Send className="h-4 w-4" />
-              </Button>
-            </form>
-          </div>
-        )}
+          )}
       </div>
     )
   }
