@@ -1,6 +1,9 @@
 import { useState, useCallback } from "react"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "react-hot-toast"
+import { addAiChatMessageToDb, QueryKeys } from "@/lib/queries"
+import { TAiChatMessage } from "@/lib/types"
+import ShortUniqueId from "short-unique-id"
 
 const generateFormResponseChat = async (
   xml: string,
@@ -41,17 +44,61 @@ export const useFormResponseChatGenerator = () => {
   const [isStreamStarting, setIsStreamStarting] = useState(false)
   const [isStreamFinished, setIsStreamFinished] = useState(false)
 
+  const queryClient = useQueryClient()
+  const { randomUUID } = new ShortUniqueId({ length: 10 })
+
+  const createAiChatMessageMutation = useMutation({
+    mutationFn: async ({
+      message,
+      publishedFormId,
+    }: {
+      message: TAiChatMessage
+      publishedFormId: string
+    }) => addAiChatMessageToDb(message, publishedFormId),
+    onSuccess: (data) => {
+      if (data?.error) {
+        toast.error(data?.error.message)
+      } else {
+      }
+    },
+  })
   const formResponseChatMutation = useMutation({
-    mutationFn: ({ xml, prompt }: { xml: string; prompt: string }) => {
+    mutationFn: ({
+      xml,
+      prompt,
+      publishedFormId,
+    }: {
+      xml: string
+      prompt: string
+      publishedFormId: string
+    }) => {
       setIsStreamStarting(true)
       setCurrentStreamedResponse("")
       return generateFormResponseChat(xml, prompt, (chunk) => {
         setCurrentStreamedResponse((prev) => prev + chunk)
       })
     },
-    onSuccess: async () => {
+    onSuccess: async (data, variables) => {
       setIsStreamStarting(false)
       setIsStreamFinished(true)
+
+      createAiChatMessageMutation.mutate(
+        {
+          message: {
+            id: randomUUID(),
+            role: "assistant",
+            content: data,
+          },
+          publishedFormId: variables.publishedFormId,
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: [QueryKeys.GetAiChatMessagesByPublishedFormId],
+            })
+          },
+        }
+      )
     },
     onError: (error: Error) => {
       setIsStreamStarting(false)

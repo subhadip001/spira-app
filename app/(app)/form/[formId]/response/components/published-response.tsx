@@ -25,7 +25,6 @@ import { cn } from "@/lib/utils"
 import useFormVersionStore from "@/store/formVersions"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import parse from "html-react-parser"
-import { Parser } from "htmlparser2"
 import {
   ArrowRight,
   CircleDashed,
@@ -36,12 +35,10 @@ import {
   Sheet,
 } from "lucide-react"
 import { useParams, usePathname, useRouter } from "next/navigation"
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "react-hot-toast"
 import ShortUniqueId from "short-unique-id"
-import StreamingAiContent, {
-  extractSingleDivFromHtml,
-} from "./streaming-ai-content"
+import { extractSingleDivFromHtml } from "./streaming-ai-content"
 const { randomUUID } = new ShortUniqueId({ length: 10 })
 
 type ResponseData = {
@@ -158,6 +155,8 @@ export default function PublishedResponse() {
   const [isChatActive, setIsChatActive] = useState(true)
   const queryClient = useQueryClient()
 
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!inputValue.trim()) return
@@ -168,8 +167,6 @@ export default function PublishedResponse() {
       role: "user" as const,
       content: inputValue,
     }
-    setInputValue("")
-    setIsChatActive(true)
 
     createAiChatMessageMutation.mutate(
       {
@@ -189,26 +186,11 @@ export default function PublishedResponse() {
       {
         xml: jsonArrayToXml(publishedFormResponse?.data || []),
         prompt: inputValue,
+        publishedFormId: publishedForm?.data?.id || "",
       },
       {
         onSuccess: () => {
-          createAiChatMessageMutation.mutate(
-            {
-              message: {
-                id: randomUUID(),
-                role: "assistant",
-                content: currentStreamedResponse,
-              },
-              publishedFormId: publishedForm?.data?.id || "",
-            },
-            {
-              onSuccess: () => {
-                queryClient.invalidateQueries({
-                  queryKey: [QueryKeys.GetAiChatMessagesByPublishedFormId],
-                })
-              },
-            }
-          )
+          setInputValue("")
         },
       }
     )
@@ -218,6 +200,33 @@ export default function PublishedResponse() {
     setInputValue(question)
     handleSendMessage(new Event("submit") as any)
   }
+
+  const scrollToBottom = () => {
+    if (scrollAreaRef.current) {
+      const scrollContainer = scrollAreaRef.current.querySelector(
+        "[data-radix-scroll-area-viewport]"
+      )
+      if (scrollContainer) {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight
+      }
+    }
+  }
+
+  // Handle scroll on messages update
+  useEffect(() => {
+    if (messages?.aiChatMessages?.length) {
+      // Add a small delay to ensure content is rendered
+      const timeoutId = setTimeout(scrollToBottom, 100)
+      return () => clearTimeout(timeoutId)
+    }
+  }, [messages?.aiChatMessages])
+
+  // Handle initial scroll when component mounts
+  useEffect(() => {
+    if (messages?.aiChatMessages?.length) {
+      scrollToBottom()
+    }
+  }, [])
 
   const renderSubmittedTab = () => {
     if (
@@ -281,7 +290,11 @@ export default function PublishedResponse() {
               <h3 className="font-semibold">Chat with your data</h3>
             </div>
 
-            <ScrollArea className="flex-1 p-4">
+            <ScrollArea
+              ref={scrollAreaRef}
+              className="flex-1 p-4"
+              data-scroll-container
+            >
               {messages?.aiChatMessages?.map((message, index) => (
                 <div
                   key={index}
@@ -299,11 +312,11 @@ export default function PublishedResponse() {
                   )}
                 </div>
               ))}
-              {isStreamStarting && <div>Loading...</div>}
+              {/* {isStreamStarting && <div>Loading...</div>}
               <StreamingAiContent
                 className="mb-4 p-3 rounded-lg max-w-[80%]"
                 currentStreamedResponse={currentStreamedResponse}
-              />
+              /> */}
             </ScrollArea>
 
             <form
