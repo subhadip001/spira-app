@@ -1,84 +1,84 @@
 "use client"
-import { fetchFormVersions, QueryKeys } from "@/lib/queries"
+import { fetchFormVersions, fetchBaseForm, QueryKeys } from "@/lib/queries"
 import useFormVersionStore from "@/store/formVersions"
 import { useQuery } from "@tanstack/react-query"
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import EditForm from "./edit-form"
 import EditFormField from "./edit-form-field"
 import { TFormVersionData } from "@/lib/types"
+import { useParams } from "next/navigation"
 
-type FormPageProps = {
-  baseQuery: string
-  baseFormId: string
-  formVersions: {
-    created_at: string
-    form_id: string
-    form_schema_string: string
-    id: string
-    query: string
-    version_number: number
-  }[]
-}
-
-const FormPage: React.FC<FormPageProps> = ({
-  baseQuery,
-  formVersions,
-  baseFormId,
-}) => {
+const FormPage: React.FC = () => {
+  const params = useParams()
+  const baseFormId = params.formId as string
   const setFormVersionsData = useFormVersionStore(
     (state) => state.setFormVersionsData
   )
 
-  const { data } = useQuery({
+  const { data: baseFormData, isLoading: isLoadingBaseForm } = useQuery({
+    queryKey: [QueryKeys.GetBaseForm, baseFormId],
+    queryFn: () => fetchBaseForm(baseFormId),
+    enabled: !!baseFormId,
+    refetchOnWindowFocus: false,
+  })
+
+  const { data: formVersions, isLoading: isLoadingVersions } = useQuery({
     queryKey: [QueryKeys.GetFormVersions, baseFormId],
     queryFn: () => fetchFormVersions(baseFormId),
-    initialData: formVersions,
     enabled: !!baseFormId,
     refetchOnWindowFocus: false,
   })
 
   useEffect(() => {
-    if (data && data?.length > 0) {
-      const sortedData = data.sort((a, b) =>
+    if (formVersions && formVersions?.length > 0) {
+      const sortedData = formVersions.sort((a, b) =>
         b.created_at.localeCompare(a.created_at)
       )
       setFormVersionsData(sortedData as TFormVersionData[])
     }
-  }, [data])
+  }, [formVersions, setFormVersionsData])
+
+  if (isLoadingBaseForm || isLoadingVersions) {
+    return <div>Loading...</div>
+  }
+
+  if (!baseFormId || !baseFormData) {
+    return (
+      <div className="flex flex-col w-full items-center justify-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Form not found</h1>
+          <p className="text-gray-500">
+            The form you are looking for does not exist.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>
-      {data && data?.length > 0 ? (
+      {formVersions && formVersions?.length > 0 ? (
         <>
           <EditForm
-            baseQuery={baseQuery}
+            baseQuery={baseFormData.query}
             baseFormId={baseFormId}
             needToGenerateFormSchema={false}
           />
           <EditFormField />
         </>
-      ) : baseQuery ? (
+      ) : baseFormData.query ? (
         <>
           <EditForm
-            baseQuery={baseQuery}
+            baseQuery={baseFormData.query}
             baseFormId={baseFormId}
             needToGenerateFormSchema={
-              baseQuery !== "CREATED_FROM_SCRATCH" &&
-              baseQuery !== "CREATED_FROM_TEMPLATE"
+              baseFormData.query !== "CREATED_FROM_SCRATCH" &&
+              baseFormData.query !== "CREATED_FROM_TEMPLATE"
             }
           />
           <EditFormField />
         </>
-      ) : (
-        <div className="flex flex-col w-full items-center justify-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold">Form not found</h1>
-            <p className="text-gray-500">
-              The form you are looking for does not exist.
-            </p>
-          </div>
-        </div>
-      )}
+      ) : null}
     </>
   )
 }
