@@ -51,7 +51,11 @@ export default function ChatSection({
             <h3 className="font-semibold">Chat with your data</h3>
           </div>
 
-          <ScrollArea className="flex-1 p-4" data-scroll-container>
+          <ScrollArea
+            ref={scrollToBottomRef}
+            className="flex-1 p-4"
+            data-scroll-container
+          >
             {aiChat?.aiChatMessages?.map((message, index) => (
               <div
                 key={index}

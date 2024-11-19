@@ -23,7 +23,7 @@ export default async function Layout({
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true"
 
   return (
-    <SidebarProvider defaultOpen={defaultOpen}>
+    <SidebarProvider defaultOpen={true}>
       <TooltipProvider>
         <ClientLayout>{children}</ClientLayout>
       </TooltipProvider>
