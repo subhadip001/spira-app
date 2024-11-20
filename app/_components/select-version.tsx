@@ -16,16 +16,28 @@ const SelectVersion = ({ formId }: { formId: string }) => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const formVersion = JSON.parse(
-        localStorage.getItem("selected-form-version") || "{}"
-      )
-      if (formVersion.form_id !== formId) {
+      try {
+        const formVersion = JSON.parse(
+          localStorage.getItem("selected-form-version") || "{}"
+        )
+        if (formVersion?.form_id !== formId) {
+          setSelectedFormVersion(formVersionsData[0])
+          localStorage.setItem(
+            "selected-form-version",
+            JSON.stringify(formVersionsData[0])
+          )
+        } else {
+          setSelectedFormVersion(formVersion)
+        }
+      } catch (error) {
         setSelectedFormVersion(formVersionsData[0])
-      } else {
-        setSelectedFormVersion(formVersion)
+        localStorage.setItem(
+          "selected-form-version",
+          JSON.stringify(formVersionsData[0])
+        )
       }
     }
-  }, [formVersionsData, setSelectedFormVersion, formId])
+  }, [formVersionsData, formId])
   return null
 }
 
