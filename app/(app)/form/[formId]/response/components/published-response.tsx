@@ -208,7 +208,10 @@ export default function PublishedResponse() {
         "[data-radix-scroll-area-viewport]"
       )
       if (scrollContainer) {
-        scrollContainer.scrollTop = scrollContainer.scrollHeight
+        scrollContainer.scrollTo({
+          top: scrollContainer.scrollHeight,
+          behavior: "smooth",
+        })
       }
     }
   }
@@ -220,14 +223,6 @@ export default function PublishedResponse() {
   }, [aiChat?.aiChatMessages])
 
   const renderSubmittedTab = () => {
-    if (!publishedForm?.data) {
-      return (
-        <div className="flex flex-col items-center justify-center p-8 text-center">
-          Form not published yet
-        </div>
-      )
-    }
-
     if (
       publishedFormResponse?.data?.length === 0 &&
       !isPublishedFormResponseLoading
@@ -243,6 +238,14 @@ export default function PublishedResponse() {
           <p className="text-sm text-gray-500 max-w-sm">
             When users submit responses to your form, they will appear here.
           </p>
+        </div>
+      )
+    }
+
+    if (!publishedForm?.data) {
+      return (
+        <div className="flex flex-col items-center justify-center p-8 text-center">
+          Form not published yet
         </div>
       )
     }
