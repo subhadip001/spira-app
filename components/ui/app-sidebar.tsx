@@ -7,6 +7,8 @@ import {
   Inbox,
   Search,
   Settings,
+  Sparkle,
+  Sparkles,
   User2,
 } from "lucide-react"
 
@@ -40,17 +42,12 @@ const items = [
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
+    title: "Response Analytics",
+    url: "/dashboard/response-analytics",
+    icon: Sparkles,
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
+    title: "Global Search",
     url: "#",
     icon: Search,
   },

@@ -2,6 +2,7 @@ import { parse } from "csv-parse/sync"
 import { escapeXml } from "./utils"
 
 export const csvToXml = (csv: string) => {
+  console.log(csv)
   try {
     const records = parse(csv, {
       columns: true,
