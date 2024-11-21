@@ -216,6 +216,74 @@ export type Database = {
           },
         ]
       }
+      response_analytics: {
+        Row: {
+          created_at: string
+          id: string
+          published_formId: string
+          response_json: Json
+          title: string
+          transformed_xml: string
+          uploaded_csv_url: string
+          version: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          published_formId?: string
+          response_json?: Json
+          title?: string
+          transformed_xml?: string
+          uploaded_csv_url?: string
+          version?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          published_formId?: string
+          response_json?: Json
+          title?: string
+          transformed_xml?: string
+          uploaded_csv_url?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      uploaded_csv_chat: {
+        Row: {
+          ai_chat_messages: Json
+          ai_starter_questions: Json
+          created_at: string
+          id: string
+          is_chat_active: boolean
+          response_analytics_id: string
+        }
+        Insert: {
+          ai_chat_messages?: Json
+          ai_starter_questions?: Json
+          created_at?: string
+          id?: string
+          is_chat_active?: boolean
+          response_analytics_id?: string
+        }
+        Update: {
+          ai_chat_messages?: Json
+          ai_starter_questions?: Json
+          created_at?: string
+          id?: string
+          is_chat_active?: boolean
+          response_analytics_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uploaded_csv_chat_response_analytics_id_fkey"
+            columns: ["response_analytics_id"]
+            isOneToOne: false
+            referencedRelation: "response_analytics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
