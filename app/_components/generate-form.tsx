@@ -1,19 +1,16 @@
 "use client"
 import { useFormSchemaGenerator } from "@/hooks/form-schema-streamer"
-import { jsonExtractor } from "@/lib/form-lib/utils"
-import { generateFormSchema } from "@/lib/queries"
 import { TQueryData } from "@/lib/types"
 import useEditFormPageStore from "@/store/editFormPageStore"
 import useFormStore from "@/store/formStore"
 import useFormVersionStore from "@/store/formVersions"
 import { FormSchema } from "@/types/FormSchema"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQueryClient } from "@tanstack/react-query"
+import { Loader2, RefreshCw, ThumbsDown, ThumbsUp } from "lucide-react"
 import dynamic from "next/dynamic"
 import React, { useEffect, useRef } from "react"
 import FormBuilder from "./form-components/FormBuilder"
 import StreamingFormBuilder from "./form-components/streaming-formbuilder"
-import { Loader2, RefreshCw, ThumbsDown, ThumbsUp } from "lucide-react"
-import { Button } from "@/components/ui/button"
 
 const HorizontalResizableComponent = dynamic(
   () => import("./resizable-component"),
@@ -131,6 +128,9 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
       <div
         className="mx-3 w-full  mmd:w-auto  bg-[#ffff] border shadow-sm rounded-lg h-[calc(90svh-128px)] overflow-y-auto"
         ref={streamingFormRef}
+        style={{
+          scrollBehavior: "smooth",
+        }}
       >
         {isStreamStarting ? (
           <div className="flex items-center justify-center h-full">

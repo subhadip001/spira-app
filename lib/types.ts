@@ -1,5 +1,4 @@
 import { PostgrestError } from "@supabase/supabase-js"
-import exp from "constants"
 
 export type TQueryData = {
   prompt: string
@@ -47,6 +46,20 @@ export type TAiChat = {
   isChatActive: boolean
   error: PostgrestError | null
 }
+
+export type TPublishedForm = {
+  data: {
+    created_at: string
+    form_base_id: string
+    form_version_id: string
+    id: string
+    short_id: string
+    status: EPublishedFormStatus
+    user_id: string
+  } | null
+  error: PostgrestError | null
+}
+
 export type TPublishedFormResponse = {
   data:
     | {

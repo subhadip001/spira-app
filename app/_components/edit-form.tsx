@@ -63,7 +63,6 @@ const EditForm: React.FC<EditFormProps> = ({
   baseFormId,
   needToGenerateFormSchema,
 }) => {
-  console.log("needToGenerateFormSchema", needToGenerateFormSchema)
   const [selectedViewport, setSelectedViewport] = useState<
     "phone" | "tablet" | "desktop"
   >("desktop")

@@ -5,9 +5,11 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { TAiChat } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import parse from "html-react-parser"
-import { Send } from "lucide-react"
+import { Loader2, Send } from "lucide-react"
 import { useEffect, useRef } from "react"
-import { extractSingleDivFromHtml } from "./streaming-ai-content"
+import StreamingAiContent, {
+  extractSingleDivFromHtml,
+} from "./streaming-ai-content"
 
 import { Input } from "@/components/ui/input"
 
@@ -16,6 +18,10 @@ type ChatSectionProps = {
   handleSendMessageAction: (e: React.FormEvent<HTMLFormElement>) => void
   inputValue: string
   setInputValueAction: (value: string) => void
+  createAiChatMessageMutationPending: boolean
+  currentStreamedResponse: string
+  isStreamStarting: boolean
+  isStreamFinished: boolean
 }
 
 export default function ChatSection({
@@ -23,6 +29,10 @@ export default function ChatSection({
   handleSendMessageAction,
   inputValue,
   setInputValueAction,
+  createAiChatMessageMutationPending,
+  currentStreamedResponse,
+  isStreamStarting,
+  isStreamFinished,
 }: ChatSectionProps) {
   const scrollToBottomRef = useRef<HTMLDivElement>(null)
 
@@ -74,11 +84,11 @@ export default function ChatSection({
               </div>
             ))}
             <div className="" ref={scrollToBottomRef}></div>
-            {/* {isStreamStarting && <div>Loading...</div>}
-        <StreamingAiContent
-          className="mb-4 p-3 rounded-lg max-w-[80%]"
-          currentStreamedResponse={currentStreamedResponse}
-        /> */}
+            {isStreamStarting && <div>Loading...</div>}
+            {/* <StreamingAiContent
+              className="mb-4 p-3 rounded-lg max-w-[80%]"
+              currentStreamedResponse={currentStreamedResponse}
+            /> */}
           </ScrollArea>
 
           <form
@@ -91,8 +101,16 @@ export default function ChatSection({
               placeholder="Ask about your data..."
               className="flex-1"
             />
-            <Button type="submit" size="icon">
-              <Send className="h-4 w-4" />
+            <Button
+              type="submit"
+              size="icon"
+              disabled={createAiChatMessageMutationPending}
+            >
+              {!createAiChatMessageMutationPending ? (
+                <Send className="h-4 w-4" />
+              ) : (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )}
             </Button>
           </form>
         </div>
