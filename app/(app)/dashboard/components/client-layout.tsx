@@ -1,8 +1,6 @@
 "use client"
 import React from "react"
 import useAppStore from "@/store/appStore"
-import Sidebar from "./sidebar"
-import { SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/ui/app-sidebar"
 
 interface ClientLayoutProps {
