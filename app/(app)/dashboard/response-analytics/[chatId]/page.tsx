@@ -5,7 +5,8 @@ type ChatPageProps = {
     chatId: string
   }
 }
+
 export default async function ChatPage({ params }: ChatPageProps) {
-  const { chatId } = await params
+  const { chatId } = params
   return <div>page {chatId}</div>
 }
