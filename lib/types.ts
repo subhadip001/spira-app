@@ -80,3 +80,14 @@ export type TResponseData = {
     value: string
   }
 }
+
+export type TResponseAnalytics = {
+  created_at: string
+  id: string
+  published_formId: string
+  response_json: Object
+  title: string
+  transformed_xml: string
+  uploaded_csv_url: string
+  version: string
+}

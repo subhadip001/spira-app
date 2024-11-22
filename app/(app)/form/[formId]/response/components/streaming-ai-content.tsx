@@ -7,33 +7,27 @@ import parse from "html-react-parser"
 interface StreamingAiContentProps {
   currentStreamedResponse: string
   className?: string
+  extractClassName?: string
 }
 
 export default function StreamingAiContent({
   currentStreamedResponse,
-  className = "analysis",
+  className,
+  extractClassName = "analysis",
 }: StreamingAiContentProps) {
   const [extractedContent, setExtractedContent] = useState("")
 
   useEffect(() => {
-    let isMounted = true
-
     const parseContent = async () => {
       const content = await extractSingleDivFromStreamingHtml(
         currentStreamedResponse,
-        className
+        extractClassName
       )
-      if (isMounted) {
-        setExtractedContent(content as string)
-      }
+      setExtractedContent(content)
     }
 
     parseContent()
-
-    return () => {
-      isMounted = false
-    }
-  }, [currentStreamedResponse, className])
+  }, [currentStreamedResponse, extractClassName])
 
   return (
     <div className="mt-4 p-4 bg-gray-100 rounded-md">
@@ -42,7 +36,10 @@ export default function StreamingAiContent({
   )
 }
 
-const extractSingleDivFromStreamingHtml = (html: string, className: string) => {
+const extractSingleDivFromStreamingHtml = (
+  html: string,
+  className: string
+): Promise<string> => {
   return new Promise((resolve) => {
     let depth = 0
     let capturing = false
@@ -59,82 +56,51 @@ const extractSingleDivFromStreamingHtml = (html: string, className: string) => {
           ) {
             capturing = true
             targetFound = true
+            depth = 0
           }
 
           if (capturing) {
             depth++
-            // Reconstruct the opening tag with attributes
-            capturedContent += `<${name}`
-            for (const [key, value] of Object.entries(attributes)) {
-              capturedContent += ` ${key}="${value}"`
-            }
-            capturedContent += ">"
+            capturedContent += `<${name}${Object.entries(attributes).reduce((acc, [key, value]) => `${acc} ${key}="${value}"`, "")}>`
           }
         },
 
         ontext(text) {
           if (capturing) {
-            // Preserve whitespace in text content
             capturedContent += text
           }
         },
 
         onclosetag(tagname) {
           if (capturing) {
-            capturedContent += `</${tagname}>`
             depth--
+            capturedContent += `</${tagname}>`
 
-            if (depth === 0 && targetFound) {
+            if (depth === 0) {
               capturing = false
               resolve(capturedContent)
             }
           }
         },
 
-        onerror(error) {
-          console.error("Parser error:", error)
-          resolve("")
-        },
-
         onend() {
-          if (capturing) {
-            // If we're still capturing when the parser ends, resolve with what we have
-            resolve(capturedContent)
-          } else if (!targetFound) {
-            // If we never found the target div, resolve with empty string
-            resolve("")
-          }
+          resolve(targetFound ? capturedContent : "")
         },
       },
-      {
-        decodeEntities: true,
-        xmlMode: false,
-        recognizeSelfClosing: true,
-      }
+      { decodeEntities: true, recognizeSelfClosing: true }
     )
 
-    try {
-      parser.write(html)
-      parser.end()
-    } catch (error) {
-      console.error("Parser error:", error)
-      resolve("")
-    }
+    parser.write(html)
+    parser.end()
   })
 }
 
-// Fallback parser using DOMParser for non-streaming cases
 export function extractSingleDivFromHtml(
   html: string,
   className: string
 ): string {
-  try {
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(html, "text/html")
-    const targetElement = doc.querySelector(`.${className}`)
-    return targetElement?.innerHTML || ""
-  } catch (error) {
-    console.error("Error parsing HTML:", error)
-    return ""
-  }
+  const tempDiv = document.createElement("div")
+  tempDiv.innerHTML = html
+  const targetElement = tempDiv.querySelector(`.${className}`)
+  return targetElement ? targetElement.innerHTML : ""
 }

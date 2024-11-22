@@ -221,8 +221,38 @@ export const getAiChatMessagesByPublishedFormId = async (
   const isChatActive = data?.[0]?.is_chat_active as boolean
   return { aiChatMessages, aiStarterQuestions, isChatActive, error }
 }
-// Make sure to create a client-side Supabase client
-import { TFormVersionData } from "@/lib/types"
+
+export const createNewResponseAnalyticsForUploadedCsv = async (param: {
+  title: string
+  transformedJson: Record<string, string>[]
+  transformedXml: string
+  uploadedCsvUrl: string
+}) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("response_analytics")
+    .insert({
+      title: param.title,
+      response_json: param.transformedJson,
+      transformed_xml: param.transformedXml,
+      uploaded_csv_url: param.uploadedCsvUrl,
+      version: "1",
+    })
+    .select()
+    .limit(1)
+    .single()
+
+  return { data, error }
+}
+
+export const getResponseAnalyticsById = async (responseAnalyticsId: string) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("response_analytics")
+    .select()
+    .eq("id", responseAnalyticsId)
+  return { data, error }
+}
 
 export const fetchFormVersions = async (formId: string) => {
   const supabase = createClient()

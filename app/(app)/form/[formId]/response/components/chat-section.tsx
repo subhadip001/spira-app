@@ -84,11 +84,13 @@ export default function ChatSection({
               </div>
             ))}
             <div className="" ref={scrollToBottomRef}></div>
-            {isStreamStarting && <div>Loading...</div>}
-            {/* <StreamingAiContent
-              className="mb-4 p-3 rounded-lg max-w-[80%]"
-              currentStreamedResponse={currentStreamedResponse}
-            /> */}
+            {false && (
+              <StreamingAiContent
+                className="mb-4 p-3 rounded-lg max-w-[80%]"
+                currentStreamedResponse={currentStreamedResponse}
+                extractClassName="analysis"
+              />
+            )}
           </ScrollArea>
 
           <form
