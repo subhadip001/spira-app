@@ -253,8 +253,6 @@ export const getResponseAnalyticsById = async (responseAnalyticsId: string) => {
     .eq("id", responseAnalyticsId)
   return { data, error }
 }
-// Make sure to create a client-side Supabase client
-import { TFormVersionData } from "@/lib/types"
 
 export const fetchFormVersions = async (formId: string) => {
   const supabase = createClient()
