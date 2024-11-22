@@ -1,6 +1,5 @@
 "use client"
 import Confetti from "@/components/magicui/confetti"
-import { RainbowButton } from "@/components/magicui/rainbow-button"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,7 +42,6 @@ import {
   Save,
   Smartphone,
   Sparkles,
-  SquareArrowUpRight,
   Tablet,
   WandSparkles,
 } from "lucide-react"

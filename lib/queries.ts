@@ -12,6 +12,7 @@ export enum QueryKeys {
   GetFormsByUserId = "getFormsByUserId",
   GetPublishedFormResponseByPublishedFormId = "getPublishedFormResponseByPublishedFormId",
   GetAiChatMessagesByPublishedFormId = "getAiChatMessagesByPublishedFormId",
+  GetBaseForm = "getBaseForm",
 }
 
 export const generateFormSchema = async (data: TQueryData) => {
@@ -98,15 +99,6 @@ export const addNewFormVersion = async ({
   }
 
   return response
-}
-
-export const fetchFormVersions = async (baseFormId: string) => {
-  const supabase = createClient()
-  const { data } = await supabase
-    .from("form_versions")
-    .select()
-    .eq("form_id", baseFormId)
-  return data
 }
 
 export const getPublishedFormByFormVersionId = async (
@@ -260,4 +252,29 @@ export const getResponseAnalyticsById = async (responseAnalyticsId: string) => {
     .select()
     .eq("id", responseAnalyticsId)
   return { data, error }
+}
+// Make sure to create a client-side Supabase client
+import { TFormVersionData } from "@/lib/types"
+
+export const fetchFormVersions = async (formId: string) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("form_versions")
+    .select()
+    .eq("form_id", formId)
+
+  if (error) throw error
+  return data
+}
+
+export const fetchBaseForm = async (formId: string) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("forms")
+    .select("*")
+    .eq("id", formId)
+    .single()
+
+  if (error) throw error
+  return data
 }
