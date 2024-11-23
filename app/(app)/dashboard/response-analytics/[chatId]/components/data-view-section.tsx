@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import CSVViewer from "./csv-viewer"
 
 type DataViewSectionProps = {
   responseAnalytics: TResponseAnalytics
@@ -27,14 +28,17 @@ const DataViewSection: React.FC<DataViewSectionProps> = ({
   )
 
   return (
-    <div className="space-y-4">
+    <div className="">
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
-          <Button variant="outline">View Table Data</Button>
+          <Button className="w-full flex justify-start" variant="outline">
+            View Full Data
+          </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-[95vw] w-full max-h-[90vh]">
+        <DialogContent className="max-w-[95vw] w-full h-[90vh]">
           <DialogTitle>Table Data View</DialogTitle>
-          <TableContentView />
+          {/* <TableContentView /> */}
+          <CSVViewer url={responseAnalytics.uploaded_csv_url} />
         </DialogContent>
       </Dialog>
     </div>
