@@ -35,7 +35,6 @@ import {
 import { Icons } from "@/app/_components/icons"
 import { cn } from "@/lib/utils"
 
-// Menu items.
 const items = [
   {
     title: "Home",
@@ -49,7 +48,7 @@ const items = [
   },
   {
     title: "Global Search",
-    url: "#",
+    url: "/dashboard/global-search",
     icon: Search,
   },
   {
@@ -67,7 +66,10 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>
-            <div className="flex items-center gap-1">
+            <div
+              onClick={() => router.push("/")}
+              className="flex items-center gap-1 cursor-pointer"
+            >
               <Icons.logo size={20} />
               Spira AI
             </div>
