@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server"
 import React from "react"
 import DashboardChatSection from "./components/chat-section"
 import { TResponseAnalytics } from "@/lib/types"
+import DataViewSection from "./components/data-view-section"
 
 type ChatPageProps = {
   params: Promise<{
@@ -25,10 +26,15 @@ export default async function ChatPage({ params }: ChatPageProps) {
   }
 
   return (
-    <div>
-      <DashboardChatSection
+    <div className="space-y-6">
+      <DataViewSection
         responseAnalytics={responseAnalytics?.[0] as TResponseAnalytics}
       />
+      <div className="">
+        <DashboardChatSection
+          responseAnalytics={responseAnalytics?.[0] as TResponseAnalytics}
+        />
+      </div>
     </div>
   )
 }
