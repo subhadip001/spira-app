@@ -91,3 +91,12 @@ export type TResponseAnalytics = {
   uploaded_csv_url: string
   version: string
 }
+
+export type TUploadedCsvChatData = {
+  ai_chat_messages: Object
+  ai_starter_questions: string
+  created_at: string
+  id: string
+  is_chat_active: boolean
+  response_analytics_id: string
+}

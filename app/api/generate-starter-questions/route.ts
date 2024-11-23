@@ -1,34 +1,26 @@
-import { aiApiHandlerStreaming, aiApiHandler } from "@/lib/ai-api-handler"
+import { aiApiHandler, aiApiHandlerStreaming } from "@/lib/ai-api-handler"
+import { models } from "@/lib/models"
+import { RESPONSE_CHAT_SYSTEM_PROMPT } from "@/lib/prompts/csv-prompts"
 import {
-  RESPONSE_CHAT_SYSTEM_PROMPT,
-  RESPONSE_CHAT_USER_PROMPT,
-} from "@/lib/prompts/csv-prompts"
-import { FORM_SCHEMA_GENERATOR_PROMPT } from "@/lib/prompts/form-gen-prompts"
+  STARTER_QUESTIONS_GEN_SYSTEM_PROMPT,
+  STARTER_QUESTIONS_GEN_USER_PROMPT,
+} from "@/lib/prompts/tool-prompts"
 import { NextResponse } from "next/server"
 import { ChatCompletionChunk as OpenAIChatCompletionChunk } from "openai/resources/index.mjs"
 
 export async function POST(req: Request) {
-  const {
-    xml,
-    prompt,
-    streaming = true,
-  }: { xml: string; prompt: string; streaming?: boolean } = await req.json()
+  const { csvXml, streaming = false }: { csvXml: string; streaming?: boolean } =
+    await req.json()
 
-  if (prompt === undefined || prompt === "") {
-    return new Response(JSON.stringify({ message: "Invalid request" }), {
-      status: 400,
-    })
-  }
-
-  const userPrompt = RESPONSE_CHAT_USER_PROMPT.replace(
+  const userPrompt = STARTER_QUESTIONS_GEN_USER_PROMPT.replace(
     "{{CSV_XML}}",
-    xml
-  ).replace("{{USER_QUERY}}", prompt)
+    csvXml
+  )
 
   try {
     if (streaming) {
-      const stream = await aiApiHandlerStreaming("groq", {
-        system_prompt: RESPONSE_CHAT_SYSTEM_PROMPT,
+      const stream = await aiApiHandlerStreaming("openai", {
+        system_prompt: STARTER_QUESTIONS_GEN_SYSTEM_PROMPT,
         user_question: userPrompt,
       })
       if (!stream) {
@@ -64,8 +56,8 @@ export async function POST(req: Request) {
       })
     }
 
-    const response = await aiApiHandler("groq", {
-      system_prompt: FORM_SCHEMA_GENERATOR_PROMPT,
+    const response = await aiApiHandler("openai", {
+      system_prompt: STARTER_QUESTIONS_GEN_SYSTEM_PROMPT,
       user_question: userPrompt,
     })
 

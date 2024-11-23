@@ -13,7 +13,17 @@ export enum QueryKeys {
   GetPublishedFormResponseByPublishedFormId = "getPublishedFormResponseByPublishedFormId",
   GetAiChatMessagesByPublishedFormId = "getAiChatMessagesByPublishedFormId",
   GetBaseForm = "getBaseForm",
+  GetResponseAnalytics = "getResponseAnalytics",
+  GetDataForUploadedCsv = "getDataForUploadedCsv",
 }
+
+export enum ApiQueryKeys {
+  GenerateFormSchema = "generateFormSchema",
+  GenerateTypeSuggestion = "generateTypeSuggestion",
+  GenerateStarterQuestions = "generateStarterQuestions",
+}
+
+/* ********* API Queries ******** */
 
 export const generateFormSchema = async (data: TQueryData) => {
   const response = await fetch("/api/generate-form-schema", {
@@ -47,6 +57,19 @@ export const generateTypeSuggestion = async (data: TQueryData) => {
   return response.json()
 }
 
+export const generateStarterQuestions = async (csvXml: string) => {
+  const response = await fetch("/api/generate-starter-questions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ csvXml }),
+  })
+  return response.json()
+}
+
+/* ********* Supabase Queries ******** */
+
 export const getUserProfile = async () => {
   const supabase = createClient()
   const { data: user } = await supabase.auth.getUser()
@@ -57,6 +80,29 @@ export const getUserProfile = async () => {
     .eq("id", user.user.id)
     .single()
   return { data, error }
+}
+
+export const fetchFormVersions = async (formId: string) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("form_versions")
+    .select()
+    .eq("form_id", formId)
+
+  if (error) throw error
+  return data
+}
+
+export const fetchBaseForm = async (formId: string) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("forms")
+    .select("*")
+    .eq("id", formId)
+    .single()
+
+  if (error) throw error
+  return data
 }
 
 export const addNewFormVersion = async ({
@@ -254,25 +300,32 @@ export const getResponseAnalyticsById = async (responseAnalyticsId: string) => {
   return { data, error }
 }
 
-export const fetchFormVersions = async (formId: string) => {
+export const fetchChatDataForUploadedCsv = async (
+  responseAnalyticsId: string
+) => {
   const supabase = createClient()
   const { data, error } = await supabase
-    .from("form_versions")
+    .from("uploaded_csv_chat")
     .select()
-    .eq("form_id", formId)
+    .eq("response_analytics_id", responseAnalyticsId)
+    .limit(1)
 
-  if (error) throw error
-  return data
+  // If no rows found, return null data instead of throwing error
+  if (data && data.length === 0) {
+    return { data: null, error: null }
+  }
+
+  return { data: data?.[0] || null, error }
 }
 
-export const fetchBaseForm = async (formId: string) => {
+export const createStarterQuestionsForUploadedCsv = async (
+  responseAnalyticsId: string,
+  aiStarterQuestions: string
+) => {
   const supabase = createClient()
-  const { data, error } = await supabase
-    .from("forms")
-    .select("*")
-    .eq("id", formId)
-    .single()
-
-  if (error) throw error
-  return data
+  const { data, error } = await supabase.from("uploaded_csv_chat").insert({
+    ai_starter_questions: aiStarterQuestions,
+    response_analytics_id: responseAnalyticsId,
+  })
+  return { data, error }
 }

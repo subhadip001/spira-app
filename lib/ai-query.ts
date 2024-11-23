@@ -3,9 +3,10 @@ import { models } from "./models"
 import { Anthropic } from "@anthropic-ai/sdk"
 import OpenAI from "openai"
 
-export const createGroqChatCompletion = async (
+export const createGroqChatCompletionStreaming = async (
   system_prompt: string,
-  user_question: string
+  user_question: string,
+  model = models.groq_models.LLAMA_3_2_90B_VISION
 ) => {
   const API_KEY = process.env.GROQ_API_KEY
   const groq = new Groq({ apiKey: API_KEY })
@@ -21,7 +22,7 @@ export const createGroqChatCompletion = async (
         content: user_question,
       },
     ],
-    model: models.groq_models.LLAMA_3_2_90B_VISION,
+    model: model,
     temperature: 0.3,
     max_tokens: 2048,
     // top_p: 1,
@@ -30,6 +31,40 @@ export const createGroqChatCompletion = async (
   })
 
   return chatCompletion
+}
+
+export const createGroqChatCompletion = async (
+  system_prompt: string,
+  user_question: string,
+  model = models.groq_models.LLAMA_3_2_90B_VISION
+) => {
+  const API_KEY = process.env.GROQ_API_KEY
+  const groq = new Groq({ apiKey: API_KEY })
+
+  try {
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: system_prompt,
+        },
+        {
+          role: "user",
+          content: user_question,
+        },
+      ],
+      model: model,
+      temperature: 0.3,
+      max_tokens: 2048,
+      // top_p: 1,
+      stream: false,
+      stop: null,
+    })
+    return chatCompletion
+  } catch (error) {
+    console.error("Error:", error)
+    return ""
+  }
 }
 
 export async function createAnthropicResponse(

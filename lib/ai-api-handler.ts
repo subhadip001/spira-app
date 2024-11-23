@@ -2,18 +2,20 @@ import {
   createAnthropicResponse,
   createAnthropicResponseStreaming,
   createGroqChatCompletion,
+  createGroqChatCompletionStreaming,
   createOpenAIChatCompletion,
   createOpenAIChatCompletionStreaming,
 } from "./ai-query"
 
 const aiApiHandler = async (
-  model: "anthropic" | "gemini" | "groq" | "openai",
+  providor: "anthropic" | "gemini" | "groq" | "openai",
   prompt: {
     system_prompt: string
     user_question: string
-  }
+  },
+  model?: string
 ) => {
-  switch (model) {
+  switch (providor) {
     case "anthropic":
       const response = await createAnthropicResponse(
         prompt.system_prompt,
@@ -21,15 +23,11 @@ const aiApiHandler = async (
       )
       return response
     case "groq":
-      const stream = await createGroqChatCompletion(
+      const fullResponse = await createGroqChatCompletion(
         prompt.system_prompt,
-        prompt.user_question
+        prompt.user_question,
+        model
       )
-      let fullResponse = ""
-      for await (const chunk of stream) {
-        const content = chunk.choices[0]?.delta?.content || ""
-        fullResponse += content
-      }
       return fullResponse
     case "openai":
       const openaiResponse = await createOpenAIChatCompletion(
@@ -57,7 +55,7 @@ const aiApiHandlerStreaming = async (
       )
       return response
     case "groq":
-      const stream = await createGroqChatCompletion(
+      const stream = await createGroqChatCompletionStreaming(
         prompt.system_prompt,
         prompt.user_question
       )

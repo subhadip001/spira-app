@@ -252,7 +252,7 @@ export type Database = {
       uploaded_csv_chat: {
         Row: {
           ai_chat_messages: Json
-          ai_starter_questions: Json
+          ai_starter_questions: string
           created_at: string
           id: string
           is_chat_active: boolean
@@ -260,7 +260,7 @@ export type Database = {
         }
         Insert: {
           ai_chat_messages?: Json
-          ai_starter_questions?: Json
+          ai_starter_questions: string
           created_at?: string
           id?: string
           is_chat_active?: boolean
@@ -268,7 +268,7 @@ export type Database = {
         }
         Update: {
           ai_chat_messages?: Json
-          ai_starter_questions?: Json
+          ai_starter_questions?: string
           created_at?: string
           id?: string
           is_chat_active?: boolean
