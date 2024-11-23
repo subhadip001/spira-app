@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/sidebar"
 import { title } from "process"
 import { url } from "inspector"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,8 +33,8 @@ import {
   DropdownMenuTrigger,
 } from "./dropdown-menu"
 import { Icons } from "@/app/_components/icons"
+import { cn } from "@/lib/utils"
 
-// Menu items.
 const items = [
   {
     title: "Home",
@@ -48,7 +48,7 @@ const items = [
   },
   {
     title: "Global Search",
-    url: "#",
+    url: "/dashboard/global-search",
     icon: Search,
   },
   {
@@ -60,12 +60,16 @@ const items = [
 
 export function AppSidebar() {
   const router = useRouter()
+  const pathname = usePathname()
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>
-            <div className="flex items-center gap-1">
+            <div
+              onClick={() => router.push("/")}
+              className="flex items-center gap-1 cursor-pointer"
+            >
               <Icons.logo size={20} />
               Spira AI
             </div>
@@ -76,7 +80,11 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <div
-                      className="cursor-pointer"
+                      className={cn(
+                        "cursor-pointer",
+                        pathname === item.url &&
+                          "bg-blue-100 text-blue-600 hover:bg-blue-100 hover:text-blue-600"
+                      )}
                       onClick={() => {
                         router.push(`${item.url}`)
                       }}

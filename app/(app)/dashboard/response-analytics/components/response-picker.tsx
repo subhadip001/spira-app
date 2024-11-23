@@ -78,11 +78,10 @@ const ResponsePicker = () => {
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 border cursor-pointer rounded-lg">
           <Search />
-          Select from Published Form Responses ({" "}
-          <div className="flex items-center gap-1">
-            <Command className="w-4 h-4" /> + K{" "}
+          Select from Published Form Responses
+          <div className="flex items-center ">
+            <Command className="w-4 h-4" /> +K
           </div>
-          )
         </div>
         <span>OR</span>
         <label className="flex items-center gap-2 px-3 py-2 border cursor-pointer rounded-lg">
