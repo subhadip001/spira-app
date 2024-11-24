@@ -294,7 +294,7 @@ export const getAllResponseAnalyticsByUserId = async (userId: string) => {
   const supabase = createClient()
   const { data, error } = await supabase
     .from("response_analytics")
-    .select("id, title, created_at, version")
+    .select("id, title, created_at, version, updated_at")
     .eq("user_id", userId)
   return { data, error }
 }
@@ -358,6 +358,15 @@ export const addAiChatMessageToDbForUploadedCsv = async (
       ai_starter_questions: "",
       is_chat_active: true,
     })
+
+    if (!error) {
+      // Update response_analytics updated_at timestamp
+      await supabase
+        .from("response_analytics")
+        .update({ updated_at: new Date().toISOString() })
+        .eq("id", responseAnalyticsId)
+    }
+
     return { data, error }
   } else {
     const { data: updatedData, error: updatedError } = await supabase
@@ -370,6 +379,14 @@ export const addAiChatMessageToDbForUploadedCsv = async (
         is_chat_active: true,
       })
       .eq("response_analytics_id", responseAnalyticsId)
+
+    if (!updatedError) {
+      // Update response_analytics updated_at timestamp
+      await supabase
+        .from("response_analytics")
+        .update({ updated_at: new Date().toISOString() })
+        .eq("id", responseAnalyticsId)
+    }
 
     return { data: updatedData, error: updatedError }
   }

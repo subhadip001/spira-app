@@ -34,9 +34,14 @@ const RecentAnalytics = () => {
     )
   }
 
+  // Sort analytics by updated_at in descending order (latest first)
+  const sortedAnalytics = [...data.data].sort((a, b) => {
+    return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+  })
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {data.data.map((item) => (
+      {sortedAnalytics.map((item) => (
         <Card
           key={item.id}
           className="cursor-pointer hover:bg-accent/50 transition-colors"
@@ -44,10 +49,15 @@ const RecentAnalytics = () => {
             router.push(`/dashboard/response-analytics/${item.id}`)
           }
         >
-          <CardContent className="p-4">
-            <div className="font-medium"> {item.title}</div>
-            <div className="text-sm text-muted-foreground">
-              {formatRelativeTime(new Date(item.created_at))}
+          <CardContent className="p-4 flex flex-col h-full">
+            <div className="font-medium">{item.title}</div>
+            <div className="flex flex-col flex-grow gap-1 justify-end text-sm text-muted-foreground">
+              <div className="">
+                Last updated {formatRelativeTime(new Date(item.updated_at))}
+              </div>
+              <div className="text-xs">
+                Created {formatRelativeTime(new Date(item.created_at))}
+              </div>
             </div>
           </CardContent>
         </Card>

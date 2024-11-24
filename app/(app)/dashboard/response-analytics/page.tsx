@@ -10,7 +10,12 @@ export default function Dashboard() {
         <div className="flex w-full justify-center items-center py-10">
           <ResponsePicker />
         </div>
-        <RecentAnalytics />
+        <div className="flex flex-col gap-4">
+          <span className="text-lg text-muted-foreground">
+            Recent Analytics
+          </span>
+          <RecentAnalytics />
+        </div>
       </section>
     </div>
   )
