@@ -48,6 +48,8 @@ export const useFormResponseChatGenerator = () => {
   const [isStreamStarting, setIsStreamStarting] = useState(false)
   const [isStreamFinished, setIsStreamFinished] = useState(false)
 
+  const [isResponseLoading, setIsResponseLoading] = useState(false)
+
   const queryClient = useQueryClient()
   const { randomUUID } = new ShortUniqueId({ length: 10 })
 
@@ -86,34 +88,49 @@ export const useFormResponseChatGenerator = () => {
     mutationFn: ({
       xml,
       prompt,
+      streaming,
       publishedFormId,
       responseAnalyticsId,
     }: {
       xml: string
       prompt: string
+      streaming: boolean
       publishedFormId?: string
       responseAnalyticsId?: string
     }) => {
       setIsStreamStarting(true)
+      setIsResponseLoading(true)
       setCurrentStreamedResponse("")
-      return generateFormResponseChat(xml, prompt, (chunk) => {
-        setCurrentStreamedResponse((prev) => prev + chunk)
-      })
+
+      if (streaming) {
+        return generateFormResponseChat(xml, prompt, (chunk) => {
+          setCurrentStreamedResponse((prev) => prev + chunk)
+        })
+      } else {
+        return fetch("/api/response-chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ xml, prompt, streaming: false }),
+        }).then((res) => res.json())
+      }
     },
     onSuccess: async (data, variables) => {
       setIsStreamStarting(false)
       setIsStreamFinished(true)
+      setIsResponseLoading(false)
+      console.log("data", data)
+
+      const message = {
+        id: randomUUID(),
+        role: "assistant" as const,
+        content: variables.streaming ? data : data?.message,
+      }
+
+      console.log("variables", variables)
 
       if (variables.publishedFormId) {
         createAiChatMessageMutation.mutate(
-          {
-            message: {
-              id: randomUUID(),
-              role: "assistant",
-              content: data,
-            },
-            publishedFormId: variables.publishedFormId,
-          },
+          { message, publishedFormId: variables.publishedFormId },
           {
             onSuccess: () => {
               queryClient.invalidateQueries({
@@ -124,14 +141,7 @@ export const useFormResponseChatGenerator = () => {
         )
       } else if (variables.responseAnalyticsId) {
         createAiChatMessageMutationForUploadedCsv.mutate(
-          {
-            message: {
-              id: randomUUID(),
-              role: "assistant",
-              content: data,
-            },
-            responseAnalyticsId: variables.responseAnalyticsId,
-          },
+          { message, responseAnalyticsId: variables.responseAnalyticsId },
           {
             onSuccess: () => {
               queryClient.invalidateQueries({
@@ -147,6 +157,7 @@ export const useFormResponseChatGenerator = () => {
     },
     onError: (error: Error) => {
       setIsStreamStarting(false)
+      setIsResponseLoading(false)
       console.error("Error generating form response", error)
       toast.error("Failed to generate form response")
     },
@@ -157,5 +168,6 @@ export const useFormResponseChatGenerator = () => {
     currentStreamedResponse,
     isStreamStarting,
     isStreamFinished,
+    isResponseLoading,
   }
 }
