@@ -19,13 +19,16 @@ const ResponsePicker = () => {
   const user = useAppStore((state) => state.user)
 
   const createNewResponseAnalyticsForUploadedCsvMutation = useMutation({
-    mutationFn: async (csvData: { csv: string; url: string }) => {
+    mutationFn: async (csvData: {
+      csv: string
+      url: string
+      title: string
+    }) => {
       if (!user?.id) {
         throw new Error("User ID is required")
       }
       return createNewResponseAnalyticsForUploadedCsv({
-        title: "New Response Analytics",
-        transformedJson: csvToJson(csvData.csv),
+        title: csvData.title,
         transformedXml: csvToXml(csvData.csv),
         uploadedCsvUrl: csvData.url,
         userId: user.id,
@@ -53,9 +56,11 @@ const ResponsePicker = () => {
         reader.onload = async (e) => {
           const content = e.target?.result as string
           const downloadURL = await uploadFile(file)
+          console.log("Download URL:", downloadURL)
           createNewResponseAnalyticsForUploadedCsvMutation.mutate({
             csv: content,
             url: downloadURL,
+            title: file.name,
           })
         }
         reader.readAsText(file)

@@ -269,7 +269,6 @@ export const getAiChatMessagesByPublishedFormId = async (
 
 export const createNewResponseAnalyticsForUploadedCsv = async (param: {
   title: string
-  transformedJson: Record<string, string>[]
   transformedXml: string
   uploadedCsvUrl: string
   userId: string
@@ -279,7 +278,6 @@ export const createNewResponseAnalyticsForUploadedCsv = async (param: {
     .from("response_analytics")
     .insert({
       title: param.title,
-      response_json: param.transformedJson,
       transformed_xml: param.transformedXml,
       uploaded_csv_url: param.uploadedCsvUrl,
       version: "1",

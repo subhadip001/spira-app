@@ -167,6 +167,13 @@ const DashboardChatSection: React.FC<DashboardChatSectionProps> = ({
     scrollToBottom()
   }, [chatData?.data?.ai_chat_messages])
 
+  const commonStarterQuestionsForUploadedCsv = [
+    "What is the overall summary of the data?",
+    "What are the key insights from the data?",
+    "How many records are there in total?",
+    "What are the unique values in each column?",
+  ]
+
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] mx-auto">
       {/* Chat Messages */}
@@ -203,11 +210,11 @@ const DashboardChatSection: React.FC<DashboardChatSectionProps> = ({
       </ScrollArea>
 
       {/* Starter Questions */}
-      {chatData?.data?.ai_starter_questions &&
-        !chatData.data.is_chat_active && (
+      {chatData?.data?.ai_starter_questions !== "NOT_AVAILABLE" &&
+        !chatData?.data?.is_chat_active && (
           <div className="mb-4">
             <div className="grid grid-cols-2 gap-2">
-              {chatData.data.ai_starter_questions
+              {chatData?.data?.ai_starter_questions
                 .split("|")
                 .map((question, index) => (
                   <Button
@@ -219,6 +226,23 @@ const DashboardChatSection: React.FC<DashboardChatSectionProps> = ({
                     {question.trim()}
                   </Button>
                 ))}
+            </div>
+          </div>
+        )}
+      {chatData?.data?.ai_starter_questions === "NOT_AVAILABLE" &&
+        !chatData?.data?.is_chat_active && (
+          <div className="mb-4">
+            <div className="grid grid-cols-2 gap-2">
+              {commonStarterQuestionsForUploadedCsv.map((question, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  className="text-left h-auto py-2 px-3 whitespace-normal break-words"
+                  onClick={() => setMessage(question.trim())}
+                >
+                  {question.trim()}
+                </Button>
+              ))}
             </div>
           </div>
         )}
