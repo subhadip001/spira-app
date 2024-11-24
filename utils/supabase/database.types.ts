@@ -221,33 +221,44 @@ export type Database = {
           created_at: string
           id: string
           published_formId: string
-          response_json: Json
           title: string
           transformed_xml: string
+          updated_at: string
           uploaded_csv_url: string
+          user_id: string
           version: string
         }
         Insert: {
           created_at?: string
           id?: string
           published_formId?: string
-          response_json?: Json
           title?: string
           transformed_xml?: string
+          updated_at?: string
           uploaded_csv_url?: string
+          user_id?: string
           version?: string
         }
         Update: {
           created_at?: string
           id?: string
           published_formId?: string
-          response_json?: Json
           title?: string
           transformed_xml?: string
+          updated_at?: string
           uploaded_csv_url?: string
+          user_id?: string
           version?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "response_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       uploaded_csv_chat: {
         Row: {
