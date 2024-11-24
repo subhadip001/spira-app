@@ -87,7 +87,9 @@ export type TResponseAnalytics = {
   published_formId: string
   title: string
   transformed_xml: string
+  updated_at: string
   uploaded_csv_url: string
+  user_id: string
   version: string
 }
 
