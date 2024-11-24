@@ -14,7 +14,7 @@ import { TAiChatMessage, TResponseAnalytics } from "@/lib/types"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Send, Loader2 } from "lucide-react"
+import { Send, Loader2, Sparkles } from "lucide-react"
 import { useFormResponseChatGenerator } from "@/hooks/form-response-chat-streamer"
 import ShortUniqueId from "short-unique-id"
 import parse from "html-react-parser"
@@ -42,6 +42,7 @@ const DashboardChatSection: React.FC<DashboardChatSectionProps> = ({
     currentStreamedResponse,
     isStreamStarting,
     isStreamFinished,
+    isResponseLoading,
   } = useFormResponseChatGenerator()
 
   const { data: chatData } = useQuery({
@@ -141,6 +142,7 @@ const DashboardChatSection: React.FC<DashboardChatSectionProps> = ({
         xml: responseAnalytics.transformed_xml as string,
         prompt: message,
         responseAnalyticsId: responseAnalytics.id,
+        streaming: false,
       },
       {
         onSuccess: () => {
@@ -156,8 +158,6 @@ const DashboardChatSection: React.FC<DashboardChatSectionProps> = ({
         "[data-radix-scroll-area-viewport]"
       )
       if (scrollContainer) {
-        console.log(chatData?.data?.ai_chat_messages)
-
         scrollContainer.scrollTop = scrollContainer.scrollHeight
       }
     }
@@ -173,6 +173,8 @@ const DashboardChatSection: React.FC<DashboardChatSectionProps> = ({
     "How many records are there in total?",
     "What are the unique values in each column?",
   ]
+
+  console.log("isResponseLoading", isResponseLoading)
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] mx-auto">
@@ -205,6 +207,12 @@ const DashboardChatSection: React.FC<DashboardChatSectionProps> = ({
                 </div>
               </div>
             )
+          )}
+          {isResponseLoading && (
+            <div className="flex items-center justify-left animate-pulse">
+              <Sparkles className="mr-2 h-4 w-4" />
+              <span>Generating response...</span>
+            </div>
           )}
         </div>
       </ScrollArea>

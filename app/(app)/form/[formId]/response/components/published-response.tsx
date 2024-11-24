@@ -190,6 +190,7 @@ export default function PublishedResponse() {
         xml: jsonArrayToXml(publishedFormResponse?.data || []),
         prompt: inputValue,
         publishedFormId: publishedForm?.data?.id || "",
+        streaming: false,
       },
       {
         onSuccess: () => {
