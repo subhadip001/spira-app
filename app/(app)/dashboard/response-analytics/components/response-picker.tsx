@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import { useMutation } from "@tanstack/react-query"
 import { createNewResponseAnalyticsForUploadedCsv } from "@/lib/queries"
 import toast from "react-hot-toast"
+import useAppStore from "@/store/appStore"
 
 const ResponsePicker = () => {
   const { uploadFile, uploadProgress, uploadError, isUploading } =
@@ -15,13 +16,19 @@ const ResponsePicker = () => {
 
   const router = useRouter()
 
+  const user = useAppStore((state) => state.user)
+
   const createNewResponseAnalyticsForUploadedCsvMutation = useMutation({
     mutationFn: async (csvData: { csv: string; url: string }) => {
+      if (!user?.id) {
+        throw new Error("User ID is required")
+      }
       return createNewResponseAnalyticsForUploadedCsv({
         title: "New Response Analytics",
         transformedJson: csvToJson(csvData.csv),
         transformedXml: csvToXml(csvData.csv),
         uploadedCsvUrl: csvData.url,
+        userId: user.id,
       })
     },
     onSuccess: (data) => {

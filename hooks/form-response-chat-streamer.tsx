@@ -1,7 +1,11 @@
 import { useState, useCallback } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "react-hot-toast"
-import { addAiChatMessageToDb, QueryKeys } from "@/lib/queries"
+import {
+  addAiChatMessageToDb,
+  addAiChatMessageToDbForUploadedCsv,
+  QueryKeys,
+} from "@/lib/queries"
 import { TAiChatMessage } from "@/lib/types"
 import ShortUniqueId from "short-unique-id"
 
@@ -62,15 +66,33 @@ export const useFormResponseChatGenerator = () => {
       }
     },
   })
+
+  const createAiChatMessageMutationForUploadedCsv = useMutation({
+    mutationFn: async ({
+      message,
+      responseAnalyticsId,
+    }: {
+      message: TAiChatMessage
+      responseAnalyticsId: string
+    }) => addAiChatMessageToDbForUploadedCsv(message, responseAnalyticsId),
+    onSuccess: (data) => {
+      if (data?.error) {
+        toast.error(data?.error.message)
+      } else {
+      }
+    },
+  })
   const formResponseChatMutation = useMutation({
     mutationFn: ({
       xml,
       prompt,
       publishedFormId,
+      responseAnalyticsId,
     }: {
       xml: string
       prompt: string
-      publishedFormId: string
+      publishedFormId?: string
+      responseAnalyticsId?: string
     }) => {
       setIsStreamStarting(true)
       setCurrentStreamedResponse("")
@@ -82,23 +104,46 @@ export const useFormResponseChatGenerator = () => {
       setIsStreamStarting(false)
       setIsStreamFinished(true)
 
-      createAiChatMessageMutation.mutate(
-        {
-          message: {
-            id: randomUUID(),
-            role: "assistant",
-            content: data,
+      if (variables.publishedFormId) {
+        createAiChatMessageMutation.mutate(
+          {
+            message: {
+              id: randomUUID(),
+              role: "assistant",
+              content: data,
+            },
+            publishedFormId: variables.publishedFormId,
           },
-          publishedFormId: variables.publishedFormId,
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.GetAiChatMessagesByPublishedFormId],
-            })
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({
+                queryKey: [QueryKeys.GetAiChatMessagesByPublishedFormId],
+              })
+            },
+          }
+        )
+      } else if (variables.responseAnalyticsId) {
+        createAiChatMessageMutationForUploadedCsv.mutate(
+          {
+            message: {
+              id: randomUUID(),
+              role: "assistant",
+              content: data,
+            },
+            responseAnalyticsId: variables.responseAnalyticsId,
           },
-        }
-      )
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({
+                queryKey: [
+                  QueryKeys.GetDataForUploadedCsvByResponseAnalyticsId,
+                  variables.responseAnalyticsId,
+                ],
+              })
+            },
+          }
+        )
+      }
     },
     onError: (error: Error) => {
       setIsStreamStarting(false)
