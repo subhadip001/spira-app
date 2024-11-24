@@ -1,19 +1,25 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
+  addAiChatMessageToDbForUploadedCsv,
   createStarterQuestionsForUploadedCsv,
-  fetchChatDataForUploadedCsv,
+  fetchChatDataForUploadedCsvByResponseAnalyticsId,
   generateStarterQuestions,
   QueryKeys,
 } from "@/lib/queries"
 import toast from "react-hot-toast"
-import { TResponseAnalytics } from "@/lib/types"
+import { TAiChatMessage, TResponseAnalytics } from "@/lib/types"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Send, Loader2 } from "lucide-react"
+import { useFormResponseChatGenerator } from "@/hooks/form-response-chat-streamer"
+import ShortUniqueId from "short-unique-id"
+import parse from "html-react-parser"
+import { extractSingleDivFromHtml } from "@/app/(app)/form/[formId]/response/components/streaming-ai-content"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 type DashboardChatSectionProps = {
   responseAnalytics: TResponseAnalytics
@@ -28,9 +34,23 @@ const DashboardChatSection: React.FC<DashboardChatSectionProps> = ({
     Array<{ role: "user" | "assistant"; content: string }>
   >([])
 
+  const { randomUUID } = new ShortUniqueId({ length: 10 })
+  const scrollToBottomRef = useRef<HTMLDivElement>(null)
+
+  const {
+    formResponseChatMutation,
+    currentStreamedResponse,
+    isStreamStarting,
+    isStreamFinished,
+  } = useFormResponseChatGenerator()
+
   const { data: chatData } = useQuery({
-    queryKey: [QueryKeys.GetDataForUploadedCsv, responseAnalytics.id],
-    queryFn: () => fetchChatDataForUploadedCsv(responseAnalytics.id),
+    queryKey: [
+      QueryKeys.GetDataForUploadedCsvByResponseAnalyticsId,
+      responseAnalytics.id,
+    ],
+    queryFn: () =>
+      fetchChatDataForUploadedCsvByResponseAnalyticsId(responseAnalytics.id),
   })
 
   const generateStarterQuestionsMutation = useMutation({
@@ -58,9 +78,28 @@ const DashboardChatSection: React.FC<DashboardChatSectionProps> = ({
         toast.error(data.error.message)
       } else {
         queryClient.invalidateQueries({
-          queryKey: [QueryKeys.GetDataForUploadedCsv, responseAnalytics.id],
+          queryKey: [
+            QueryKeys.GetDataForUploadedCsvByResponseAnalyticsId,
+            responseAnalytics.id,
+          ],
         })
         toast.success("Starter questions saved successfully")
+      }
+    },
+  })
+
+  const createAiChatMessageMutationForUploadedCsv = useMutation({
+    mutationFn: async ({
+      message,
+      responseAnalyticsId,
+    }: {
+      message: TAiChatMessage
+      responseAnalyticsId: string
+    }) => addAiChatMessageToDbForUploadedCsv(message, responseAnalyticsId),
+    onSuccess: (data) => {
+      if (data?.error) {
+        toast.error(data?.error.message)
+      } else {
       }
     },
   })
@@ -76,58 +115,113 @@ const DashboardChatSection: React.FC<DashboardChatSectionProps> = ({
   const handleSendMessage = () => {
     if (!message.trim()) return
 
-    // Add user message to chat
-    setMessages([...messages, { role: "user", content: message.trim() }])
-    setMessage("")
+    createAiChatMessageMutationForUploadedCsv.mutate(
+      {
+        message: {
+          id: randomUUID(),
+          role: "user" as const,
+          content: message,
+        },
+        responseAnalyticsId: responseAnalytics.id,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: [
+              QueryKeys.GetDataForUploadedCsvByResponseAnalyticsId,
+              responseAnalytics.id,
+            ],
+          })
+        },
+      }
+    )
 
-    // TODO: Implement API call to get AI response
+    formResponseChatMutation.mutate(
+      {
+        xml: responseAnalytics.transformed_xml as string,
+        prompt: message,
+        responseAnalyticsId: responseAnalytics.id,
+      },
+      {
+        onSuccess: () => {
+          setMessage("")
+        },
+      }
+    )
   }
+
+  const scrollToBottom = () => {
+    if (scrollToBottomRef.current) {
+      const scrollContainer = scrollToBottomRef.current.querySelector(
+        "[data-radix-scroll-area-viewport]"
+      )
+      if (scrollContainer) {
+        console.log(chatData?.data?.ai_chat_messages)
+
+        scrollContainer.scrollTop = scrollContainer.scrollHeight
+      }
+    }
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [chatData?.data?.ai_chat_messages])
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] mx-auto">
       {/* Chat Messages */}
-      <Card className="flex-1 p-4 mb-4 overflow-y-auto">
+      <ScrollArea
+        ref={scrollToBottomRef}
+        className="flex-1 p-4 mb-4 overflow-y-auto"
+      >
         <div className="space-y-4">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex ${
-                msg.role === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
+          {(chatData?.data?.ai_chat_messages as TAiChatMessage[])?.map(
+            (msg, index) => (
               <div
-                className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                  msg.role === "user"
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-100 text-gray-800"
+                key={index}
+                className={`flex ${
+                  msg.role === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                {msg.content}
+                <div
+                  className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                    msg.role === "user"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {parse(
+                    msg.role === "assistant"
+                      ? extractSingleDivFromHtml(msg.content, "analysis")
+                      : msg.content
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
         </div>
-      </Card>
+      </ScrollArea>
 
       {/* Starter Questions */}
-      {chatData?.data?.ai_starter_questions && (
-        <div className="mb-4">
-          <div className="grid grid-cols-2 gap-2">
-            {chatData.data.ai_starter_questions
-              .split("|")
-              .map((question, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className="text-left h-auto py-2 px-3"
-                  onClick={() => setMessage(question.trim())}
-                >
-                  {question.trim()}
-                </Button>
-              ))}
+      {chatData?.data?.ai_starter_questions &&
+        !chatData.data.is_chat_active && (
+          <div className="mb-4">
+            <div className="grid grid-cols-2 gap-2">
+              {chatData.data.ai_starter_questions
+                .split("|")
+                .map((question, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    className="text-left h-auto py-2 px-3 whitespace-normal break-words"
+                    onClick={() => setMessage(question.trim())}
+                  >
+                    {question.trim()}
+                  </Button>
+                ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Chat Input */}
       <div className="flex gap-2">

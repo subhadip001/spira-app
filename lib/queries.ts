@@ -14,7 +14,8 @@ export enum QueryKeys {
   GetAiChatMessagesByPublishedFormId = "getAiChatMessagesByPublishedFormId",
   GetBaseForm = "getBaseForm",
   GetResponseAnalytics = "getResponseAnalytics",
-  GetDataForUploadedCsv = "getDataForUploadedCsv",
+  GetDataForUploadedCsvByResponseAnalyticsId = "getDataForUploadedCsvByResponseAnalyticsId",
+  GetAllResponseAnalyticsByUserId = "getAllResponseAnalyticsByUserId",
 }
 
 export enum ApiQueryKeys {
@@ -228,7 +229,6 @@ export const addAiChatMessageToDb = async (
   if (existingError) return { data: null, error: existingError }
 
   if (existingData.length === 0) {
-    // insert message into ai_chat table
     const { data, error } = await supabase.from("ai_chat").insert({
       ai_chat_messages: [message],
       published_form_id: publishedFormId,
@@ -238,7 +238,6 @@ export const addAiChatMessageToDb = async (
 
     return { data, error }
   } else {
-    // update existing ai_chat table with appended message
     const { data: updatedData, error: updatedError } = await supabase
       .from("ai_chat")
       .update({
@@ -273,6 +272,7 @@ export const createNewResponseAnalyticsForUploadedCsv = async (param: {
   transformedJson: Record<string, string>[]
   transformedXml: string
   uploadedCsvUrl: string
+  userId: string
 }) => {
   const supabase = createClient()
   const { data, error } = await supabase
@@ -283,11 +283,21 @@ export const createNewResponseAnalyticsForUploadedCsv = async (param: {
       transformed_xml: param.transformedXml,
       uploaded_csv_url: param.uploadedCsvUrl,
       version: "1",
+      user_id: param.userId,
     })
     .select()
     .limit(1)
     .single()
 
+  return { data, error }
+}
+
+export const getAllResponseAnalyticsByUserId = async (userId: string) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("response_analytics")
+    .select("id, title, created_at, version")
+    .eq("user_id", userId)
   return { data, error }
 }
 
@@ -300,7 +310,7 @@ export const getResponseAnalyticsById = async (responseAnalyticsId: string) => {
   return { data, error }
 }
 
-export const fetchChatDataForUploadedCsv = async (
+export const fetchChatDataForUploadedCsvByResponseAnalyticsId = async (
   responseAnalyticsId: string
 ) => {
   const supabase = createClient()
@@ -328,4 +338,41 @@ export const createStarterQuestionsForUploadedCsv = async (
     response_analytics_id: responseAnalyticsId,
   })
   return { data, error }
+}
+
+export const addAiChatMessageToDbForUploadedCsv = async (
+  message: TAiChatMessage,
+  responseAnalyticsId: string
+) => {
+  const supabase = createClient()
+
+  const { data: existingData, error: existingError } = await supabase
+    .from("uploaded_csv_chat")
+    .select()
+    .eq("response_analytics_id", responseAnalyticsId)
+
+  if (existingError) return { data: null, error: existingError }
+
+  if (existingData.length === 0) {
+    const { data, error } = await supabase.from("uploaded_csv_chat").insert({
+      ai_chat_messages: [message],
+      response_analytics_id: responseAnalyticsId,
+      ai_starter_questions: "",
+      is_chat_active: true,
+    })
+    return { data, error }
+  } else {
+    const { data: updatedData, error: updatedError } = await supabase
+      .from("uploaded_csv_chat")
+      .update({
+        ai_chat_messages: [
+          ...(existingData[0].ai_chat_messages as TAiChatMessage[]),
+          message,
+        ],
+        is_chat_active: true,
+      })
+      .eq("response_analytics_id", responseAnalyticsId)
+
+    return { data: updatedData, error: updatedError }
+  }
 }
