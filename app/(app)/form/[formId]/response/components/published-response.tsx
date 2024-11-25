@@ -1,15 +1,6 @@
 "use client"
 
 import { jsonArrayToXml } from "@/app/transformations/json-to-xml"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useFormResponseChatGenerator } from "@/hooks/form-response-chat-streamer"
 import {
@@ -27,37 +18,19 @@ import {
   TPublishedFormResponse,
   TResponseData,
 } from "@/lib/types"
-import { cn } from "@/lib/utils"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import {
-  ArrowRight,
-  CircleDashed,
-  ClipboardX,
-  Clock,
-  Construction,
-  Loader2,
-  MessageSquarePlus,
-  Send,
-  Sheet,
-} from "lucide-react"
-import { useParams, usePathname, useRouter } from "next/navigation"
+import { CircleDashed, Sheet } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "react-hot-toast"
 import ShortUniqueId from "short-unique-id"
-import ChatSection from "./chat-section"
-import TableSection from "./table-section"
-import SubmittedTab from "./submitted-tab"
 import InProgressTab from "./in-progress-tab"
+import SubmittedTab from "./submitted-tab"
 const { randomUUID } = new ShortUniqueId({ length: 10 })
 
 type TabType = "submitted" | "in-progress" | "advanced-insights"
 
 export default function PublishedResponse() {
-  const { formId } = useParams()
-  // const selectedFormVersion = useFormVersionStore(
-  //   (state) => state.selectedFormVersion
-  // )
-
   const selectedFormVersion =
     typeof window !== "undefined"
       ? JSON.parse(window.localStorage.getItem("selected-form-version") || "{}")
