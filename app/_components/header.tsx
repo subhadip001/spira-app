@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
       <div className="flex gap-4 items-center">
         <CustomButton
           handleClick={() => router.push("/dashboard")}
-          className="flex items-center gap-2 py-[0.3rem]"
+          className="flex items-center gap-2"
         >
           Go to Dashboard
           <div>

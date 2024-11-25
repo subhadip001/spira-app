@@ -11,7 +11,7 @@ const CustomButton = ({
   className,
 }: {
   children: React.ReactNode | string
-  handleClick: () => void
+  handleClick?: () => void
   className?: string
 }) => {
   const user = useAppStore((state) => state.user)
@@ -25,7 +25,7 @@ const CustomButton = ({
     <button
       onClick={handleClick}
       className={cn(
-        "bg-blue-100 text-spirablue border border-blue-200 hover:bg-blue-200 px-3 py-2 rounded-lg flex items-center",
+        "bg-blue-100 text-spirablue border border-blue-200 hover:bg-blue-200 px-3  py-[0.35rem] rounded-lg flex items-center",
         className
       )}
     >

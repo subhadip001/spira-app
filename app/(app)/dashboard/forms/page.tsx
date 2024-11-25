@@ -2,6 +2,7 @@ import { Select, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus } from "lucide-react"
 import Link from "next/link"
 import FormsContainer from "./components/forms-container"
+import CustomButton from "@/app/_components/custom-button"
 
 export default async function Dashboard() {
   return (
@@ -17,12 +18,11 @@ export default async function Dashboard() {
               </SelectTrigger>
             </Select>
           </div>
-          <Link
-            href="/"
-            className="bg-spirablue text-white px-4 py-2 rounded-md flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            New Form
+          <Link href="/">
+            <CustomButton className="flex items-center gap-2">
+              <Plus className="w-4 h-4" />
+              New Form
+            </CustomButton>
           </Link>
         </div>
         <div className="flex flex-col gap-4">
