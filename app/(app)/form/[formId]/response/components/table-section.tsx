@@ -41,22 +41,11 @@ export default function TableSection({
   return (
     <div
       className={cn(
-        "flex-1 border rounded-lg relative",
-        aiChat?.isChatActive ? "h-[calc(100vh-12rem)] overflow-y-auto" : "mb-8"
+        "flex flex-col border rounded-lg relative",
+        aiChat?.isChatActive ? "h-[calc(100vh-12rem)]" : "mb-8"
       )}
     >
-      <div className="p-4 absolute right-0 bottom-0 flex justify-end border-b">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={exportToCsv}
-          className="flex items-center gap-2"
-          title="Export to CSV"
-        >
-          <Download className="h-4 w-4" />
-        </Button>
-      </div>
-      <div className="overflow-x-auto">
+      <div className="flex-1 overflow-auto">
         <table className="min-w-full table-auto divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr className="divide-x divide-gray-200">
@@ -87,6 +76,17 @@ export default function TableSection({
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="flex justify-end border-t bg-white">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={exportToCsv}
+          className="flex items-center gap-2 m-1"
+          title="Export to CSV"
+        >
+          <Download className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   )
