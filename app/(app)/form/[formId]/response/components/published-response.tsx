@@ -154,6 +154,7 @@ export default function PublishedResponse() {
           queryClient.invalidateQueries({
             queryKey: [QueryKeys.GetAiChatMessagesByPublishedFormId],
           })
+          setInputValue("")
         },
       }
     )
@@ -166,9 +167,7 @@ export default function PublishedResponse() {
         streaming: false,
       },
       {
-        onSuccess: () => {
-          setInputValue("")
-        },
+        onSuccess: () => {},
       }
     )
   }
