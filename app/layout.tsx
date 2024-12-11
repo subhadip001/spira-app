@@ -7,7 +7,7 @@ import { Toaster } from "react-hot-toast"
 import { ThemeProvider } from "@/components/theme-provider"
 
 const ogImage =
-  "https://ytyftdvatzggzgniwjrw.supabase.co/storage/v1/object/public/spira-micro/spira-image.png"
+  "https://w06x29rjhxvpmsmw.public.blob.vercel-storage.com/images/spira-image.png"
 
 const title = "Spira - AI first form builder"
 const description =
