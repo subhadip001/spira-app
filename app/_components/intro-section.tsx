@@ -9,7 +9,7 @@ const IntroSection = () => {
         </span>
         <p className="text-center text-gray-500">
           With Spira AI, you can create forms, analyze their responses in
-          natural language with AI.
+          natural language.
         </p>
       </div>
     </div>

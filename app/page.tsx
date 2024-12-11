@@ -31,7 +31,7 @@ export default async function Home() {
         />
         <Header />
         <main className="flex flex-grow w-full">
-          <div className="m-auto w-[80%] md:w-[60%] px-3 py-2 flex gap-5 flex-col md:h-[60vh]">
+          <div className="m-auto w-[80%] md:w-[60%] px-3 py-2 flex gap-5 flex-col">
             <div className="flex justify-center">
               <Badge>Prototype</Badge>
             </div>

@@ -36,7 +36,7 @@ export const createGroqChatCompletionStreaming = async (
 export const createGroqChatCompletion = async (
   system_prompt: string,
   user_question: string,
-  model = models.groq_models.LLAMA_3_2_90B_VISION
+  model = models.groq_models.LLAMA_3_3_70B_VERSATILE
 ) => {
   const API_KEY = process.env.GROQ_API_KEY
   const groq = new Groq({ apiKey: API_KEY })
@@ -60,7 +60,7 @@ export const createGroqChatCompletion = async (
       stream: false,
       stop: null,
     })
-    return chatCompletion
+    return chatCompletion.choices[0].message.content
   } catch (error) {
     console.error("Error:", error)
     return ""
