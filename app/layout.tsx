@@ -6,10 +6,39 @@ import ReactQueryProvider from "@/app/_components/react-query-provider"
 import { Toaster } from "react-hot-toast"
 import { ThemeProvider } from "@/components/theme-provider"
 
+const ogImage =
+  "https://ytyftdvatzggzgniwjrw.supabase.co/storage/v1/object/public/spira-micro/spira-image.png"
+
+const title = "Spira - AI first form builder"
+const description =
+  "Spira is an AI powered google form alternative. It helps you create forms, surveys in seconds."
+const url = "https://heyspira.com"
+const siteName = "heyspira.com"
+const keywords = "spira, ai, google form, form builder, survey"
+
 export const metadata: Metadata = {
-  title: "Spira - Ai powered form builder",
-  description:
-    "Spira is an AI powered google form alternative. It helps you create forms, surveys and quizzes in seconds.",
+  metadataBase: new URL(url),
+  title,
+  description,
+  icons: {
+    icon: "/favicon.ico",
+  },
+  keywords,
+  openGraph: {
+    images: [ogImage],
+    title,
+    description,
+    url: url,
+    siteName: siteName,
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [ogImage],
+    title,
+    description,
+  },
 }
 
 const fontSans = FontSans({
