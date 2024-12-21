@@ -83,7 +83,7 @@ const PromptBox = () => {
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Tab" && suggestion) {
       e.preventDefault()
       setQuery((prevQuery) => {
@@ -96,7 +96,7 @@ const PromptBox = () => {
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setQuery(e.target.value)
     setSuggestion("")
   }
