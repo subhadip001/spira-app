@@ -5,8 +5,8 @@ interface AnimatedPlaceholderInputProps {
   className?: string
   name: string
   value: string
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
   duration?: number
 }
 
@@ -21,7 +21,7 @@ export default function AnimatedPlaceholderInput({
 }: AnimatedPlaceholderInputProps) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,9 +37,9 @@ export default function AnimatedPlaceholderInput({
 
   return (
     <div className={`relative w-full ${className}`}>
-      <input
+      <textarea
         ref={inputRef}
-        className="w-full border-none outline-none px-3 py-1 rounded text-lg"
+        className="w-full border-none outline-none px-3 py-1 rounded text-lg resize-none"
         name={name}
         autoComplete="off"
         value={value}
