@@ -38,7 +38,7 @@ const FormPage: React.FC = () => {
         b.created_at.localeCompare(a.created_at)
       )
       setFormVersionsData(sortedData as TFormVersionData[])
-      setSelectedFormVersion(sortedData[0] as TFormVersionData)
+      // setSelectedFormVersion(sortedData[0] as TFormVersionData)
     }
   }, [formVersions, setFormVersionsData])
 
