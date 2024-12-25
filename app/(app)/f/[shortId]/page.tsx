@@ -14,6 +14,7 @@ export const generateMetadata = async (props: {
     .select(
       `
     id,
+    form_title,
     form_versions (
       id,
       created_at,
@@ -31,7 +32,7 @@ export const generateMetadata = async (props: {
   }
 
   return {
-    title: `Form - ${publishedForm.form_versions?.query}`,
+    title: `Form - ${publishedForm?.form_title !== "N/A" ? publishedForm.form_title : publishedForm?.form_versions?.query}`,
   }
 }
 

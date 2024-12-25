@@ -14,7 +14,7 @@ export default async function Layout(props: {
   return (
     <TooltipProvider>
       <div className="bg-white w-[100vw] min-h-[100svh]">
-        <SelectVersion formId={params.formId} />
+        {/* <SelectVersion formId={params.formId} /> */}
         <EditFormHeader formId={params.formId} />
         <main className="flex px-3">{children}</main>
       </div>

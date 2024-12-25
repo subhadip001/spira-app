@@ -22,6 +22,9 @@ type TGenerateFormProps = {
   selectedViewport: "phone" | "tablet" | "desktop"
   baseFormId: string
   needToGenerateFormSchema: boolean
+  isEditFormStreaming: boolean
+  isEditFormStreamStarting: boolean
+  currentStreamedEditFormSchema: Partial<FormSchema> | null
 }
 
 const GenerateForm: React.FC<TGenerateFormProps> = ({
@@ -29,6 +32,9 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   selectedViewport,
   baseFormId,
   needToGenerateFormSchema,
+  isEditFormStreaming,
+  isEditFormStreamStarting,
+  currentStreamedEditFormSchema,
 }) => {
   const currentFormSchema = useFormStore((state) => state.currentFormSchema)
   const streamingFormRef = useRef<HTMLDivElement>(null)
@@ -109,11 +115,19 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   //   },
   // })
 
+  const isFormStreaming =
+    formSchemaStreamMutation.isPending || isEditFormStreaming
+  const isFormStreamStarting = isStreamStarting || isEditFormStreamStarting
+
   useEffect(() => {
-    if (formSchemaStreamMutation.isPending && streamingFormRef.current) {
+    if (isFormStreaming && streamingFormRef.current) {
       streamingFormRef.current.scrollTop = streamingFormRef.current.scrollHeight
     }
-  }, [currentStreamedFormSchema, formSchemaStreamMutation.isPending])
+  }, [
+    currentStreamedFormSchema,
+    currentStreamedEditFormSchema,
+    isFormStreaming,
+  ])
 
   return (
     <HorizontalResizableComponent
@@ -132,13 +146,16 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
           scrollBehavior: "smooth",
         }}
       >
-        {isStreamStarting ? (
+        {isFormStreamStarting ? (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="h-4 w-4 animate-spin" />
           </div>
-        ) : formSchemaStreamMutation.isPending ? (
+        ) : isFormStreaming ? (
           <StreamingFormBuilder
-            initialSchema={currentStreamedFormSchema as Partial<FormSchema>}
+            initialSchema={
+              currentStreamedFormSchema ??
+              (currentStreamedEditFormSchema as Partial<FormSchema>)
+            }
             className="px-4 py-3 mmd:px-10 mmd:py-8"
             published={false}
           />

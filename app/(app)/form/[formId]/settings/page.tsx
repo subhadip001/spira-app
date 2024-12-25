@@ -14,5 +14,5 @@ export default function SettingsPage(props: {
   // if (!user?.user && !pathname?.endsWith("/editor")) {
   //   redirect(`/login?${params.formId ? `formId=${params.formId}` : ""}`)
   // }
-  return <div>SettingsPage</div>
+  return <div>Cooking...</div>
 }

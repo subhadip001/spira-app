@@ -14,6 +14,9 @@ const FormPage: React.FC = () => {
   const setFormVersionsData = useFormVersionStore(
     (state) => state.setFormVersionsData
   )
+  const setSelectedFormVersion = useFormVersionStore(
+    (state) => state.setSelectedFormVersion
+  )
 
   const { data: baseFormData, isLoading: isLoadingBaseForm } = useQuery({
     queryKey: [QueryKeys.GetBaseForm, baseFormId],
@@ -35,11 +38,58 @@ const FormPage: React.FC = () => {
         b.created_at.localeCompare(a.created_at)
       )
       setFormVersionsData(sortedData as TFormVersionData[])
+      setSelectedFormVersion(sortedData[0] as TFormVersionData)
     }
   }, [formVersions, setFormVersionsData])
 
   if (isLoadingBaseForm || isLoadingVersions) {
-    return <div>Loading...</div>
+    return (
+      <div className="flex flex-col w-full h-[calc(100svh-64px)] bg-[#f6f6f6df] rounded-md min-w-0">
+        {/* Header Skeleton */}
+        <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center gap-4">
+            <div className="h-8 w-48 bg-gray-200 animate-pulse rounded" />
+            <div className="h-8 w-24 bg-gray-200 animate-pulse rounded" />
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-9 w-20 bg-gray-200 animate-pulse rounded" />
+            <div className="h-9 w-24 bg-gray-200 animate-pulse rounded" />
+          </div>
+        </div>
+
+        {/* Main Content Skeleton */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Form Preview Skeleton */}
+          <div className="flex-1 p-6 overflow-auto">
+            <div className="max-w-5xl mx-auto space-y-6">
+              <div className="h-10 w-72 bg-gray-200 animate-pulse rounded mb-4" />
+              <div className="h-6 w-96 bg-gray-200 animate-pulse rounded mb-8" />
+
+              {/* Form Fields Skeleton */}
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="border rounded-lg p-6 bg-white mb-4">
+                  <div className="h-6 w-48 bg-gray-200 animate-pulse rounded mb-4" />
+                  <div className="h-10 w-full bg-gray-100 animate-pulse rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Sidebar Skeleton */}
+          <div className="w-[500px] border-l bg-white p-4">
+            <div className="h-8 w-48 bg-gray-200 animate-pulse rounded mb-6" />
+            <div className="space-y-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="space-y-2">
+                  <div className="h-4 w-24 bg-gray-200 animate-pulse rounded" />
+                  <div className="h-9 w-full bg-gray-100 animate-pulse rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (!baseFormId || !baseFormData) {
