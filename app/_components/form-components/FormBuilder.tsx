@@ -17,7 +17,7 @@ import {
   FormField as FormSchemaField,
 } from "@/types/FormSchema"
 import { ArrowDown, ArrowUp, CircleCheckBig, Edit, Trash2 } from "lucide-react"
-import React, { Fragment, useState } from "react"
+import React, { Fragment, useEffect, useState } from "react"
 import { HexColorPicker } from "react-colorful"
 import { useForm } from "react-hook-form"
 import { FormFieldComponent } from "./FormFields"
@@ -238,6 +238,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     if (!editable) return
     setSelectedFieldConstantId(fieldConstantId)
   }
+
+  // useEffect(() => {
+  //   setSelectedFieldConstantId(initialSchema.fields[0].constantId)
+  // }, [])
 
   return (
     <Form {...form}>

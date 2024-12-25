@@ -168,6 +168,7 @@ export type Database = {
         Row: {
           created_at: string
           form_base_id: string
+          form_title: string
           form_version_id: string
           id: string
           short_id: string
@@ -177,6 +178,7 @@ export type Database = {
         Insert: {
           created_at?: string
           form_base_id: string
+          form_title?: string
           form_version_id: string
           id?: string
           short_id?: string
@@ -186,6 +188,7 @@ export type Database = {
         Update: {
           created_at?: string
           form_base_id?: string
+          form_title?: string
           form_version_id?: string
           id?: string
           short_id?: string

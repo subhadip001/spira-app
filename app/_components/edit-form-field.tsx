@@ -122,8 +122,10 @@ const EditFormField = () => {
         </div>
         <section className="py-4 mx-4">
           <div className="w-full min-h-[70svh] flex flex-col items-center justify-center gap-2">
-            <h3 className="text-gray-500">No Field Left to Edit</h3>
-            <p className="text-gray-500">Create a new field to edit</p>
+            <h3 className="text-gray-500 font-semibold text-xl">
+              No Field Left to Edit
+            </h3>
+            <p className="text-gray-500">Create or Select a field to edit</p>
           </div>
         </section>
       </section>
