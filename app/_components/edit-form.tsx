@@ -18,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useFormSchemaEditor } from "@/hooks/form-schema-editor"
 import {
   addNewFormVersion,
   getPublishedFormByFormVersionId,
@@ -40,18 +41,18 @@ import {
   Monitor,
   MousePointerClick,
   Save,
+  Send,
   Smartphone,
   Sparkles,
   Tablet,
-  WandSparkles,
 } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import React, { useState } from "react"
 import toast from "react-hot-toast"
 import ShortUniqueId from "short-unique-id"
 import GenerateForm from "./generate-form"
+import { Icons } from "./icons"
 import VersionDropdown from "./version-dropdown"
-import { useFormSchemaEditor } from "@/hooks/form-schema-editor"
 
 type EditFormProps = {
   baseQuery: string
@@ -70,6 +71,7 @@ const EditForm: React.FC<EditFormProps> = ({
   const [publishedShortId, setPublishedShortId] = useState<string | null>(null)
   const [isPublishing, setIsPublishing] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
+  const [editInstruction, setEditInstruction] = useState<string>("")
 
   const currentFormSchema = useFormStore((state) => state.currentFormSchema)
   const user = useAppStore((state) => state.user)
@@ -219,18 +221,18 @@ const EditForm: React.FC<EditFormProps> = ({
     isStreamStarting,
   } = useFormSchemaEditor(baseFormId)
 
-  const handleEditFormUsingSpira = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
-    const prompt = formData.get("edit-form-using-spira") as string
-    if (!prompt) return
-
-    formSchemaEditMutation.mutate({
-      prompt,
-      formSchema: selectedFormVersion?.form_schema_string as string,
-    })
+  const handleEditFormUsingSpira = async () => {
+    formSchemaEditMutation.mutate(
+      {
+        prompt: editInstruction,
+        formSchema: selectedFormVersion?.form_schema_string as string,
+      },
+      {
+        onSuccess: () => {
+          setEditInstruction("")
+        },
+      }
+    )
   }
 
   return (
@@ -386,19 +388,32 @@ const EditForm: React.FC<EditFormProps> = ({
           currentStreamedEditFormSchema={currentStreamedFormSchema}
         />
       </div>
-      <form onSubmit={handleEditFormUsingSpira} className="flex w-full px-3">
+      <div className="flex w-full px-3">
         <div className="w-full flex gap-2 items-center border px-3 py-2 rounded-md bg-white">
           <div>
-            <WandSparkles className="h-4 w-4" />
+            <Icons.logo className="w-6 h-6" />
           </div>
           <input
             placeholder="Ask spira to modify the form"
             name="edit-form-using-spira"
             type="text"
             className="outline-none flex-grow text-sm bg-transparent"
+            onChange={(e) => setEditInstruction(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleEditFormUsingSpira()
+              }
+            }}
+            value={editInstruction}
           />
+          <div
+            className="flex items-center cursor-pointer"
+            onClick={handleEditFormUsingSpira}
+          >
+            <Send className="h-4 w-4" />
+          </div>
         </div>
-      </form>
+      </div>
       <AlertDialog
         open={!!publishedShortId}
         onOpenChange={() => setPublishedShortId(null)}

@@ -153,16 +153,13 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
         ) : isFormStreaming ? (
           <StreamingFormBuilder
             initialSchema={
-              currentStreamedFormSchema ??
-              (currentStreamedEditFormSchema as Partial<FormSchema>)
+              isEditFormStreaming
+                ? (currentStreamedEditFormSchema as Partial<FormSchema>)
+                : (currentStreamedFormSchema as Partial<FormSchema>)
             }
             className="px-4 py-3 mmd:px-10 mmd:py-8"
             published={false}
           />
-        ) : addNewFormversionMutation.isPending ? (
-          <div className="flex items-center justify-center h-full">
-            <Loader2 className="h-4 w-4 animate-spin" />
-          </div>
         ) : currentFormSchema ? (
           <FormBuilder
             initialSchema={currentFormSchema}
