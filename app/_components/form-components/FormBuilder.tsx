@@ -239,9 +239,9 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     setSelectedFieldConstantId(fieldConstantId)
   }
 
-  // useEffect(() => {
-  //   setSelectedFieldConstantId(initialSchema.fields[0].constantId)
-  // }, [])
+  useEffect(() => {
+    setSelectedFieldConstantId(initialSchema.fields[0].constantId)
+  }, [])
 
   return (
     <Form {...form}>
