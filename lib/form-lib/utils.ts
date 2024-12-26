@@ -1,4 +1,5 @@
 import { TFormValues } from "@/types/form"
+import { TFormVersionData } from "../types"
 
 export const fileSizeConverter = (bytes: number): string => {
   const megabytes = bytes / (1024 * 1024)
@@ -69,4 +70,21 @@ export function convertFormResponseArrayToObject(
       {} as FormResponseForStorage["fields"]
     ),
   }
+}
+
+export const getMaxFormVersion = (
+  formVersionsData: TFormVersionData[]
+): number => {
+  if (!formVersionsData || formVersionsData.length === 0) {
+    return 0
+  }
+
+  const maxVersion = formVersionsData.reduce((acc, version) => {
+    if (acc.version_number < version.version_number) {
+      return version
+    }
+    return acc
+  })
+
+  return maxVersion.version_number
 }

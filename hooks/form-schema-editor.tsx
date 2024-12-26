@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast"
 import useFormVersionStore from "@/store/formVersions"
 import { addNewFormVersion } from "@/lib/queries"
 import { Allow, parse } from "partial-json"
+import { getMaxFormVersion } from "@/lib/form-lib/utils"
 
 const editFormSchemaStreaming = async (
   prompt: string,
@@ -44,7 +45,6 @@ const editFormSchemaStreaming = async (
     try {
       const partialSchema = parse(buffer, Allow.ALL) as Partial<FormSchema>
       finalSchema = { ...finalSchema, ...partialSchema }
-      console.log("partialSchema", partialSchema)
       onPartialUpdate(finalSchema)
     } catch (error) {
       // If parsing fails, it means the JSON is incomplete
@@ -102,14 +102,13 @@ export const useFormSchemaEditor = (baseFormId: string) => {
       })
     },
     onSuccess: async (data, variables) => {
-      // The full schema is now in 'data'
       setCurrentStreamedFormSchema(data)
 
       addNewFormversionMutation.mutate({
         formSchemaString: JSON.stringify(data),
         baseFormId: baseFormId,
-        query: variables.prompt, // This is the prompt
-        version: formVersionsData?.length + 1,
+        query: variables.prompt,
+        version: getMaxFormVersion(formVersionsData) + 1,
       })
     },
     onError: (error: Error) => {
