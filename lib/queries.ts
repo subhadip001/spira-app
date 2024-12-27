@@ -1,7 +1,12 @@
-import { createClient } from "@/utils/supabase/client"
-import { TQueryData, AddNewFormVersionVariables, TAiChatMessage } from "./types"
 import { TFormValues } from "@/types/form"
+import { createClient } from "@/utils/supabase/client"
 import { convertFormResponseArrayToObject } from "./form-lib/utils"
+import {
+  AddNewFormVersionVariables,
+  EFormVersionStatus,
+  TAiChatMessage,
+  TQueryData,
+} from "./types"
 
 export enum QueryKeys {
   GetUserProfile = "getUserProfile",
@@ -88,6 +93,7 @@ export const fetchFormVersions = async (formId: string) => {
   const { data, error } = await supabase
     .from("form_versions")
     .select()
+    .neq("status", EFormVersionStatus.DELETED)
     .eq("form_id", formId)
 
   if (error) throw error
@@ -141,11 +147,23 @@ export const addNewFormVersion = async ({
         form_id: baseFormId,
         query: query,
         version_number: version,
+        status: EFormVersionStatus.DRAFT,
       })
       .select()
   }
 
   return response
+}
+
+export const deleteFormVersionById = async (formVersionId: string) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("form_versions")
+    .update({
+      status: EFormVersionStatus.DELETED,
+    })
+    .eq("id", formVersionId)
+  return { data, error }
 }
 
 export const getPublishedFormByFormVersionId = async (
