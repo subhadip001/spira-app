@@ -88,3 +88,8 @@ export const getMaxFormVersion = (
 
   return maxVersion.version_number
 }
+
+export const switchToNearestFormVersion = (
+  formVersionsData: TFormVersionData[],
+  versionNumber: number
+): void => {}

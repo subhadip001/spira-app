@@ -105,8 +105,8 @@ const VersionDropdown = ({ formId }: { formId: string }) => {
         <SelectValue placeholder="Select version" />
       </SelectTrigger>
       <SelectContent>
-        {formVersionsData.map((version) => (
-          <div className="flex" key={version.version_number}>
+        {formVersionsData.map((version, index, data) => (
+          <div className="flex" key={index}>
             <SelectItem
               key={version.version_number}
               value={version.version_number?.toString() || ""}
@@ -114,34 +114,40 @@ const VersionDropdown = ({ formId }: { formId: string }) => {
             >
               <span>v{version.version_number}</span>
             </SelectItem>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button className="text-xs text-red-500 px-1 rounded-md hover:bg-red-100">
-                  <div>
-                    <Trash2 className="w-4 h-4" />
-                  </div>
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will permanently delete{" "}
-                    <b>Version {version.version_number}</b> of this form. This
-                    action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => deleteFormVersionMutation.mutate(version.id)}
-                    className="bg-red-600"
-                  >
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            {data.length > 1 && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <button className="text-xs text-red-500 px-1 rounded-md hover:bg-red-100">
+                    <div>
+                      <Trash2 className="w-4 h-4" />
+                    </div>
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete{" "}
+                      <b>Version {version.version_number}</b> of this form. This
+                      action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() =>
+                        deleteFormVersionMutation.mutate(version.id)
+                      }
+                      className="bg-red-600"
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
         ))}
 
