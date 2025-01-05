@@ -33,6 +33,10 @@ export const generateMetadata = async (props: {
 
   return {
     title: `Form - ${publishedForm?.form_title !== "N/A" ? publishedForm.form_title : publishedForm?.form_versions?.query}`,
+    description:
+      publishedForm?.form_title !== "N/A"
+        ? publishedForm.form_title
+        : publishedForm?.form_versions?.query,
   }
 }
 

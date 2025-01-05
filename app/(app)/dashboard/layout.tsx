@@ -6,6 +6,10 @@ import ClientLayout from "./components/client-layout"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { cookies } from "next/headers"
 
+export const metadata = {
+  title: "Dashboard - Spira AI",
+}
+
 export default async function Layout({
   children,
 }: {
