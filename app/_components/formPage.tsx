@@ -34,11 +34,7 @@ const FormPage: React.FC = () => {
 
   useEffect(() => {
     if (formVersions && formVersions?.length > 0) {
-      const sortedData = formVersions.sort((a, b) =>
-        b.created_at.localeCompare(a.created_at)
-      )
-      setFormVersionsData(sortedData as TFormVersionData[])
-      // setSelectedFormVersion(sortedData[0] as TFormVersionData)
+      setFormVersionsData(formVersions as TFormVersionData[])
     }
   }, [formVersions, setFormVersionsData])
 

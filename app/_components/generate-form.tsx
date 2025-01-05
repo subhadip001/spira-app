@@ -11,6 +11,7 @@ import dynamic from "next/dynamic"
 import React, { useEffect, useRef } from "react"
 import FormBuilder from "./form-components/FormBuilder"
 import StreamingFormBuilder from "./form-components/streaming-formbuilder"
+import EditingFormBuilder from "./form-components/editing-formbuilder"
 
 const HorizontalResizableComponent = dynamic(
   () => import("./resizable-component"),
@@ -120,13 +121,13 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
   const isFormStreamStarting = isStreamStarting || isEditFormStreamStarting
 
   useEffect(() => {
-    if (isFormStreaming && streamingFormRef.current) {
+    if (formSchemaStreamMutation.isPending && streamingFormRef.current) {
       streamingFormRef.current.scrollTop = streamingFormRef.current.scrollHeight
     }
   }, [
     currentStreamedFormSchema,
     currentStreamedEditFormSchema,
-    isFormStreaming,
+    formSchemaStreamMutation.isPending,
   ])
 
   return (
@@ -146,20 +147,28 @@ const GenerateForm: React.FC<TGenerateFormProps> = ({
           scrollBehavior: "smooth",
         }}
       >
-        {isFormStreamStarting ? (
+        {isStreamStarting ? (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="h-4 w-4 animate-spin" />
           </div>
         ) : isFormStreaming ? (
-          <StreamingFormBuilder
-            initialSchema={
-              isEditFormStreaming
-                ? (currentStreamedEditFormSchema as Partial<FormSchema>)
-                : (currentStreamedFormSchema as Partial<FormSchema>)
-            }
-            className="px-4 py-3 mmd:px-10 mmd:py-8"
-            published={false}
-          />
+          isEditFormStreaming ? (
+            <EditingFormBuilder
+              currentFormSchema={currentFormSchema as FormSchema}
+              streamedFormSchema={
+                currentStreamedFormSchema as Partial<FormSchema>
+              }
+              className="px-4 py-3 mmd:px-10 mmd:py-8"
+              published={false}
+              editable={true}
+            />
+          ) : (
+            <StreamingFormBuilder
+              initialSchema={currentStreamedFormSchema as Partial<FormSchema>}
+              className="px-4 py-3 mmd:px-10 mmd:py-8"
+              published={false}
+            />
+          )
         ) : currentFormSchema ? (
           <FormBuilder
             initialSchema={currentFormSchema}

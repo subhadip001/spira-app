@@ -55,7 +55,7 @@ export const createGroqChatCompletion = async (
       ],
       model: model,
       temperature: 0.3,
-      max_tokens: 2048,
+      max_tokens: 32768,
       // top_p: 1,
       stream: false,
       stop: null,

@@ -1,6 +1,29 @@
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import PublishedResponse from "./components/published-response"
+import { Metadata } from "next"
+
+export const generateMetadata = async (props: {
+  params: Promise<{ formId: string }>
+}): Promise<Metadata> => {
+  const params = await props.params
+  const supabase = await createClient()
+  const { data: baseForm, error: baseFormError } = await supabase
+    .from("forms")
+    .select("query")
+    .eq("id", params.formId)
+    .single()
+
+  if (baseFormError || !baseForm) {
+    return {
+      title: "Responses",
+    }
+  }
+
+  return {
+    title: `Responses - ${baseForm.query.length > 50 ? baseForm.query.slice(0, 40) + "..." : baseForm.query}`,
+  }
+}
 
 export default async function ResponsePage(props: {
   params: Promise<{ formId: string }>

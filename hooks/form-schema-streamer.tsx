@@ -1,11 +1,12 @@
 import { addNewFormVersion } from "@/lib/queries"
-import { AddNewFormVersionVariables } from "@/lib/types"
+import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
 import { QueryKeys } from "@/lib/queries"
 import { toast } from "react-hot-toast"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { parse, Allow } from "partial-json"
 import { useState } from "react"
 import useFormVersionStore from "@/store/formVersions"
+import { getMaxFormVersion } from "@/lib/form-lib/utils"
 
 interface FormSchema {
   title?: string
@@ -98,7 +99,8 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
         formSchemaString: JSON.stringify(data),
         baseFormId: baseFormId,
         query: variables, // This is the prompt
-        version: formVersionsData?.length + 1,
+        version: getMaxFormVersion(formVersionsData) + 1,
+        status: EFormVersionStatus.DRAFT,
       })
 
       // Optionally invalidate or update any relevant queries
