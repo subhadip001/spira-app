@@ -255,7 +255,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                     name="title"
                     value={initialSchema?.title ?? ""}
                     placeholder="Add Form Title"
-                    className="mb-4 text-3xl w-full p-3 outline-none bg-transparent border-2 focus:border-blue-300 rounded-md transition duration-300 ease-in-out"
+                    className="mb-4 text-3xl w-full p-3 outline-none bg-transparent border-2 focus:border-blue-300 rounded-md"
                     onChange={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
@@ -278,7 +278,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                       value={initialSchema?.description ?? ""}
                       placeholder="Add Form Description"
                       rows={4}
-                      className="mb-4 w-full outline-none bg-transparent p-3 border-2 focus:border-blue-300 rounded-md resize-none transition duration-300 ease-in-out"
+                      className="mb-4 w-full outline-none bg-transparent p-3 border-2 focus:border-blue-300 rounded-md resize-none"
                       onChange={(e) => {
                         e.preventDefault()
                         e.stopPropagation()

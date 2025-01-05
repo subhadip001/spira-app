@@ -91,5 +91,29 @@ export const getMaxFormVersion = (
 
 export const switchToNearestFormVersion = (
   formVersionsData: TFormVersionData[],
-  versionNumber: number
-): void => {}
+  currentVersionNumber: number
+): number => {
+  if (!formVersionsData || formVersionsData.length === 0) {
+    return 1
+  }
+
+  // check if successor version exists
+  const successorVersion = formVersionsData.find(
+    (version) => version.version_number === currentVersionNumber + 1
+  )
+  if (successorVersion) {
+    // if successor version exists, set it as selected version
+    return successorVersion.version_number
+  }
+
+  // check if predecessor version exists
+  const predecessorVersion = formVersionsData.find(
+    (version) => version.version_number === currentVersionNumber - 1
+  )
+  if (predecessorVersion) {
+    // if predecessor version exists, set it as selected version
+    return predecessorVersion.version_number
+  }
+
+  return 1
+}

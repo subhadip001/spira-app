@@ -34,6 +34,7 @@ const FormPage: React.FC = () => {
 
   useEffect(() => {
     if (formVersions && formVersions?.length > 0) {
+      console.log("formVersions", formVersions)
       setFormVersionsData(formVersions as TFormVersionData[])
     }
   }, [formVersions, setFormVersionsData])

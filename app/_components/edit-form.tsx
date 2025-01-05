@@ -21,6 +21,8 @@ import {
 import { useFormSchemaEditor } from "@/hooks/form-schema-editor"
 import {
   addNewFormVersion,
+  fetchFormVersionByVersionNumber,
+  fetchLatestFormVersion,
   getPublishedFormByFormVersionId,
   QueryKeys,
 } from "@/lib/queries"
@@ -53,6 +55,7 @@ import ShortUniqueId from "short-unique-id"
 import GenerateForm from "./generate-form"
 import { Icons } from "./icons"
 import VersionDropdown from "./version-dropdown"
+import { getMaxFormVersion } from "@/lib/form-lib/utils"
 
 type EditFormProps = {
   baseQuery: string
@@ -95,6 +98,9 @@ const EditForm: React.FC<EditFormProps> = ({
   )
   const selectedFormVersion = useFormVersionStore(
     (state) => state.selectedFormVersion
+  )
+  const setSelectedFormVersion = useFormVersionStore(
+    (state) => state.setSelectedFormVersion
   )
   const formVersionsData = useFormVersionStore(
     (state) => state.formVersionsData
@@ -203,11 +209,41 @@ const EditForm: React.FC<EditFormProps> = ({
   const addNewFormversionMutation = useMutation({
     mutationFn: (variables: AddNewFormVersionVariables) =>
       addNewFormVersion(variables),
-    onSuccess: () => {
+    onSuccess: async (data, variables) => {
+      const response = await fetchLatestFormVersion(baseFormId)
+      const updatedResponse = {
+        ...response,
+        status: response.status as EFormVersionStatus,
+      }
+      setSelectedFormVersion(updatedResponse)
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.GetFormVersions, baseFormId],
       })
       toast.success("Form version added successfully")
+    },
+    onError: (error: Error) => {
+      console.error("Error adding new form version", error)
+      toast.error("Error adding new form version")
+    },
+  })
+
+  const updateFormVersionMutation = useMutation({
+    mutationFn: (variables: AddNewFormVersionVariables) =>
+      addNewFormVersion(variables),
+    onSuccess: async (data, variables) => {
+      const response = await fetchFormVersionByVersionNumber(
+        baseFormId,
+        variables.version
+      )
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.GetFormVersions, baseFormId],
+      })
+      const updatedResponse = {
+        ...response,
+        status: response.status as EFormVersionStatus,
+      }
+      setSelectedFormVersion(updatedResponse)
+      toast.success("Form version updated successfully")
     },
     onError: (error: Error) => {
       console.error("Error adding new form version", error)
@@ -320,7 +356,7 @@ const EditForm: React.FC<EditFormProps> = ({
                       formSchemaString: JSON.stringify(currentFormSchema),
                       baseFormId: baseFormId,
                       query: selectedFormVersion?.query || "N/A",
-                      version: (formVersionsData?.length || 1) + 1,
+                      version: getMaxFormVersion(formVersionsData) + 1,
                     })
                   }}
                   disabled={formVersionsData?.length === 0}
@@ -329,11 +365,11 @@ const EditForm: React.FC<EditFormProps> = ({
                 </AlertDialogAction>
                 <AlertDialogAction
                   onClick={() => {
-                    addNewFormversionMutation.mutate({
+                    updateFormVersionMutation.mutate({
                       formSchemaString: JSON.stringify(currentFormSchema),
                       baseFormId: baseFormId,
                       query: selectedFormVersion?.query || "N/A",
-                      version: selectedFormVersion?.version_number || 1,
+                      version: selectedFormVersion?.version_number ?? 1,
                     })
                   }}
                 >
