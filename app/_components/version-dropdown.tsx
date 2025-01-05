@@ -55,12 +55,6 @@ const VersionDropdown = ({ formId }: { formId: string }) => {
   //   }
   // }, [formVersionsData, setSelectedFormVersion])
 
-  const getConstantIdForFirstField = (formSchemaString: string) => {
-    const jsonFormSchema = JSON.parse(formSchemaString as string)
-    const constantId = jsonFormSchema.fields[0].constantId
-    return constantId
-  }
-
   const handleVersionChange = (value: string) => {
     const selectedVersion = formVersionsData.find(
       (version) => version.version_number === Number(value)
@@ -73,9 +67,6 @@ const VersionDropdown = ({ formId }: { formId: string }) => {
           JSON.stringify(selectedVersion)
         )
       }
-      setSelectedFieldConstantId(
-        getConstantIdForFirstField(selectedVersion.form_schema_string)
-      )
     }
   }
 

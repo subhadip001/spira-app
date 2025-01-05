@@ -95,6 +95,7 @@ export const fetchFormVersions = async (formId: string) => {
     .select()
     .neq("status", EFormVersionStatus.DELETED)
     .eq("form_id", formId)
+    .order("created_at", { ascending: false })
 
   if (error) throw error
   return data
@@ -129,7 +130,10 @@ export const addNewFormVersion = async ({
 
   let response
 
-  if (existingVersion) {
+  if (
+    existingVersion &&
+    existingVersion.status !== EFormVersionStatus.DELETED
+  ) {
     response = await supabase
       .from("form_versions")
       .update({

@@ -19,6 +19,7 @@ export type AddNewFormVersionVariables = {
   baseFormId: string
   query: string
   version: number
+  status?: EFormVersionStatus
 }
 
 export enum EFormVersionStatus {

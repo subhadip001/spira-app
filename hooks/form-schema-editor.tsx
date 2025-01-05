@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { FormSchema } from "@/types/FormSchema"
-import { AddNewFormVersionVariables } from "@/lib/types"
+import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
 import { QueryKeys } from "@/lib/queries"
 import { toast } from "react-hot-toast"
 import useFormVersionStore from "@/store/formVersions"
@@ -72,6 +72,21 @@ export const useFormSchemaEditor = (baseFormId: string) => {
     (state) => state.setSelectedFormVersion
   )
 
+  const handleVersionChange = (value: string) => {
+    const selectedVersion = formVersionsData.find(
+      (version) => version.version_number === Number(value)
+    )
+    if (selectedVersion) {
+      setSelectedFormVersion(selectedVersion)
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "selected-form-version",
+          JSON.stringify(selectedVersion)
+        )
+      }
+    }
+  }
+
   const addNewFormversionMutation = useMutation({
     mutationFn: (variables: AddNewFormVersionVariables) =>
       addNewFormVersion(variables),
@@ -109,6 +124,7 @@ export const useFormSchemaEditor = (baseFormId: string) => {
         baseFormId: baseFormId,
         query: variables.prompt,
         version: getMaxFormVersion(formVersionsData) + 1,
+        status: EFormVersionStatus.DRAFT,
       })
     },
     onError: (error: Error) => {
