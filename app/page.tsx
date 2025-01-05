@@ -6,6 +6,8 @@ import { RecentForms } from "./_components/recent-forms"
 import { createClient } from "@/utils/supabase/server"
 import { BookDashed, Plus } from "lucide-react"
 import TemplateAndScratch from "./_components/template-and-scratch"
+import AnimatedShinyText from "@/components/magicui/animated-shiny-text"
+import { AnimatedBadge } from "@/components/ui/AnimatedBadge"
 
 export default async function Home() {
   const supabase = await createClient()
@@ -33,7 +35,7 @@ export default async function Home() {
         <main className="flex flex-grow w-full">
           <div className="m-auto w-[80%] md:w-[60%] px-3 py-2 flex gap-5 flex-col">
             <div className="flex justify-center">
-              <Badge>Prototype</Badge>
+              <AnimatedBadge> Happy New Year 2025 🎉 </AnimatedBadge>
             </div>
             <div className="flex flex-col gap-5 font-bricolage_grotesque">
               <IntroSection />
