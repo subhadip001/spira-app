@@ -25,6 +25,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import toast from "react-hot-toast"
+import { TFormVersionData } from "@/lib/types"
+import { switchToNearestFormVersion } from "@/lib/form-lib/utils"
 
 const VersionDropdown = ({ formId }: { formId: string }) => {
   const formVersionsData = useFormVersionStore(
@@ -35,10 +37,6 @@ const VersionDropdown = ({ formId }: { formId: string }) => {
       selectedFormVersion: state.selectedFormVersion,
       setSelectedFormVersion: state.setSelectedFormVersion,
     })
-  )
-
-  const setSelectedFieldConstantId = useEditFormPageStore(
-    (state) => state.setSelectedFieldConstantId
   )
 
   const queryClient = useQueryClient()
@@ -61,26 +59,34 @@ const VersionDropdown = ({ formId }: { formId: string }) => {
     )
     if (selectedVersion) {
       setSelectedFormVersion(selectedVersion)
-      if (typeof window !== "undefined") {
-        localStorage.setItem(
-          "selected-form-version",
-          JSON.stringify(selectedVersion)
-        )
-      }
     }
   }
 
   const deleteFormVersionMutation = useMutation({
-    mutationFn: (formVersionId: string) => deleteFormVersionById(formVersionId),
-    onSuccess: (data) => {
+    mutationFn: (version: TFormVersionData) =>
+      deleteFormVersionById(version.id),
+    onSuccess: (data, variables) => {
       if (data.error) {
         console.error(data.error)
       } else {
-        console.log("Form version deleted successfully")
         toast.success("Form version deleted successfully")
         queryClient.invalidateQueries({
           queryKey: [QueryKeys.GetFormVersions, formId],
         })
+
+        if (selectedFormVersion?.version_number !== variables.version_number) {
+          return
+        }
+
+        const nearestVersionNumber = switchToNearestFormVersion(
+          formVersionsData,
+          variables.version_number
+        )
+        const nearestVersion = formVersionsData.find(
+          (version) => version.version_number === nearestVersionNumber
+        )
+
+        setSelectedFormVersion(nearestVersion as TFormVersionData)
       }
     },
   })
@@ -128,9 +134,7 @@ const VersionDropdown = ({ formId }: { formId: string }) => {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={() =>
-                        deleteFormVersionMutation.mutate(version.id)
-                      }
+                      onClick={() => deleteFormVersionMutation.mutate(version)}
                       className="bg-red-600"
                     >
                       Delete

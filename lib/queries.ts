@@ -12,6 +12,8 @@ export enum QueryKeys {
   GetUserProfile = "getUserProfile",
   GetSpiraResponse = "getSpiraResponse",
   GetFormVersions = "getFormVersions",
+  GetFormVersionByVersionNumber = "getFormVersionByVersionNumber",
+  GetLatestFormVersion = "getLatestFormVersion",
   GetPublishedFormByFormVersionId = "getPublishedFormByFormVersionId",
   GetRecentFormsByUserId = "getRecentFormsByUserId",
   GetFormsByUserId = "getFormsByUserId",
@@ -101,6 +103,38 @@ export const fetchFormVersions = async (formId: string) => {
   return data
 }
 
+export const fetchFormVersionByVersionNumber = async (
+  formId: string,
+  versionNumber: number
+) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("form_versions")
+    .select()
+    .eq("form_id", formId)
+    .neq("status", EFormVersionStatus.DELETED)
+    .eq("version_number", versionNumber)
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+export const fetchLatestFormVersion = async (formId: string) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("form_versions")
+    .select()
+    .eq("form_id", formId)
+    .neq("status", EFormVersionStatus.DELETED)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single()
+
+  if (error) throw error
+  return data
+}
+
 export const fetchBaseForm = async (formId: string) => {
   const supabase = createClient()
   const { data, error } = await supabase
@@ -121,19 +155,20 @@ export const addNewFormVersion = async ({
 }: AddNewFormVersionVariables) => {
   const supabase = createClient()
 
+  console.log("version", version)
+
   const { data: existingVersion } = await supabase
     .from("form_versions")
     .select()
     .eq("form_id", baseFormId)
     .eq("version_number", version)
+    .neq("status", EFormVersionStatus.DELETED)
+    .limit(1)
     .single()
 
   let response
 
-  if (
-    existingVersion &&
-    existingVersion.status !== EFormVersionStatus.DELETED
-  ) {
+  if (existingVersion) {
     response = await supabase
       .from("form_versions")
       .update({

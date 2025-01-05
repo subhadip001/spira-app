@@ -1,12 +1,15 @@
-import { addNewFormVersion } from "@/lib/queries"
-import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
-import { QueryKeys } from "@/lib/queries"
-import { toast } from "react-hot-toast"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { parse, Allow } from "partial-json"
-import { useState } from "react"
-import useFormVersionStore from "@/store/formVersions"
 import { getMaxFormVersion } from "@/lib/form-lib/utils"
+import {
+  addNewFormVersion,
+  fetchLatestFormVersion,
+  QueryKeys,
+} from "@/lib/queries"
+import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
+import useFormVersionStore from "@/store/formVersions"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Allow, parse } from "partial-json"
+import { useState } from "react"
+import { toast } from "react-hot-toast"
 
 interface FormSchema {
   title?: string
@@ -69,10 +72,20 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
     (state) => state.formVersionsData
   )
 
+  const setSelectedFormVersion = useFormVersionStore(
+    (state) => state.setSelectedFormVersion
+  )
+
   const addNewFormversionMutation = useMutation({
     mutationFn: (variables: AddNewFormVersionVariables) =>
       addNewFormVersion(variables),
-    onSuccess: (data) => {
+    onSuccess: async (data, variables) => {
+      const response = await fetchLatestFormVersion(baseFormId)
+      const updatedResponse = {
+        ...response,
+        status: response.status as EFormVersionStatus,
+      }
+      setSelectedFormVersion(updatedResponse)
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.GetFormVersions, baseFormId],
       })
@@ -80,6 +93,7 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
     },
     onError: (error: Error) => {
       console.error("Error adding new form version", error)
+      toast.error("Error adding new form version")
     },
   })
 

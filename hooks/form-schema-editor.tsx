@@ -1,13 +1,16 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import { FormSchema } from "@/types/FormSchema"
-import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
-import { QueryKeys } from "@/lib/queries"
-import { toast } from "react-hot-toast"
-import useFormVersionStore from "@/store/formVersions"
-import { addNewFormVersion } from "@/lib/queries"
-import { Allow, parse } from "partial-json"
 import { getMaxFormVersion } from "@/lib/form-lib/utils"
+import {
+  addNewFormVersion,
+  fetchLatestFormVersion,
+  QueryKeys,
+} from "@/lib/queries"
+import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
+import useFormVersionStore from "@/store/formVersions"
+import { FormSchema } from "@/types/FormSchema"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Allow, parse } from "partial-json"
+import { useState } from "react"
+import { toast } from "react-hot-toast"
 
 const editFormSchemaStreaming = async (
   prompt: string,
@@ -72,33 +75,24 @@ export const useFormSchemaEditor = (baseFormId: string) => {
     (state) => state.setSelectedFormVersion
   )
 
-  const handleVersionChange = (value: string) => {
-    const selectedVersion = formVersionsData.find(
-      (version) => version.version_number === Number(value)
-    )
-    if (selectedVersion) {
-      setSelectedFormVersion(selectedVersion)
-      if (typeof window !== "undefined") {
-        localStorage.setItem(
-          "selected-form-version",
-          JSON.stringify(selectedVersion)
-        )
-      }
-    }
-  }
-
   const addNewFormversionMutation = useMutation({
     mutationFn: (variables: AddNewFormVersionVariables) =>
       addNewFormVersion(variables),
-    onSuccess: (data) => {
+    onSuccess: async (data, variables) => {
+      const response = await fetchLatestFormVersion(baseFormId)
+      const updatedResponse = {
+        ...response,
+        status: response.status as EFormVersionStatus,
+      }
+      setSelectedFormVersion(updatedResponse)
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.GetFormVersions, baseFormId],
       })
-      toast.success("Form version updated successfully")
+      toast.success("Form version added successfully")
     },
     onError: (error: Error) => {
       console.error("Error adding new form version", error)
-      toast.error("Failed to update form version")
+      toast.error("Error adding new form version")
     },
   })
 
