@@ -285,27 +285,30 @@ const EditForm: React.FC<EditFormProps> = ({
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-5 items-center">
-          <VersionDropdown formId={formId} />
-          <div className="bg-white h-full border rounded-md flex gap-2 p-1">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div
-                    className={`p-2 cursor-pointer rounded border border-gray-200 ${
-                      isViewAsPublished ? "bg-gray-200" : ""
-                    }`}
-                    onClick={() => setIsViewAsPublished(!isViewAsPublished)}
-                  >
-                    <div>
-                      <Eye className="h-4 w-4" />
+          <div className="flex items-center gap-2 justify-between">
+            <VersionDropdown formId={formId} />
+
+            <div className="bg-white h-full border rounded-md flex gap-2 p-1">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div
+                      className={`p-2 cursor-pointer rounded border border-gray-200 ${
+                        isViewAsPublished ? "bg-gray-200" : ""
+                      }`}
+                      onClick={() => setIsViewAsPublished(!isViewAsPublished)}
+                    >
+                      <div>
+                        <Eye className="h-4 w-4" />
+                      </div>
                     </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>View as Published</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                  </TooltipTrigger>
+                  <TooltipContent>View as Published</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
-          <div className="bg-white h-full border rounded-md flex gap-2 p-1">
+          <div className="bg-white h-full border rounded-md hidden lg:flex gap-2 p-1">
             <div
               className={`p-2 cursor-pointer ${
                 selectedViewport === "desktop" ? "bg-gray-200" : ""
@@ -331,6 +334,8 @@ const EditForm: React.FC<EditFormProps> = ({
               <Smartphone className="h-4 w-4" />
             </div>
           </div>
+        </div>
+        <div className="flex items-center gap-2">
           <AlertDialog>
             <AlertDialogTrigger>
               <div className="flex items-center gap-2 border rounded-md py-2 px-3 bg-white">
@@ -380,36 +385,36 @@ const EditForm: React.FC<EditFormProps> = ({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+          <button
+            type="button"
+            className={`flex flex-grow items-center h-10 px-4 py-2 rounded-md gap-2 justify-center ${
+              selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
+                ? "bg-white text-primary border"
+                : "bg-primary text-white"
+            }`}
+            onClick={handlePublish}
+            disabled={isPublishing}
+          >
+            {isPublishing
+              ? "Publishing..."
+              : selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
+                ? "Published"
+                : "Publish"}
+            {isPublishing ? (
+              <div>
+                <Loader className="h-4 w-4 animate-spin" />
+              </div>
+            ) : selectedFormVersion?.status === EFormVersionStatus.PUBLISHED ? (
+              <div>
+                <ArrowUpRight className="h-4 w-4" />
+              </div>
+            ) : (
+              <div>
+                <MousePointerClick className="h-4 w-4" />
+              </div>
+            )}
+          </button>
         </div>
-        <button
-          type="button"
-          className={`flex items-center h-10 px-4 py-2 rounded-md gap-2 justify-center ${
-            selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
-              ? "bg-white text-primary border"
-              : "bg-primary text-white"
-          }`}
-          onClick={handlePublish}
-          disabled={isPublishing}
-        >
-          {isPublishing
-            ? "Publishing..."
-            : selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
-              ? "Published"
-              : "Publish"}
-          {isPublishing ? (
-            <div>
-              <Loader className="h-4 w-4 animate-spin" />
-            </div>
-          ) : selectedFormVersion?.status === EFormVersionStatus.PUBLISHED ? (
-            <div>
-              <ArrowUpRight className="h-4 w-4" />
-            </div>
-          ) : (
-            <div>
-              <MousePointerClick className="h-4 w-4" />
-            </div>
-          )}
-        </button>
       </div>
       <div className="flex w-full justify-center items-center h-[calc(90svh-128px)]">
         <GenerateForm
