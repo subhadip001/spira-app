@@ -298,6 +298,41 @@ export type Database = {
           },
         ]
       }
+      user_onboardings: {
+        Row: {
+          created_at: string
+          id: string
+          profession: string
+          referred_from: string
+          usecase: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profession?: string
+          referred_from?: string
+          usecase?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profession?: string
+          referred_from?: string
+          usecase?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_onboardings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

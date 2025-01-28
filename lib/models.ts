@@ -13,6 +13,7 @@ export const models = {
     LLAMA_3_2_90B_VISION: "llama-3.2-90b-vision-preview",
     LLAMA_3_3_70B_VERSATILE: "llama-3.3-70b-versatile",
     MIXTRAL_7B: "mixtral-8x7b-32768",
+    DEEPSEEK_R1_DISTILL_LLAMA_70B: "deepseek-r1-distill-llama-70b",
   },
   anthropic_models: {
     CLAUDE_3_5_SONNET: "claude-3-5-sonnet-20240620",

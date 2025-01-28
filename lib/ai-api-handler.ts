@@ -41,13 +41,13 @@ const aiApiHandler = async (
 }
 
 const aiApiHandlerStreaming = async (
-  model: "anthropic" | "groq" | "openai",
+  providor: "anthropic" | "gemini" | "groq" | "openai",
   prompt: {
     system_prompt: string
     user_question: string
   }
 ) => {
-  switch (model) {
+  switch (providor) {
     case "anthropic":
       const response = await createAnthropicResponseStreaming(
         prompt.system_prompt,
