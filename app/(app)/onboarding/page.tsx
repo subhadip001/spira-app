@@ -2,15 +2,9 @@ import React from "react"
 import OnboardingForm from "./components/OnboardingForm"
 import { createClient } from "@/utils/supabase/server"
 
-export function generateMetadata({
-  params,
-  searchParams,
-}: {
-  params: { onboardingId: string }
-  searchParams?: { [key: string]: string | string[] | undefined }
-}) {
+export function generateMetadata({}: {}) {
   return {
-    title: "Onboarding",
+    title: "Spira AI - Onboarding",
   }
 }
 
