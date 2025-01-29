@@ -29,14 +29,29 @@ export async function GET(request: Request) {
     return NextResponse.redirect("/login")
   }
 
+  if (!userData.user.id) {
+    return NextResponse.redirect("/login")
+  }
+
+  const { data: profileData, error: profileError } = await supabase
+    .from("profiles")
+    .select()
+    .eq("id", userData.user?.id)
+    .single()
+
+  if (profileError) {
+    return NextResponse.redirect("/login")
+  }
+
   const origin = getURL()
 
   if (!formId) {
-    return NextResponse.redirect(origin ?? requestUrl.origin)
-  }
-
-  if (!userData.user.id) {
-    return NextResponse.redirect("/login")
+    if (!profileData?.is_onboarded) {
+      const newRedirectUrl = new URL("/onboarding", origin ?? requestUrl.origin)
+      return NextResponse.redirect(newRedirectUrl)
+    } else {
+      return NextResponse.redirect(origin ?? requestUrl.origin)
+    }
   }
 
   await supabase
@@ -44,6 +59,18 @@ export async function GET(request: Request) {
     .update({ user_id: userData.user.id })
     .eq("id", formId)
 
-  const newRedirectUrl = new URL(`/form/${formId}`, origin ?? requestUrl.origin)
+  if (profileData?.is_onboarded) {
+    const newRedirectUrl = new URL(
+      `/form/${formId}`,
+      origin ?? requestUrl.origin
+    )
+    return NextResponse.redirect(newRedirectUrl)
+  }
+
+  // const newRedirectUrl = new URL(`/form/${formId}`, origin ?? requestUrl.origin)
+  const newRedirectUrl = new URL(
+    `/onboarding?formId=${formId}`,
+    origin ?? requestUrl.origin
+  )
   return NextResponse.redirect(newRedirectUrl)
 }

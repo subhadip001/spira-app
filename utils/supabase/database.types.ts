@@ -148,18 +148,21 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          is_onboarded: boolean
           name: string
         }
         Insert: {
           created_at?: string
           email: string
           id?: string
+          is_onboarded?: boolean
           name: string
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
+          is_onboarded?: boolean
           name?: string
         }
         Relationships: []
@@ -327,7 +330,7 @@ export type Database = {
           {
             foreignKeyName: "user_onboardings_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
