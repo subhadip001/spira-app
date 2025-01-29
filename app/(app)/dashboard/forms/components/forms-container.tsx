@@ -3,6 +3,9 @@ import { getFormsByUserId, QueryKeys } from "@/lib/queries"
 import useAppStore from "@/store/appStore"
 import { useQuery } from "@tanstack/react-query"
 import FormCard from "./form-card"
+import { Plus } from "lucide-react"
+import Link from "next/link"
+import CustomButton from "@/app/_components/custom-button"
 
 export default function FormsContainer() {
   const user = useAppStore((state) => state.user)
@@ -15,6 +18,20 @@ export default function FormsContainer() {
 
   if (error) {
     return <div>Error: {error.message}</div>
+  }
+
+  if (data?.data?.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <p className="text-lg text-muted-foreground">No forms found</p>
+        <Link href="/">
+          <CustomButton className="flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            Create New Form
+          </CustomButton>
+        </Link>
+      </div>
+    )
   }
 
   return (

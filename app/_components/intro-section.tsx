@@ -8,7 +8,7 @@ const IntroSection = () => {
           Create forms in seconds
         </span>
         <p className="text-center text-gray-500">
-          With Spira AI, you can create forms, analyze their responses in
+          With Spira AI, you can create forms, get actionables Insights in
           natural language.
         </p>
       </div>
