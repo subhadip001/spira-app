@@ -139,7 +139,7 @@ export async function createOpenAIChatCompletionStreaming(
       { role: "system", content: system_prompt },
       { role: "user", content: user_question },
     ],
-    model: models.openai_models.GPT_4,
+    model: models.openai_models.CHAT_GPT_4O,
     stream: true,
     max_tokens: 4000,
     temperature: 0.2,

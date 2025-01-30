@@ -45,7 +45,8 @@ const aiApiHandlerStreaming = async (
   prompt: {
     system_prompt: string
     user_question: string
-  }
+  },
+  model?: string
 ) => {
   switch (providor) {
     case "anthropic":
@@ -57,7 +58,8 @@ const aiApiHandlerStreaming = async (
     case "groq":
       const stream = await createGroqChatCompletionStreaming(
         prompt.system_prompt,
-        prompt.user_question
+        prompt.user_question,
+        model
       )
       return stream
     case "openai":

@@ -20,6 +20,7 @@ export const models = {
   },
   openai_models: {
     GPT_4: "gpt-4-turbo-preview",
-    GPT_4O: "chatgpt-4o-latest",
+    CHAT_GPT_4O: "chatgpt-4o-latest",
+    GPT_4O: "gpt-4o-2024-11-20",
   },
 }
