@@ -4,6 +4,28 @@ export type TQueryData = {
   prompt: string
 }
 
+export enum EUiLayout {
+  DEFAULT = "DEFAULT",
+  ONE_BY_ONE = "ONE_BY_ONE",
+}
+
+export type TUiTheme = {
+  primary_text: string
+  secondary_text: string
+  primary_bg: string
+  secondary_bg: string
+  button_text: string
+  button_bg: string
+  accent: string
+  neutral: string
+}
+
+export type TUiBrandKit = {
+  brand_name: string
+  brand_color: string
+  brand_icon: string
+}
+
 export type TFormVersionData = {
   created_at: string
   form_id: string
@@ -12,6 +34,9 @@ export type TFormVersionData = {
   query: string
   version_number: number
   status: EFormVersionStatus
+  ui_layout: EUiLayout
+  ui_theme: TUiTheme
+  ui_brand_kit: TUiBrandKit
 }
 
 export type AddNewFormVersionVariables = {
@@ -20,6 +45,9 @@ export type AddNewFormVersionVariables = {
   query: string
   version: number
   status?: EFormVersionStatus
+  uiLayout?: EUiLayout
+  uiTheme?: TUiTheme
+  uiBrandKit?: TUiBrandKit
 }
 
 export enum EFormVersionStatus {

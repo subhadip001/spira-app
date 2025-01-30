@@ -155,6 +155,22 @@ const EditFormField = () => {
         </TabsList>
         <TabsContent value="field">
           <div className="p-4 space-y-4 flex-grow overflow-y-auto max-h-[calc(100vh-190px)]">
+            <section className="flex max-w-full overflow-x-auto gap-3 hide-scrollbar">
+              {currentFormSchema?.fields.map((field, index) => (
+                <div
+                  key={field.serialId}
+                  className={`flex gap-2 text-sm px-3 py-1 ${
+                    selectedFieldConstantId === field.constantId
+                      ? "bg-blue-200 text-spirablue border-spirablue"
+                      : ""
+                  } cursor-pointer border rounded-md`}
+                  onClick={() => setSelectedFieldConstantId(field.constantId)}
+                >
+                  <span>Field</span>
+                  <span> {field.serialId}</span>
+                </div>
+              ))}
+            </section>
             <div>
               <Label className="text-gray-500" htmlFor="label">
                 Label
