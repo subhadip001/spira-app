@@ -3,6 +3,7 @@ import PublishedForm from "@/app/_components/published-form"
 import { EFormVersionStatus } from "@/lib/types"
 import { createClient } from "@/utils/supabase/server"
 import { Metadata } from "next"
+import FloatingBrand from "./components/floating-brand"
 
 export const generateMetadata = async (props: {
   params: Promise<{ shortId: string }>
@@ -90,7 +91,7 @@ export default async function PublishedFormHome(props: {
 
   return (
     <>
-      <main className="flex flex-col bg-white w-[100vw] overflow-y-auto h-[100svh]">
+      <main className="flex flex-col bg-white w-[100vw] overflow-y-auto h-[100svh] relative">
         <header className="relative">
           <div className="h-[35vh]">
             <div className="h-[20vh] bg-spirablue"></div>
@@ -102,8 +103,9 @@ export default async function PublishedFormHome(props: {
         <div className="relative w-[85%] mx-auto md:w-[60%]">
           <PublishedForm publishedForm={publishedForm} />
         </div>
+        <FloatingBrand />
         <footer className="inline-flex items-center justify-center w-full py-2 mt-auto">
-          <div className="text-sm inline-flex items-center gap-1 text-gray-500">
+          {/* <div className="text-sm inline-flex items-center gap-1 text-gray-500">
             Made with{" "}
             <a
               href={process.env.NEXT_PUBLIC_SITE_URL}
@@ -112,7 +114,7 @@ export default async function PublishedFormHome(props: {
               <Icons.logo className="w-4 h-4" />
               <span className="text-spirablue">Spira AI</span>
             </a>
-          </div>
+          </div> */}
         </footer>
       </main>
     </>
