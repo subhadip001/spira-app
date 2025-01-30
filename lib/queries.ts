@@ -4,6 +4,9 @@ import { convertFormResponseArrayToObject } from "./form-lib/utils"
 import {
   AddNewFormVersionVariables,
   EFormVersionStatus,
+  EProfession,
+  EReferrer,
+  EUseCase,
   TAiChatMessage,
   TQueryData,
 } from "./types"
@@ -447,4 +450,43 @@ export const addAiChatMessageToDbForUploadedCsv = async (
 
     return { data: updatedData, error: updatedError }
   }
+}
+
+export const addNewUserToOnboarding = async (
+  userId: string,
+  profession: EProfession,
+  usecase: EUseCase,
+  referrer: EReferrer
+) => {
+  const supabase = createClient()
+  const { data, error } = await supabase.from("user_onboardings").insert({
+    user_id: userId,
+    profession: profession,
+    usecase: usecase,
+    referred_from: referrer,
+  })
+
+  if (!error) {
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({
+        is_onboarded: true,
+      })
+      .eq("id", userId)
+
+    if (profileError) {
+      console.log("Error updating profile", profileError)
+      return { data: null, error: profileError }
+    }
+  }
+  return { data, error }
+}
+
+export const getOnboardingByUserId = async (userId: string) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("user_onboardings")
+    .select()
+    .eq("user_id", userId)
+  return { data, error }
 }

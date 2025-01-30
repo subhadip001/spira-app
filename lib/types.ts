@@ -102,3 +102,46 @@ export type TUploadedCsvChatData = {
   is_chat_active: boolean
   response_analytics_id: string
 }
+
+export enum EProfession {
+  DATA_SCIENCE = "Data Science",
+  DEVELOPMENT = "Development",
+  DESIGN = "Design",
+  MARKETING = "Marketing",
+  BUSINESS = "Business",
+  STUDENT = "Student",
+  OTHER = "Other",
+}
+
+export enum EUseCase {
+  SURVEY = "Survey",
+  RESEARCH = "Research",
+  JOB_APPLICATION = "Job Application",
+  CUSTOMER_SATISFACTION = "Customer Satisfaction",
+  EMPLOYEE_ONBOARDING = "Employee Onboarding",
+  PRODUCT_FEATURE = "Product Feature",
+  FEEDBACK_FORM = "Feedback Form",
+  ALL = "All",
+  OTHER = "Other",
+}
+
+export enum EReferrer {
+  LINKEDIN = "LinkedIn",
+  GOOGLE = "Google",
+  FACEBOOK = "Facebook",
+  TWITTER = "Twitter",
+  INSTAGRAM = "Instagram",
+  YOUTUBE = "YouTube",
+  WHATSAPP = "WhatsApp",
+  OTHER = "Other",
+}
+
+export type TUserOnboarding = {
+  created_at: string
+  id: string
+  profession: EProfession | undefined
+  referrer: EReferrer | undefined
+  updated_at: string
+  usecase: EUseCase | undefined
+  user_id: string
+}

@@ -148,18 +148,21 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          is_onboarded: boolean
           name: string
         }
         Insert: {
           created_at?: string
           email: string
           id?: string
+          is_onboarded?: boolean
           name: string
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
+          is_onboarded?: boolean
           name?: string
         }
         Relationships: []
@@ -294,6 +297,41 @@ export type Database = {
             columns: ["response_analytics_id"]
             isOneToOne: false
             referencedRelation: "response_analytics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_onboardings: {
+        Row: {
+          created_at: string
+          id: string
+          profession: string
+          referred_from: string
+          usecase: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profession?: string
+          referred_from?: string
+          usecase?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profession?: string
+          referred_from?: string
+          usecase?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_onboardings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

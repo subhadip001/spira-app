@@ -223,8 +223,8 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
       supabase:
-        specifier: '>=1.8.1'
-        version: 1.204.3
+        specifier: ^2.9.6
+        version: 2.9.6
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.13
@@ -3241,8 +3241,8 @@ packages:
     engines: {node: '>=16 || 14 >=14.17'}
     hasBin: true
 
-  supabase@1.204.3:
-    resolution: {integrity: sha512-uO09eyAw7TZAX/7wPeieQBWrl4QAJ0WLF+HTkFy35GWBmQULP5nkJR93LcuhSyooYiqwEUKlChEF/PGAEmTCKw==}
+  supabase@2.9.6:
+    resolution: {integrity: sha512-oPJXgvyuZCsbR/SQ5/0Jvab3zHqUg+lunnweYMCN8EdT9Q0ANChrn1lCKUJ4toXJXdq8gdVgNvTgIDu/JljbMw==}
     engines: {npm: '>=8'}
     hasBin: true
 
@@ -6941,7 +6941,7 @@ snapshots:
       pirates: 4.0.6
       ts-interface-checker: 0.1.13
 
-  supabase@1.204.3:
+  supabase@2.9.6:
     dependencies:
       bin-links: 5.0.0
       https-proxy-agent: 7.0.5

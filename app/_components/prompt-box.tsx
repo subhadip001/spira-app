@@ -124,7 +124,7 @@ const PromptBox = () => {
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 font-sans">
       <ShineBorder
         className="rounded-lg relative bg-white shadow-lg"
         color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}

@@ -30,7 +30,7 @@ export default function Sidebar() {
       onClick={onClick}
       className={`flex items-center space-x-3 w-full px-3 py-[0.3rem] rounded-sm transition-colors ${
         isActive
-          ? "bg-blue-200 text-spirablue"
+          ? "bg-blue-200 text-spirablue hover:bg-blue-300"
           : "text-muted-foreground hover:bg-gray-200"
       }`}
     >

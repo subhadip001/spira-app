@@ -13,12 +13,14 @@ export const models = {
     LLAMA_3_2_90B_VISION: "llama-3.2-90b-vision-preview",
     LLAMA_3_3_70B_VERSATILE: "llama-3.3-70b-versatile",
     MIXTRAL_7B: "mixtral-8x7b-32768",
+    DEEPSEEK_R1_DISTILL_LLAMA_70B: "deepseek-r1-distill-llama-70b",
   },
   anthropic_models: {
     CLAUDE_3_5_SONNET: "claude-3-5-sonnet-20240620",
   },
   openai_models: {
     GPT_4: "gpt-4-turbo-preview",
-    GPT_4O: "chatgpt-4o-latest",
+    CHAT_GPT_4O: "chatgpt-4o-latest",
+    GPT_4O: "gpt-4o-2024-11-20",
   },
 }
