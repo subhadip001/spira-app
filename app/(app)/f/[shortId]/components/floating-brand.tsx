@@ -22,7 +22,7 @@ const FloatingBrand = ({ text, className }: FloatingBrandProps) => {
         {text || "Made with "}
         <div className="flex items-center cursor-pointer gap-[0.1rem]">
           <Icons.logo className="w-4 h-4" />
-          <span className="text-spirablue">Spira AI</span>
+          <span className="text-spirablue">Spira</span>
         </div>
       </div>
     </div>

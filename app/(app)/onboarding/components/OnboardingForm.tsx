@@ -84,7 +84,7 @@ const OnboardingForm = ({ userId, formId }: OnboardingFormProps) => {
           if (formId) {
             router.push(`/form/${formId}`)
           } else {
-            router.push("/dashboard/forms")
+            router.push("/")
           }
         },
         onError: (error) => {
