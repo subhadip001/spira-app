@@ -1,34 +1,45 @@
 "use client"
 import React from "react"
 import PublishedFormBuilder from "./form-components/published-formbuilder"
+import PublishedViewFormBuilder from "./form-components/published-view-formbuilder"
+import TypeformPage from "./form-components/typeform-page"
+import {
+  EFormVersionStatus,
+  EUiLayout,
+  TFormVersionData,
+  TUiBrandKit,
+  TUiTheme,
+} from "@/lib/types"
+import { FormSchema } from "@/types/FormSchema"
 
 interface PublishedFormProps {
-  publishedForm: {
-    id: string
-    form_versions: {
-      id: string
-      created_at: string
-      form_id: string
-      form_schema_string: string
-      query: string
-      status: "DRAFT" | "PUBLISHED" | "DELETED" | "UNPUBLISHED"
-      version_number: number
-    } | null
-  }
+  id: string
+  form_versions: TFormVersionData
 }
 
-const PublishedForm: React.FC<PublishedFormProps> = ({ publishedForm }) => {
+const PublishedForm: React.FC<PublishedFormProps> = ({ id, form_versions }) => {
   const formSchema = JSON.parse(
-    publishedForm?.form_versions?.form_schema_string || "{}"
-  )
+    form_versions?.form_schema_string || "{}"
+  ) as FormSchema
+
   if (!formSchema) {
-    return null
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <h1 className="text-2xl font-bold">Form schema not found</h1>
+      </div>
+    )
+  }
+
+  const layout = form_versions?.ui_layout // You can make this dynamic based on form settings
+
+  if (layout === EUiLayout.ONE_BY_ONE) {
+    return <TypeformPage initialSchema={formSchema} publishedFormId={id} />
   }
 
   return (
-    <PublishedFormBuilder
+    <PublishedViewFormBuilder
       initialSchema={formSchema}
-      publishedFormId={publishedForm.id}
+      publishedFormId={id}
       className=""
     />
   )

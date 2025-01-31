@@ -111,7 +111,7 @@ const EditFormField = () => {
   if (!editedField) {
     return (
       <section
-        className={`min-w-[35%] max-w-[35%] bg-[#ffff] border ml-3 rounded-md flex flex-col transition-all duration-300 overflow-hidden`}
+        className={`min-w-[30%] max-w-[30%] bg-[#ffff] border ml-3 rounded-md flex flex-col transition-all duration-300 overflow-hidden`}
       >
         <div className="flex justify-between items-center py-2 px-3">
           <div className="flex items-center gap-2">
@@ -351,7 +351,7 @@ const EditFormField = () => {
           <div className="p-4 space-y-4 flex-grow overflow-y-auto max-h-[calc(100vh-190px)]">
             <section>
               <Label className="text-gray-500" htmlFor="label">
-                Label
+                Choose Layout
               </Label>
               <div className="flex gap-4">
                 <div>All In One</div>
@@ -360,11 +360,12 @@ const EditFormField = () => {
             </section>
             <section>
               <Label className="text-gray-500" htmlFor="label">
-                Label
+                Choose Theme
               </Label>
               <div className="flex gap-4">
-                <div>All In One</div>
-                <div>One By One</div>
+                <div>Default</div>
+                <div>Light</div>
+                <div>Dark</div>
               </div>
             </section>
           </div>

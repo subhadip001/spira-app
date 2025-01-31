@@ -4,7 +4,13 @@ import {
   fetchLatestFormVersion,
   QueryKeys,
 } from "@/lib/queries"
-import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
+import {
+  AddNewFormVersionVariables,
+  EFormVersionStatus,
+  EUiLayout,
+  TUiTheme,
+  TUiBrandKit,
+} from "@/lib/types"
 import useFormVersionStore from "@/store/formVersions"
 import { FormSchema } from "@/types/FormSchema"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -83,6 +89,9 @@ export const useFormSchemaEditor = (baseFormId: string) => {
       const updatedResponse = {
         ...response,
         status: response.status as EFormVersionStatus,
+        ui_layout: response.ui_layout as EUiLayout,
+        ui_theme: response.ui_theme as TUiTheme,
+        ui_brand_kit: response.ui_brand_kit as TUiBrandKit,
       }
       setSelectedFormVersion(updatedResponse)
       queryClient.invalidateQueries({

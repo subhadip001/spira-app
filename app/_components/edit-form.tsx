@@ -26,7 +26,13 @@ import {
   getPublishedFormByFormVersionId,
   QueryKeys,
 } from "@/lib/queries"
-import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
+import {
+  AddNewFormVersionVariables,
+  EFormVersionStatus,
+  EUiLayout,
+  TUiBrandKit,
+  TUiTheme,
+} from "@/lib/types"
 import useAppStore from "@/store/appStore"
 import useEditFormPageStore from "@/store/editFormPageStore"
 import useFormStore from "@/store/formStore"
@@ -214,6 +220,9 @@ const EditForm: React.FC<EditFormProps> = ({
       const updatedResponse = {
         ...response,
         status: response.status as EFormVersionStatus,
+        ui_layout: response.ui_layout as EUiLayout,
+        ui_theme: response.ui_theme as TUiTheme,
+        ui_brand_kit: response.ui_brand_kit as TUiBrandKit,
       }
       setSelectedFormVersion(updatedResponse)
       queryClient.invalidateQueries({
@@ -241,6 +250,9 @@ const EditForm: React.FC<EditFormProps> = ({
       const updatedResponse = {
         ...response,
         status: response.status as EFormVersionStatus,
+        ui_layout: response.ui_layout as EUiLayout,
+        ui_theme: response.ui_theme as TUiTheme,
+        ui_brand_kit: response.ui_brand_kit as TUiBrandKit,
       }
       setSelectedFormVersion(updatedResponse)
       toast.success("Form version updated successfully")
@@ -303,7 +315,7 @@ const EditForm: React.FC<EditFormProps> = ({
                       </div>
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent>View as Published</TooltipContent>
+                  <TooltipContent>Published Preview</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
