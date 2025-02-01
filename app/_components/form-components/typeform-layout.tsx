@@ -1,20 +1,13 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-} from "@/components/ui/form"
+import { FormControl, FormField, FormItem } from "@/components/ui/form"
+import { cn } from "@/lib/utils"
 import { FormSchema } from "@/types/FormSchema"
 import { TFormErrors } from "@/types/form"
-import { ArrowRight, Loader2 } from "lucide-react"
+import { ArrowDown, ArrowUp, Loader2 } from "lucide-react"
 import React, { useState } from "react"
-import { FormFieldComponent } from "./FormFields"
-import { cn } from "@/lib/utils"
-import Image from "next/image"
 import { Icons } from "../icons"
+import { FormFieldComponent } from "./FormFields"
 
 interface TypeformLayoutProps {
   initialSchema: FormSchema
@@ -23,6 +16,7 @@ interface TypeformLayoutProps {
   handleFieldChange: (field: any, value: string) => void
   backgroundColor: string
   className?: string
+  formValues: Record<string, string>
 }
 
 const TypeformLayout: React.FC<TypeformLayoutProps> = ({
@@ -32,6 +26,7 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
   handleFieldChange,
   backgroundColor,
   className,
+  formValues,
 }) => {
   const [currentStep, setCurrentStep] = useState(-1) // -1 represents the intro screen
   const [validationError, setValidationError] = useState<string | null>(null)
@@ -43,7 +38,7 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
 
   const validateCurrentField = () => {
     if (!currentField) return true
-    const value = form.getValues()[currentField.name]
+    const value = formValues[currentField.name]
     if (
       currentField.required &&
       (!value || (typeof value === "string" && value.trim() === ""))
@@ -51,6 +46,7 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
       setValidationError("This field is required")
       return false
     }
+    setValidationError(null)
     return true
   }
 
@@ -62,7 +58,6 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
 
     if (currentStep < totalQuestions - 1) {
       if (!validateCurrentField()) return
-      setValidationError(null)
       setCurrentStep(currentStep + 1)
     }
   }
@@ -89,8 +84,10 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
             <Icons.logo className="w-24 h-24" />
           )}
         </div>
-        <h1 className="text-4xl font-bold mb-4">{initialSchema?.title}</h1>
-        <p className="text-xl text-gray-600 mb-8">
+        <h1 className="text-4xl font-bold mb-4 text-center">
+          {initialSchema?.title}
+        </h1>
+        <p className="text-xl text-gray-600 mb-8 text-center">
           {initialSchema?.description}
         </p>
         <Button
@@ -116,7 +113,7 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
 
       <div className="flex-grow flex items-center justify-center p-6 mt-4">
         {currentField && (
-          <div className="w-full max-w-3xl mx-auto">
+          <div className="w-full max-w-3xl mx-auto flex flex-col gap-4">
             <div
               className={cn(
                 "relative border rounded-lg p-8 transition-all duration-300 bg-white",
@@ -135,11 +132,10 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
                     <FormControl>
                       <FormFieldComponent
                         field={currentField}
-                        value={controllerField.value}
+                        value={formValues[currentField.name] || ""}
                         onChange={(value: string) => {
-                          controllerField.onChange(value)
                           handleFieldChange(currentField, value)
-                          if (validationError) setValidationError(null)
+                          setValidationError(null)
                         }}
                         accept={
                           currentField.type === "file"
@@ -162,30 +158,45 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
                 )}
               />
             </div>
+            <section>
+              {currentStep === totalQuestions - 1 ? (
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting || !!validationError}
+                  className=""
+                  onClick={() => {
+                    if (!validateCurrentField()) return
+                  }}
+                >
+                  {form.formState.isSubmitting ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : null}
+                  Submit
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={!!validationError}
+                  className=""
+                >
+                  OK
+                </Button>
+              )}
+            </section>
           </div>
         )}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t">
-        <div className="max-w-3xl mx-auto p-4 flex items-center justify-between">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handlePrevious}
-            className="px-6"
-          >
-            Previous
-          </Button>
-
-          <div className="text-sm text-gray-500">
-            Question {currentStep + 1} of {totalQuestions}
-          </div>
+      <div className="fixed bottom-0 w-full bg-white">
+        <div className="mx-auto p-4 relative flex items-center justify-end">
+          {/* <FloatingBrand className="" /> */}
 
           {currentStep === totalQuestions - 1 ? (
             <Button
               type="submit"
               disabled={form.formState.isSubmitting || !!validationError}
-              className="px-6"
+              className=""
               onClick={() => {
                 if (!validateCurrentField()) return
               }}
@@ -196,14 +207,25 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
               Submit
             </Button>
           ) : (
-            <Button
-              type="button"
-              onClick={handleNext}
-              disabled={!!validationError}
-              className="px-6"
-            >
-              Next <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="flex gap-2 items-center">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handlePrevious}
+                className=""
+                disabled={currentStep === 0}
+              >
+                <ArrowUp className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                onClick={handleNext}
+                disabled={!!validationError}
+                className=""
+              >
+                <ArrowDown className="h-4 w-4" />
+              </Button>
+            </div>
           )}
         </div>
       </div>

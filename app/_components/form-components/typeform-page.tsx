@@ -1,17 +1,16 @@
 "use client"
-import React, { useState } from "react"
-import { EUiLayout } from "@/lib/types"
-import TypeformLayout from "./typeform-layout"
-import { FormSchema } from "@/types/FormSchema"
-import { useForm } from "react-hook-form"
-import { TFormData, TFormErrors, TFormValues } from "@/types/form"
-import { validateForm } from "@/lib/form-lib/validation"
-import { useMutation } from "@tanstack/react-query"
-import { createNewResponseForPublishedForm } from "@/lib/queries"
-import toast from "react-hot-toast"
 import { Form } from "@/components/ui/form"
-import ThankYouPage from "./thank-you-component"
 import { convertFormResponseArrayToObject } from "@/lib/form-lib/utils"
+import { validateForm } from "@/lib/form-lib/validation"
+import { createNewResponseForPublishedForm } from "@/lib/queries"
+import { TFormData, TFormErrors, TFormValues } from "@/types/form"
+import { FormSchema } from "@/types/FormSchema"
+import { useMutation } from "@tanstack/react-query"
+import React, { useState } from "react"
+import { useForm } from "react-hook-form"
+import toast from "react-hot-toast"
+import ThankYouPage from "./thank-you-component"
+import TypeformLayout from "./typeform-layout"
 
 interface TypeformPageProps {
   initialSchema: FormSchema
@@ -26,6 +25,7 @@ const TypeformPage: React.FC<TypeformPageProps> = ({
 }) => {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [formErrors, setFormErrors] = useState<TFormErrors>([])
+  const [formValues, setFormValues] = useState<Record<string, string>>({})
   const [formResponse, setFormResponse] = useState<TFormData>({
     details: {
       title: "",
@@ -35,15 +35,7 @@ const TypeformPage: React.FC<TypeformPageProps> = ({
     values: [],
   })
 
-  const form = useForm<Record<string, string>>({
-    defaultValues: initialSchema.fields.reduce(
-      (acc, field) => {
-        acc[field.name] = ""
-        return acc
-      },
-      {} as Record<string, string>
-    ),
-  })
+  const form = useForm<Record<string, string>>()
 
   const createNewResponseForPublishedFormMutation = useMutation({
     mutationFn: (responseDataArray: TFormValues) =>
@@ -69,25 +61,35 @@ const TypeformPage: React.FC<TypeformPageProps> = ({
       formFieldId: field.serialId,
       formFieldName: field.name,
       formFieldLabel: field.label,
-      formFieldValue: data[field.name] || "",
+      formFieldValue: formValues[field.name] || "",
     }))
+
     const errors = validateForm(initialSchema, newformResponse)
-    errors.forEach((error, index) => {
-      setTimeout(() => {
-        toast.error(error.error)
-      }, index * 300)
-    })
-    setFormErrors(errors)
-    if (errors.length === 0) {
-      console.log(
-        "Form submitted:",
-        convertFormResponseArrayToObject(newformResponse)
-      )
-      createNewResponseForPublishedFormMutation.mutate(newformResponse)
+    if (errors.length > 0) {
+      errors.forEach((error, index) => {
+        setTimeout(() => {
+          toast.error(error.error)
+        }, index * 300)
+      })
+      setFormErrors(errors)
+      return
     }
+
+    setFormErrors([])
+    console.log(
+      "Form submitted:",
+      convertFormResponseArrayToObject(newformResponse)
+    )
+    // for testing
+    // createNewResponseForPublishedFormMutation.mutate(newformResponse)
   }
 
   const handleFieldChange = (field: any, value: string) => {
+    setFormValues((prev) => ({
+      ...prev,
+      [field.name]: value,
+    }))
+
     const newFormResponse = [...formResponse.values]
     const fieldIndex = newFormResponse.findIndex(
       (f) => f.formFieldId === field.serialId
@@ -107,6 +109,7 @@ const TypeformPage: React.FC<TypeformPageProps> = ({
       values: newFormResponse,
     })
 
+    // Clear any errors for this field when it changes
     setFormErrors((prevErrors) =>
       prevErrors.filter((e) => e.formFieldId !== field.serialId)
     )
@@ -116,6 +119,7 @@ const TypeformPage: React.FC<TypeformPageProps> = ({
     setIsSubmitted(false)
     form.reset()
     setFormErrors([])
+    setFormValues({})
     setFormResponse({
       details: {
         title: "",
@@ -140,6 +144,7 @@ const TypeformPage: React.FC<TypeformPageProps> = ({
           handleFieldChange={handleFieldChange}
           backgroundColor="#ffffff"
           className={className}
+          formValues={formValues}
         />
       </form>
     </Form>

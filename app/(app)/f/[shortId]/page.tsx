@@ -4,6 +4,7 @@ import { EFormVersionStatus, TFormVersionData } from "@/lib/types"
 import { createClient } from "@/utils/supabase/server"
 import { Metadata } from "next"
 import FloatingBrand from "./components/floating-brand"
+import PublishedFormWrapper from "@/app/_components/published-form"
 
 export const generateMetadata = async (props: {
   params: Promise<{ shortId: string }>
@@ -91,7 +92,7 @@ export default async function PublishedFormHome({
 
   return (
     <div className="min-h-screen">
-      <PublishedForm
+      <PublishedFormWrapper
         id={publishedForm.id}
         form_versions={publishedForm.form_versions as TFormVersionData}
       />

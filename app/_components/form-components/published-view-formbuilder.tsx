@@ -6,22 +6,20 @@ import {
   FormField,
   FormItem,
 } from "@/components/ui/form"
+import { convertFormResponseArrayToObject } from "@/lib/form-lib/utils"
 import { validateForm } from "@/lib/form-lib/validation"
+import { createNewResponseForPublishedForm } from "@/lib/queries"
 import { cn } from "@/lib/utils"
 import { TFormData, TFormErrors, TFormValues } from "@/types/form"
 import { FormSchema } from "@/types/FormSchema"
-import { ArrowRight, Loader2 } from "lucide-react"
+import { useMutation } from "@tanstack/react-query"
+import { Loader2 } from "lucide-react"
 import React, { Fragment, useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { FormFieldComponent } from "./FormFields"
-import { convertFormResponseArrayToObject } from "@/lib/form-lib/utils"
-import { useMutation } from "@tanstack/react-query"
-import { createNewResponseForPublishedForm } from "@/lib/queries"
-import ThankYouPage from "./thank-you-component"
-import { EUiLayout } from "@/lib/types"
-import Image from "next/image"
 import { Icons } from "../icons"
+import { FormFieldComponent } from "./FormFields"
+import ThankYouPage from "./thank-you-component"
 
 interface PublishedViewFormBuilderProps {
   initialSchema: FormSchema
@@ -123,7 +121,7 @@ const DefaultFormLayout: React.FC<DefaultFormLayoutProps> = ({
   )
 }
 
-const PublishedViewFormBuilder: React.FC<PublishedViewFormBuilderProps> = ({
+const DefaultViewFormBuilder: React.FC<PublishedViewFormBuilderProps> = ({
   initialSchema,
   publishedFormId,
   className,
@@ -250,4 +248,4 @@ const PublishedViewFormBuilder: React.FC<PublishedViewFormBuilderProps> = ({
   )
 }
 
-export default PublishedViewFormBuilder
+export default DefaultViewFormBuilder
