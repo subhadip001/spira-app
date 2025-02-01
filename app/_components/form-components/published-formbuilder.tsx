@@ -156,7 +156,7 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
                   <div
                     key={field.constantId + index}
                     className={cn(
-                      "relative border rounded-md transition-all duration-800",
+                      "relative border bg-white rounded-md transition-all duration-800",
                       !!formErrors.find((e) => e.formFieldId === field.serialId)
                         ?.error
                         ? "border-red-500 bg-[#ffe7e75c]"

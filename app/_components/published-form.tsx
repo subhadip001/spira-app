@@ -26,9 +26,9 @@ const PublishedFormWrapper: React.FC<PublishedFormProps> = ({
     )
   }
 
-  const layout = form_versions?.ui_layout // You can make this dynamic based on form settings
+  const layout = form_versions?.ui_layout
 
-  if (layout === EUiLayout.DEFAULT) {
+  if (layout === EUiLayout.ONE_BY_ONE) {
     return <TypeformPage initialSchema={formSchema} publishedFormId={id} />
   }
 

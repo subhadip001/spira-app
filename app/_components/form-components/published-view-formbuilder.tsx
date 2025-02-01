@@ -44,33 +44,49 @@ const DefaultFormLayout: React.FC<DefaultFormLayoutProps> = ({
   backgroundColor,
   className,
 }) => {
+  const containerWidthClassName =
+    "max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[55%]"
   return (
-    <div className={cn("flex flex-col", className)}>
+    <div className={cn("flex flex-col h-[100dvh] overflow-y-auto", className)}>
+      <div className="bg-[radial-gradient(circle_at_1px_1px,_black_1px,_transparent_0)] bg-[size:40px_40px] w-full h-[100dvh] fixed z-[-1]"></div>
       <div className={cn("flex flex-col gap-8")}>
-        <section className="flex flex-col items-center justify-center py-8 border-b">
-          <div className="w-24 h-24 relative mb-4">
-            <Icons.logo className="w-full h-full" />
+        <section className="relative">
+          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-br bg-white from-blue-500/80 via-purple-500/80 to-pink-500/80 rounded-b-[60px]" />
+          <div
+            className={cn(
+              "relative  mx-auto flex flex-col justify-center transform translate-y-[6rem]",
+              containerWidthClassName
+            )}
+          >
+            <div className="w-32 h-32 relative mb-6 bg-white rounded-2xl p-4 shadow-lg">
+              <Icons.logo className="w-full h-full" />
+            </div>
+            <div className="w-full flex flex-col bg-blue-50 border text-spirablue rounded-md p-4 mb-[12vh]">
+              <h1 className="mb-4 text-3xl font-semibold">
+                {initialSchema?.title}
+              </h1>
+              <FormDescription className="">
+                {initialSchema?.description}
+              </FormDescription>
+            </div>
           </div>
-          <span className="mb-4 text-3xl text-center">
-            {initialSchema?.title}
-          </span>
-          <FormDescription className="text-center">
-            {initialSchema?.description}
-          </FormDescription>
         </section>
 
         <section
-          className={`flex flex-col gap-5 pb-3 max-w-3xl mx-auto w-full`}
+          className={cn(
+            "flex flex-col gap-5 pb-3 mx-auto w-full z-10",
+            containerWidthClassName
+          )}
         >
           {initialSchema?.fields?.map((field, index) => (
             <Fragment key={index}>
               <div
                 key={field.constantId + index}
                 className={cn(
-                  "relative border rounded-md transition-all duration-800",
+                  "relative border bg-white rounded-md transition-all duration-800",
                   !!formErrors.find((e) => e.formFieldId === field.serialId)
                     ?.error
-                    ? "border-red-500 bg-[#ffe7e75c]"
+                    ? "border-red-500 bg-red-50"
                     : ""
                 )}
               >
@@ -105,10 +121,12 @@ const DefaultFormLayout: React.FC<DefaultFormLayoutProps> = ({
           ))}
         </section>
       </div>
-      <div className="flex justify-center mt-8 mb-8">
+      <div
+        className={cn("flex mt-4 mb-8 mx-auto w-full", containerWidthClassName)}
+      >
         <Button
           type="submit"
-          className="px-8"
+          className="px-8 w-full md:w-auto"
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (
