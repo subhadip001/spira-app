@@ -1,4 +1,4 @@
-import { TUiConfig } from "@/lib/types"
+import { EUiLayout, THEME_PRESETS, TUiConfig } from "@/lib/types"
 import { FormSchema } from "@/types/FormSchema"
 import { create } from "zustand"
 
@@ -22,7 +22,16 @@ const useFormStore = create<FormStore>((set) => ({
         },
       }
     }),
-  currentFormUI: {} as TUiConfig,
+  currentFormUI: {
+    layout: EUiLayout.DEFAULT,
+    theme: THEME_PRESETS.DEFAULT,
+    availableThemes: [
+      THEME_PRESETS.DEFAULT,
+      THEME_PRESETS.LIGHT,
+      THEME_PRESETS.DARK,
+    ],
+    brandKit: {},
+  } as TUiConfig,
   setCurrentFormUI: (formUI) => set(() => ({ currentFormUI: formUI })),
   resetStore: () =>
     set(() => ({

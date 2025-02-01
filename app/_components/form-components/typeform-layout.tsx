@@ -87,7 +87,7 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
         <h1 className="text-4xl font-bold mb-4 text-center">
           {initialSchema?.title}
         </h1>
-        <p className="text-xl text-gray-600 mb-8 text-center">
+        <p className="text-xl max-w-3xl mx-auto text-gray-600 mb-8 text-center">
           {initialSchema?.description}
         </p>
         <Button
@@ -104,7 +104,7 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
   return (
     <div className={cn("flex flex-col min-h-screen w-full", className)}>
       {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-200 fixed top-0">
+      <div className="w-full h-2 bg-gray-200 fixed top-0">
         <div
           className="h-full bg-primary transition-all duration-300 ease-in-out"
           style={{ width: `${progress}%` }}
@@ -189,44 +189,42 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
       </div>
 
       <div className="fixed bottom-0 w-full bg-white">
-        <div className="mx-auto p-4 relative flex items-center justify-end">
+        <div className="mx-auto p-4 relative flex items-center justify-end gap-4">
           {/* <FloatingBrand className="" /> */}
 
-          {currentStep === totalQuestions - 1 ? (
+          <div className="flex gap-2 items-center">
             <Button
-              type="submit"
-              disabled={form.formState.isSubmitting || !!validationError}
+              type="button"
+              variant="outline"
+              onClick={handlePrevious}
               className=""
-              onClick={() => {
-                if (!validateCurrentField()) return
-              }}
+              disabled={currentStep === 0}
             >
-              {form.formState.isSubmitting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : null}
-              Submit
+              <ArrowUp className="h-4 w-4" />
             </Button>
-          ) : (
-            <div className="flex gap-2 items-center">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handlePrevious}
-                className=""
-                disabled={currentStep === 0}
-              >
-                <ArrowUp className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                onClick={handleNext}
-                disabled={!!validationError}
-                className=""
-              >
-                <ArrowDown className="h-4 w-4" />
-              </Button>
+            <Button
+              type="button"
+              onClick={handleNext}
+              disabled={!!validationError || currentStep === totalQuestions - 1}
+              className=""
+            >
+              <ArrowDown className="h-4 w-4" />
+            </Button>
+          </div>
+          <div
+            onClick={() => {
+              window.open(process.env.NEXT_PUBLIC_SITE_URL, "_blank")
+            }}
+            className="cursor-pointer"
+          >
+            <div className="text-sm inline-flex items-center gap-1 text-gray-500 bg-blue-100 px-3 py-2 rounded-md border border-spirablue">
+              <span>Powered by</span>
+              <div className="flex items-center cursor-pointer gap-[0.1rem]">
+                <Icons.logo className="w-4 h-4" />
+                <span className="text-spirablue">Spira</span>
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

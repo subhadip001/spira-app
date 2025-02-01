@@ -10,7 +10,9 @@ import {
   EUiLayout,
   TUiTheme,
   TUiBrandKit,
+  THEME_PRESETS,
 } from "@/lib/types"
+import useFormStore from "@/store/formStore"
 import useFormVersionStore from "@/store/formVersions"
 import { FormSchema } from "@/types/FormSchema"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -81,6 +83,8 @@ export const useFormSchemaEditor = (baseFormId: string) => {
     (state) => state.setSelectedFormVersion
   )
 
+  const currentFormUI = useFormStore((state) => state.currentFormUI)
+
   const addNewFormversionMutation = useMutation({
     mutationFn: (variables: AddNewFormVersionVariables) =>
       addNewFormVersion(variables),
@@ -129,6 +133,10 @@ export const useFormSchemaEditor = (baseFormId: string) => {
         query: variables.prompt,
         version: getMaxFormVersion(formVersionsData) + 1,
         status: EFormVersionStatus.DRAFT,
+        uiLayout: currentFormUI.layout,
+        uiTheme: currentFormUI.theme,
+        uiBrandKit: currentFormUI.brandKit,
+        availableUiThemes: currentFormUI.availableThemes,
       })
     },
     onError: (error: Error) => {

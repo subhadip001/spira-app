@@ -53,7 +53,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
+      <head>
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=G-5ZVXD6T51E`}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-5ZVXD6T51E');
+            `,
+          }}
+        />
+      </head>
       <ReactQueryProvider>
         <body
           className={cn(
@@ -65,6 +80,7 @@ export default function RootLayout({
             <div className="flex-grow z-10">{children}</div>
             <Toaster position="top-right" />
           </ThemeProvider>
+          <div id="portal" />
         </body>
       </ReactQueryProvider>
     </html>

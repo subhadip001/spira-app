@@ -28,19 +28,20 @@ const SelectVersion = ({ formId }: { formId: string }) => {
             "selected-form-version",
             JSON.stringify(formVersionsData[0])
           )
+          console.log(formVersionsData[0])
           setCurrentFormUI({
-            layout: formVersionsData[0].ui_layout,
-            theme: formVersionsData[0].ui_theme,
-            brandKit: formVersionsData[0].ui_brand_kit,
-            availableThemes: formVersionsData[0].available_ui_themes,
+            layout: formVersionsData[0]?.ui_layout,
+            theme: formVersionsData[0]?.ui_theme,
+            brandKit: formVersionsData[0]?.ui_brand_kit,
+            availableThemes: formVersionsData[0]?.available_ui_themes,
           })
         } else {
           setSelectedFormVersion(formVersion)
           setCurrentFormUI({
-            layout: formVersion.ui_layout,
-            theme: formVersion.ui_theme,
-            brandKit: formVersion.ui_brand_kit,
-            availableThemes: formVersion.available_ui_themes,
+            layout: formVersion?.ui_layout,
+            theme: formVersion?.ui_theme,
+            brandKit: formVersion?.ui_brand_kit,
+            availableThemes: formVersion?.available_ui_themes,
           })
         }
       } catch (error) {
@@ -50,10 +51,10 @@ const SelectVersion = ({ formId }: { formId: string }) => {
           JSON.stringify(formVersionsData[0])
         )
         setCurrentFormUI({
-          layout: formVersionsData[0].ui_layout,
-          theme: formVersionsData[0].ui_theme,
-          brandKit: formVersionsData[0].ui_brand_kit,
-          availableThemes: formVersionsData[0].available_ui_themes,
+          layout: formVersionsData[0]?.ui_layout,
+          theme: formVersionsData[0]?.ui_theme,
+          brandKit: formVersionsData[0]?.ui_brand_kit,
+          availableThemes: formVersionsData[0]?.available_ui_themes,
         })
       }
     }

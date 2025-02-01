@@ -81,7 +81,7 @@ const TypeformPage: React.FC<TypeformPageProps> = ({
       convertFormResponseArrayToObject(newformResponse)
     )
     // for testing
-    // createNewResponseForPublishedFormMutation.mutate(newformResponse)
+    createNewResponseForPublishedFormMutation.mutate(newformResponse)
   }
 
   const handleFieldChange = (field: any, value: string) => {

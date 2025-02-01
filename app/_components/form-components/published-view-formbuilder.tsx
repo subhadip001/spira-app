@@ -20,6 +20,7 @@ import toast from "react-hot-toast"
 import { Icons } from "../icons"
 import { FormFieldComponent } from "./FormFields"
 import ThankYouPage from "./thank-you-component"
+import FloatingBrand from "@/app/(app)/f/[shortId]/components/floating-brand"
 
 interface PublishedViewFormBuilderProps {
   initialSchema: FormSchema
@@ -48,20 +49,23 @@ const DefaultFormLayout: React.FC<DefaultFormLayoutProps> = ({
     "max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[55%]"
   return (
     <div className={cn("flex flex-col h-[100dvh] overflow-y-auto", className)}>
-      <div className="bg-[radial-gradient(circle_at_1px_1px,_black_1px,_transparent_0)] bg-[size:40px_40px] w-full h-[100dvh] fixed z-[-1]"></div>
+      <div className="bg-[radial-gradient(circle_at_1px_1px,_gray_1px,_transparent_0)] bg-[size:40px_40px] bg-gray-50 w-full h-[100dvh] fixed z-[-1]"></div>
       <div className={cn("flex flex-col gap-8")}>
         <section className="relative">
-          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-br bg-white from-blue-500/80 via-purple-500/80 to-pink-500/80 rounded-b-[60px]" />
+          {/* <div className="absolute max-w-0 mx-auto inset-x-0 top-0 h-40 bg-gradient-to-br bg-white from-blue-500/80 via-purple-500/80 to-pink-500/80 " /> */}
           <div
             className={cn(
-              "relative  mx-auto flex flex-col justify-center transform translate-y-[6rem]",
+              "relative mx-auto flex flex-col justify-center transform translate-y-[4rem]",
               containerWidthClassName
             )}
           >
-            <div className="w-32 h-32 relative mb-6 bg-white rounded-2xl p-4 shadow-lg">
-              <Icons.logo className="w-full h-full" />
+            <div className="w-full flex justify-between gap-4">
+              <div className="w-32 h-32 relative mb-6 bg-white rounded-2xl p-4 shadow-lg">
+                <Icons.logo className="w-full h-full" />
+              </div>
+              <div className="h-32 flex-1 bg-gradient-to-br bg-white rounded-lg shadow-lg p-4 from-blue-500/80 via-purple-500/80 to-pink-500/80"></div>
             </div>
-            <div className="w-full flex flex-col bg-blue-50 border text-spirablue rounded-md p-4 mb-[12vh]">
+            <div className="w-full flex flex-col bg-white border rounded-md p-4 mb-[12vh]">
               <h1 className="mb-4 text-3xl font-semibold">
                 {initialSchema?.title}
               </h1>
@@ -122,11 +126,16 @@ const DefaultFormLayout: React.FC<DefaultFormLayoutProps> = ({
         </section>
       </div>
       <div
-        className={cn("flex mt-4 mb-8 mx-auto w-full", containerWidthClassName)}
+        className={cn(
+          "flex flex-col gap-4 mt-4 mb-8 mx-auto w-full",
+          containerWidthClassName
+        )}
       >
+        <FloatingBrand className="hidden md:block" />
+
         <Button
           type="submit"
-          className="px-8 w-full md:w-auto"
+          className="px-8 w-full md:w-fit bg-spirablue hover:bg-blue-500"
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (
@@ -134,6 +143,15 @@ const DefaultFormLayout: React.FC<DefaultFormLayoutProps> = ({
           ) : null}
           Submit
         </Button>
+        <div className="md:hidden flex justify-center">
+          <div className="text-sm inline-flex items-center gap-1 text-gray-500 w-fit">
+            Powered by
+            <div className="flex items-center cursor-pointer gap-[0.1rem]">
+              <Icons.logo className="w-4 h-4" />
+              <span className="text-spirablue">Spira AI</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

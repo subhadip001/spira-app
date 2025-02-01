@@ -12,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
 import {
   Tooltip,
   TooltipContent,
@@ -82,6 +83,7 @@ const EditForm: React.FC<EditFormProps> = ({
   const [isPublishing, setIsPublishing] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
   const [editInstruction, setEditInstruction] = useState<string>("")
+  const [saveAsNewVersion, setSaveAsNewVersion] = useState(false)
 
   const currentFormSchema = useFormStore((state) => state.currentFormSchema)
   const currentFormUI = useFormStore((state) => state.currentFormUI)
@@ -89,6 +91,8 @@ const EditForm: React.FC<EditFormProps> = ({
   const router = useRouter()
   const pathName = usePathname()
   const formId = pathName.split("/")[2]
+
+  console.log(currentFormUI)
 
   const queryClient = useQueryClient()
 
@@ -371,46 +375,51 @@ const EditForm: React.FC<EditFormProps> = ({
                   overwrite the current version.
                 </AlertDialogDescription>
               </AlertDialogHeader>
+              <div className="flex items-center space-x-2 py-4">
+                <Switch
+                  id="save-as-new"
+                  checked={saveAsNewVersion}
+                  onCheckedChange={setSaveAsNewVersion}
+                />
+                <label
+                  htmlFor="save-as-new"
+                  className="text-sm text-muted-foreground"
+                >
+                  Save as new version
+                </label>
+              </div>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => {
-                    addNewFormversionMutation.mutate({
-                      formSchemaString: JSON.stringify(currentFormSchema),
-                      baseFormId: baseFormId,
-                      query: selectedFormVersion?.query || "N/A",
-                      version: getMaxFormVersion(formVersionsData) + 1,
-                      status: EFormVersionStatus.DRAFT,
-                      uiLayout: currentFormUI.layout,
-                      uiTheme: currentFormUI.theme,
-                      uiBrandKit: currentFormUI.brandKit,
-                      availableUiThemes: [
-                        THEME_PRESETS.DEFAULT,
-                        THEME_PRESETS.LIGHT,
-                        THEME_PRESETS.DARK,
-                      ],
-                    })
+                    if (saveAsNewVersion) {
+                      addNewFormversionMutation.mutate({
+                        formSchemaString: JSON.stringify(currentFormSchema),
+                        baseFormId: baseFormId,
+                        query: selectedFormVersion?.query || "N/A",
+                        version: getMaxFormVersion(formVersionsData) + 1,
+                        status: EFormVersionStatus.DRAFT,
+                        uiLayout: currentFormUI.layout,
+                        uiTheme: currentFormUI.theme,
+                        uiBrandKit: currentFormUI.brandKit,
+                        availableUiThemes: currentFormUI.availableThemes,
+                      })
+                    } else {
+                      updateFormVersionMutation.mutate({
+                        formSchemaString: JSON.stringify(currentFormSchema),
+                        baseFormId: baseFormId,
+                        query: selectedFormVersion?.query || "N/A",
+                        version: selectedFormVersion?.version_number ?? 1,
+                        uiLayout: currentFormUI.layout,
+                        uiTheme: currentFormUI.theme,
+                        uiBrandKit: currentFormUI.brandKit,
+                        availableUiThemes: currentFormUI.availableThemes,
+                      })
+                    }
                   }}
-                  disabled={formVersionsData?.length === 0}
+                  disabled={saveAsNewVersion && formVersionsData?.length === 0}
                 >
-                  Save as New Version
-                </AlertDialogAction>
-                <AlertDialogAction
-                  onClick={() => {
-                    updateFormVersionMutation.mutate({
-                      formSchemaString: JSON.stringify(currentFormSchema),
-                      baseFormId: baseFormId,
-                      query: selectedFormVersion?.query || "N/A",
-                      version: selectedFormVersion?.version_number ?? 1,
-                      uiLayout: currentFormUI.layout,
-                      uiTheme: currentFormUI.theme,
-                      uiBrandKit: currentFormUI.brandKit,
-                    })
-                  }}
-                >
-                  {formVersionsData?.length === 0
-                    ? "Save"
-                    : "Save as current version"}
+                  {saveAsNewVersion ? "Save as New Version" : "Save"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
