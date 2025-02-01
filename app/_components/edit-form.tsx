@@ -91,9 +91,6 @@ const EditForm: React.FC<EditFormProps> = ({
   const router = useRouter()
   const pathName = usePathname()
   const formId = pathName.split("/")[2]
-
-  console.log(currentFormUI)
-
   const queryClient = useQueryClient()
 
   const selectedFieldConstantId = useEditFormPageStore(
@@ -360,7 +357,11 @@ const EditForm: React.FC<EditFormProps> = ({
         </div>
         <div className="flex items-center gap-2">
           <AlertDialog>
-            <AlertDialogTrigger>
+            <AlertDialogTrigger
+              onClick={() => {
+                setSaveAsNewVersion(false)
+              }}
+            >
               <div className="flex items-center gap-2 border rounded-md py-2 px-3 bg-white">
                 <div>
                   <Save className="h-5 w-5" />

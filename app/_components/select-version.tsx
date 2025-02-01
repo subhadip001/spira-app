@@ -22,7 +22,7 @@ const SelectVersion = ({ formId }: { formId: string }) => {
         const formVersion = JSON.parse(
           localStorage.getItem("selected-form-version") || "{}"
         )
-        if (formVersion?.form_id !== formId) {
+        if (formVersion?.form_id !== formId && formVersionsData[0]) {
           setSelectedFormVersion(formVersionsData[0])
           localStorage.setItem(
             "selected-form-version",
