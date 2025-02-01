@@ -78,30 +78,42 @@ export type Database = {
       }
       form_versions: {
         Row: {
+          available_ui_themes: Json
           created_at: string
           form_id: string
           form_schema_string: string
           id: string
           query: string
           status: Database["public"]["Enums"]["FORM_VERSION_STATUS"]
+          ui_brand_kit: Json
+          ui_layout: Database["public"]["Enums"]["UI_LAYOUT"]
+          ui_theme: Json
           version_number: number
         }
         Insert: {
+          available_ui_themes?: Json
           created_at?: string
           form_id?: string
           form_schema_string: string
           id?: string
           query: string
           status?: Database["public"]["Enums"]["FORM_VERSION_STATUS"]
+          ui_brand_kit?: Json
+          ui_layout?: Database["public"]["Enums"]["UI_LAYOUT"]
+          ui_theme?: Json
           version_number: number
         }
         Update: {
+          available_ui_themes?: Json
           created_at?: string
           form_id?: string
           form_schema_string?: string
           id?: string
           query?: string
           status?: Database["public"]["Enums"]["FORM_VERSION_STATUS"]
+          ui_brand_kit?: Json
+          ui_layout?: Database["public"]["Enums"]["UI_LAYOUT"]
+          ui_theme?: Json
           version_number?: number
         }
         Relationships: [
@@ -347,6 +359,7 @@ export type Database = {
       FORM_VERSION_STATUS: "DRAFT" | "PUBLISHED" | "DELETED" | "UNPUBLISHED"
       pub_form_status: "ACTIVE" | "CLOSED" | "UNPUBLISHED"
       PUB_FORM_STATUS: "ACTIVE" | "CLOSED" | "UNPUBLISHED"
+      UI_LAYOUT: "DEFAULT" | "ONE_BY_ONE"
     }
     CompositeTypes: {
       [_ in never]: never

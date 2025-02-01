@@ -4,6 +4,16 @@ import { TAiChat, TPublishedFormResponse, TResponseData } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
+import {
+  DataEditor,
+  GridCell,
+  GridCellKind,
+  GridColumn,
+  Item,
+  TextCell,
+} from "@glideapps/glide-data-grid"
+import "@glideapps/glide-data-grid/dist/index.css"
+import { useCallback, useMemo } from "react"
 
 type TableSectionProps = {
   aiChat: TAiChat
@@ -38,46 +48,66 @@ export default function TableSection({
     document.body.removeChild(link)
   }
 
+  // Transform data for the grid
+  const rows = publishedFormResponse?.data?.length || 0
+  const columns = useMemo<GridColumn[]>(
+    () =>
+      headers.map((header) => ({
+        id: header,
+        title: header,
+        width: 200,
+      })),
+    [headers]
+  )
+
+  const getCellContent = useCallback(
+    ([col, row]: Item): GridCell => {
+      const response = publishedFormResponse?.data?.[row]
+      if (!response?.response_data)
+        return {
+          kind: GridCellKind.Text,
+          displayData: "",
+          data: "",
+          allowOverlay: true,
+          readonly: true,
+        }
+
+      const values = Object.values(response.response_data as TResponseData)
+      const cellValue = values[col]?.value || ""
+
+      return {
+        kind: GridCellKind.Text,
+        displayData: cellValue,
+        data: cellValue,
+        allowOverlay: true,
+        readonly: true,
+      } as TextCell
+    },
+    [publishedFormResponse?.data]
+  )
+
   return (
     <div
       className={cn(
         "flex flex-col border rounded-lg relative",
-        aiChat?.isChatActive ? "h-[calc(100vh-12rem)]" : "mb-8"
+        aiChat?.isChatActive ? "h-[calc(100vh-12rem)]" : "h-[600px] mb-8"
       )}
     >
-      <div className="flex-1 overflow-auto">
-        <table className="min-w-full table-auto divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr className="divide-x divide-gray-200">
-              {headers.map((header, index) => (
-                <th
-                  key={index}
-                  className="px-4 py-2 text-left whitespace-nowrap text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {publishedFormResponse?.data?.map((response, rowIndex) => (
-              <tr key={rowIndex} className="divide-x divide-gray-200">
-                {Object.values(response.response_data as TResponseData).map(
-                  (field, cellIndex) => (
-                    <td
-                      key={cellIndex}
-                      className="px-4 py-3 text-sm text-gray-500"
-                    >
-                      {field.value}
-                    </td>
-                  )
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="flex-1 relative overflow-auto">
+        <DataEditor
+          getCellContent={getCellContent}
+          columns={columns}
+          rows={rows}
+          height={aiChat?.isChatActive ? "calc(100vh - 12rem)" : "100%"}
+          width="100%"
+          rowHeight={45}
+          smoothScrollX
+          smoothScrollY
+          isDraggable={false}
+          onPaste={false}
+        />
       </div>
-      <div className="flex justify-end border-t bg-white">
+      <div className="flex justify-end border-t bg-white h-10">
         <Button
           variant="outline"
           size="sm"

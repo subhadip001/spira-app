@@ -4,7 +4,15 @@ import {
   fetchLatestFormVersion,
   QueryKeys,
 } from "@/lib/queries"
-import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
+import {
+  AddNewFormVersionVariables,
+  EFormVersionStatus,
+  EUiLayout,
+  THEME_PRESETS,
+  TUiBrandKit,
+  TUiTheme,
+} from "@/lib/types"
+import useFormStore from "@/store/formStore"
 import useFormVersionStore from "@/store/formVersions"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Allow, parse } from "partial-json"
@@ -76,6 +84,8 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
     (state) => state.setSelectedFormVersion
   )
 
+  const currentFormUI = useFormStore((state) => state.currentFormUI)
+
   const addNewFormversionMutation = useMutation({
     mutationFn: (variables: AddNewFormVersionVariables) =>
       addNewFormVersion(variables),
@@ -84,6 +94,10 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
       const updatedResponse = {
         ...response,
         status: response.status as EFormVersionStatus,
+        ui_layout: response.ui_layout as EUiLayout,
+        ui_theme: response.ui_theme as TUiTheme,
+        available_ui_themes: response.available_ui_themes as TUiTheme[],
+        ui_brand_kit: response.ui_brand_kit as TUiBrandKit,
       }
       setSelectedFormVersion(updatedResponse)
       queryClient.invalidateQueries({
@@ -115,6 +129,14 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
         query: variables, // This is the prompt
         version: getMaxFormVersion(formVersionsData) + 1,
         status: EFormVersionStatus.DRAFT,
+        uiLayout: EUiLayout.DEFAULT,
+        uiTheme: THEME_PRESETS.DEFAULT,
+        uiBrandKit: currentFormUI.brandKit,
+        availableUiThemes: [
+          THEME_PRESETS.DEFAULT,
+          THEME_PRESETS.LIGHT,
+          THEME_PRESETS.DARK,
+        ],
       })
 
       // Optionally invalidate or update any relevant queries

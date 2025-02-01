@@ -155,6 +155,11 @@ export const addNewFormVersion = async ({
   baseFormId,
   query,
   version,
+  status,
+  uiLayout,
+  uiTheme,
+  uiBrandKit,
+  availableUiThemes,
 }: AddNewFormVersionVariables) => {
   const supabase = createClient()
 
@@ -177,6 +182,11 @@ export const addNewFormVersion = async ({
       .update({
         form_schema_string: formSchemaString,
         query: query,
+        status: status,
+        ui_layout: uiLayout,
+        ui_theme: uiTheme,
+        ui_brand_kit: uiBrandKit,
+        available_ui_themes: availableUiThemes,
       })
       .eq("form_id", baseFormId)
       .eq("version_number", version)
@@ -189,7 +199,11 @@ export const addNewFormVersion = async ({
         form_id: baseFormId,
         query: query,
         version_number: version,
-        status: EFormVersionStatus.DRAFT,
+        status: status,
+        ui_layout: uiLayout,
+        ui_theme: uiTheme,
+        ui_brand_kit: uiBrandKit,
+        available_ui_themes: availableUiThemes,
       })
       .select()
   }

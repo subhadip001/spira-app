@@ -28,10 +28,10 @@ const Header: React.FC<HeaderProps> = ({ formId, className }) => {
       label: "Response",
       href: `/form/${formId}/response`,
     },
-    {
-      label: "Settings",
-      href: `/form/${formId}/settings`,
-    },
+    // {
+    //   label: "Settings",
+    //   href: `/form/${formId}/settings`,
+    // },
   ]
   return (
     <div className={cn(className, "flex justify-between py-3 px-5")}>

@@ -12,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
 import {
   Tooltip,
   TooltipContent,
@@ -26,7 +27,14 @@ import {
   getPublishedFormByFormVersionId,
   QueryKeys,
 } from "@/lib/queries"
-import { AddNewFormVersionVariables, EFormVersionStatus } from "@/lib/types"
+import {
+  AddNewFormVersionVariables,
+  EFormVersionStatus,
+  EUiLayout,
+  THEME_PRESETS,
+  TUiBrandKit,
+  TUiTheme,
+} from "@/lib/types"
 import useAppStore from "@/store/appStore"
 import useEditFormPageStore from "@/store/editFormPageStore"
 import useFormStore from "@/store/formStore"
@@ -75,12 +83,16 @@ const EditForm: React.FC<EditFormProps> = ({
   const [isPublishing, setIsPublishing] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
   const [editInstruction, setEditInstruction] = useState<string>("")
+  const [saveAsNewVersion, setSaveAsNewVersion] = useState(false)
 
   const currentFormSchema = useFormStore((state) => state.currentFormSchema)
+  const currentFormUI = useFormStore((state) => state.currentFormUI)
   const user = useAppStore((state) => state.user)
   const router = useRouter()
   const pathName = usePathname()
   const formId = pathName.split("/")[2]
+
+  console.log(currentFormUI)
 
   const queryClient = useQueryClient()
 
@@ -105,6 +117,7 @@ const EditForm: React.FC<EditFormProps> = ({
   const formVersionsData = useFormVersionStore(
     (state) => state.formVersionsData
   )
+
   const { data: publishedForm } = useQuery({
     queryKey: [
       QueryKeys.GetPublishedFormByFormVersionId,
@@ -207,13 +220,19 @@ const EditForm: React.FC<EditFormProps> = ({
   }
 
   const addNewFormversionMutation = useMutation({
-    mutationFn: (variables: AddNewFormVersionVariables) =>
-      addNewFormVersion(variables),
+    mutationFn: (variables: AddNewFormVersionVariables) => {
+      console.log(variables)
+      return addNewFormVersion(variables)
+    },
     onSuccess: async (data, variables) => {
       const response = await fetchLatestFormVersion(baseFormId)
       const updatedResponse = {
         ...response,
         status: response.status as EFormVersionStatus,
+        ui_layout: response.ui_layout as EUiLayout,
+        ui_theme: response.ui_theme as TUiTheme,
+        available_ui_themes: response.available_ui_themes as TUiTheme[],
+        ui_brand_kit: response.ui_brand_kit as TUiBrandKit,
       }
       setSelectedFormVersion(updatedResponse)
       queryClient.invalidateQueries({
@@ -241,6 +260,10 @@ const EditForm: React.FC<EditFormProps> = ({
       const updatedResponse = {
         ...response,
         status: response.status as EFormVersionStatus,
+        ui_layout: response.ui_layout as EUiLayout,
+        ui_theme: response.ui_theme as TUiTheme,
+        available_ui_themes: response.available_ui_themes as TUiTheme[],
+        ui_brand_kit: response.ui_brand_kit as TUiBrandKit,
       }
       setSelectedFormVersion(updatedResponse)
       toast.success("Form version updated successfully")
@@ -303,7 +326,7 @@ const EditForm: React.FC<EditFormProps> = ({
                       </div>
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent>View as Published</TooltipContent>
+                  <TooltipContent>Published Preview</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
@@ -340,9 +363,8 @@ const EditForm: React.FC<EditFormProps> = ({
             <AlertDialogTrigger>
               <div className="flex items-center gap-2 border rounded-md py-2 px-3 bg-white">
                 <div>
-                  <Save className="h-4 w-4" />
+                  <Save className="h-5 w-5" />
                 </div>
-                <span className="text-sm font-medium">Save</span>
               </div>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -353,34 +375,51 @@ const EditForm: React.FC<EditFormProps> = ({
                   overwrite the current version.
                 </AlertDialogDescription>
               </AlertDialogHeader>
+              <div className="flex items-center space-x-2 py-4">
+                <Switch
+                  id="save-as-new"
+                  checked={saveAsNewVersion}
+                  onCheckedChange={setSaveAsNewVersion}
+                />
+                <label
+                  htmlFor="save-as-new"
+                  className="text-sm text-muted-foreground"
+                >
+                  Save as new version
+                </label>
+              </div>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => {
-                    addNewFormversionMutation.mutate({
-                      formSchemaString: JSON.stringify(currentFormSchema),
-                      baseFormId: baseFormId,
-                      query: selectedFormVersion?.query || "N/A",
-                      version: getMaxFormVersion(formVersionsData) + 1,
-                    })
+                    if (saveAsNewVersion) {
+                      addNewFormversionMutation.mutate({
+                        formSchemaString: JSON.stringify(currentFormSchema),
+                        baseFormId: baseFormId,
+                        query: selectedFormVersion?.query || "N/A",
+                        version: getMaxFormVersion(formVersionsData) + 1,
+                        status: EFormVersionStatus.DRAFT,
+                        uiLayout: currentFormUI.layout,
+                        uiTheme: currentFormUI.theme,
+                        uiBrandKit: currentFormUI.brandKit,
+                        availableUiThemes: currentFormUI.availableThemes,
+                      })
+                    } else {
+                      updateFormVersionMutation.mutate({
+                        formSchemaString: JSON.stringify(currentFormSchema),
+                        baseFormId: baseFormId,
+                        query: selectedFormVersion?.query || "N/A",
+                        version: selectedFormVersion?.version_number ?? 1,
+                        uiLayout: currentFormUI.layout,
+                        uiTheme: currentFormUI.theme,
+                        uiBrandKit: currentFormUI.brandKit,
+                        availableUiThemes: currentFormUI.availableThemes,
+                      })
+                    }
                   }}
-                  disabled={formVersionsData?.length === 0}
+                  disabled={saveAsNewVersion && formVersionsData?.length === 0}
                 >
-                  Save as New Version
-                </AlertDialogAction>
-                <AlertDialogAction
-                  onClick={() => {
-                    updateFormVersionMutation.mutate({
-                      formSchemaString: JSON.stringify(currentFormSchema),
-                      baseFormId: baseFormId,
-                      query: selectedFormVersion?.query || "N/A",
-                      version: selectedFormVersion?.version_number ?? 1,
-                    })
-                  }}
-                >
-                  {formVersionsData?.length === 0
-                    ? "Save"
-                    : "Save as current version"}
+                  {saveAsNewVersion ? "Save as New Version" : "Save"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

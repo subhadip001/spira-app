@@ -1,9 +1,10 @@
 import { Icons } from "@/app/_components/icons"
 import PublishedForm from "@/app/_components/published-form"
-import { EFormVersionStatus } from "@/lib/types"
+import { EFormVersionStatus, TFormVersionData } from "@/lib/types"
 import { createClient } from "@/utils/supabase/server"
 import { Metadata } from "next"
 import FloatingBrand from "./components/floating-brand"
+import PublishedFormWrapper from "@/app/_components/published-form"
 
 export const generateMetadata = async (props: {
   params: Promise<{ shortId: string }>
@@ -41,10 +42,12 @@ export const generateMetadata = async (props: {
   }
 }
 
-export default async function PublishedFormHome(props: {
+export default async function PublishedFormHome({
+  params,
+}: {
   params: Promise<{ shortId: string }>
 }) {
-  const params = await props.params
+  const shortId = (await params).shortId
   const supabase = await createClient()
   const { data: publishedForm, error: formError } = await supabase
     .from("published_forms")
@@ -58,65 +61,41 @@ export default async function PublishedFormHome(props: {
       form_schema_string,
       query,
       status,
-      version_number
+      version_number,
+      ui_layout,
+      ui_theme,
+      ui_brand_kit
     )
   `
     )
-    .eq("short_id", params.shortId)
+    .eq("short_id", shortId)
     .single()
 
-  if (formError) {
+  if (formError || !publishedForm) {
     return (
-      <div className="bg-white w-[100vw] min-h-[100svh]">
-        <main className="flex px-2">
-          <div className="w-full h-full flex items-center justify-center">
-            <h1 className="text-2xl font-bold">Form not found</h1>
-          </div>
-        </main>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-2xl font-bold mb-4">Form not found</h1>
+        <p className="text-gray-600">
+          The form you are looking for does not exist or has been deleted.
+        </p>
       </div>
     )
   }
 
   if (publishedForm?.form_versions?.status !== EFormVersionStatus.PUBLISHED) {
     return (
-      <div className="bg-white w-[100vw] min-h-[100svh]">
-        <main className="flex px-2">
-          <div className="w-full h-full flex items-center justify-center">
-            <h1 className="text-2xl font-bold">Form not published yet</h1>
-          </div>
-        </main>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-2xl font-bold mb-4">Form not published yet</h1>
       </div>
     )
   }
 
   return (
-    <>
-      <main className="flex flex-col bg-white w-[100vw] overflow-y-auto h-[100svh] relative">
-        <header className="relative">
-          <div className="h-[35vh]">
-            <div className="h-[20vh] bg-spirablue"></div>
-            <div className="absolute flex items-center justify-center left-1/4 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-gray-100 overflow-hidden">
-              <Icons.logo className="w-24 h-24" />
-            </div>
-          </div>
-        </header>
-        <div className="relative w-[85%] mx-auto md:w-[60%]">
-          <PublishedForm publishedForm={publishedForm} />
-        </div>
-        <FloatingBrand />
-        <footer className="inline-flex items-center justify-center w-full py-2 mt-auto">
-          {/* <div className="text-sm inline-flex items-center gap-1 text-gray-500">
-            Made with{" "}
-            <a
-              href={process.env.NEXT_PUBLIC_SITE_URL}
-              className="flex items-center cursor-pointer gap-[0.1rem]"
-            >
-              <Icons.logo className="w-4 h-4" />
-              <span className="text-spirablue">Spira AI</span>
-            </a>
-          </div> */}
-        </footer>
-      </main>
-    </>
+    <div className="min-h-screen">
+      <PublishedFormWrapper
+        id={publishedForm.id}
+        form_versions={publishedForm.form_versions as TFormVersionData}
+      />
+    </div>
   )
 }

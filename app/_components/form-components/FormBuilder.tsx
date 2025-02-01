@@ -5,7 +5,6 @@ import {
   FormDescription,
   FormField,
   FormItem,
-  FormMessage,
 } from "@/components/ui/form"
 import { cn } from "@/lib/utils"
 import useEditFormPageStore from "@/store/editFormPageStore"
@@ -17,7 +16,7 @@ import {
   FormField as FormSchemaField,
 } from "@/types/FormSchema"
 import { ArrowDown, ArrowUp, CircleCheckBig, Edit, Trash2 } from "lucide-react"
-import React, { Fragment, useEffect, useState } from "react"
+import React, { Fragment, useState } from "react"
 import { HexColorPicker } from "react-colorful"
 import { useForm } from "react-hook-form"
 import { FormFieldComponent } from "./FormFields"

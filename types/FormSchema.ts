@@ -3,7 +3,7 @@ export interface FormFieldOption {
   value: string
 }
 
-export interface FormField {
+export type FormField = {
   constantId: number
   serialId: number
   type: string
@@ -20,7 +20,7 @@ export interface FormField {
   maxSize?: string
 }
 
-export interface FormSchema {
+export type FormSchema = {
   title: string
   description: string
   headerBackground: string

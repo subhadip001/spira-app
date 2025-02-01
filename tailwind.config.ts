@@ -27,7 +27,7 @@ const config = {
         foreground: "hsl(var(--foreground))",
         spirablue: "var(--spirablue)",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "var(--spirablue)", // hsl(var(--primary))
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {

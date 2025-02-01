@@ -74,7 +74,7 @@ export default function SubmittedTab({
   return (
     <div>
       {isPublishedFormResponseLoading && (
-        <div className="flex flex-col items-center justify-center min-h-[400px] p-4">
+        <div className="flex flex-col items-center justify-center min-h-[400px]">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span className="text-sm text-muted-foreground">
             Loading responses...
@@ -130,7 +130,7 @@ export default function SubmittedTab({
             }}
             headers={headers}
           />
-          <div className="sticky bottom-10 bg-background pt-4">
+          <div className="fixed w-full right-0 bottom-0 bg-background pt-4 p-4">
             <div className="mb-4 flex flex-col gap-2 items-center">
               <div className="flex items-center gap-2 mb-3">
                 <MessageSquarePlus className="w-4 h-4 text-muted-foreground" />
