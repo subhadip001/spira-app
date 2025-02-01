@@ -133,10 +133,10 @@ export const useFormSchemaEditor = (baseFormId: string) => {
         query: variables.prompt,
         version: getMaxFormVersion(formVersionsData) + 1,
         status: EFormVersionStatus.DRAFT,
-        uiLayout: currentFormUI.layout,
-        uiTheme: currentFormUI.theme,
-        uiBrandKit: currentFormUI.brandKit,
-        availableUiThemes: currentFormUI.availableThemes,
+        uiLayout: currentFormUI?.layout,
+        uiTheme: currentFormUI?.theme,
+        uiBrandKit: currentFormUI?.brandKit,
+        availableUiThemes: currentFormUI?.availableThemes,
       })
     },
     onError: (error: Error) => {

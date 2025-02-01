@@ -410,11 +410,11 @@ const EditFormField = () => {
                 Choose Theme
               </Label>
               <div className="flex gap-4 mt-2">
-                {currentFormUI?.availableThemes.map((theme) => (
+                {currentFormUI?.availableThemes?.map((theme) => (
                   <Button
                     key={theme.name}
                     variant={
-                      currentFormUI?.theme.name === theme.name
+                      currentFormUI?.theme?.name === theme.name
                         ? "default"
                         : "outline"
                     }

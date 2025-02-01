@@ -400,10 +400,10 @@ const EditForm: React.FC<EditFormProps> = ({
                         query: selectedFormVersion?.query || "N/A",
                         version: getMaxFormVersion(formVersionsData) + 1,
                         status: EFormVersionStatus.DRAFT,
-                        uiLayout: currentFormUI.layout,
-                        uiTheme: currentFormUI.theme,
-                        uiBrandKit: currentFormUI.brandKit,
-                        availableUiThemes: currentFormUI.availableThemes,
+                        uiLayout: currentFormUI?.layout,
+                        uiTheme: currentFormUI?.theme,
+                        uiBrandKit: currentFormUI?.brandKit,
+                        availableUiThemes: currentFormUI?.availableThemes,
                       })
                     } else {
                       updateFormVersionMutation.mutate({
@@ -411,10 +411,11 @@ const EditForm: React.FC<EditFormProps> = ({
                         baseFormId: baseFormId,
                         query: selectedFormVersion?.query || "N/A",
                         version: selectedFormVersion?.version_number ?? 1,
-                        uiLayout: currentFormUI.layout,
-                        uiTheme: currentFormUI.theme,
-                        uiBrandKit: currentFormUI.brandKit,
-                        availableUiThemes: currentFormUI.availableThemes,
+                        status: EFormVersionStatus.DRAFT,
+                        uiLayout: currentFormUI?.layout,
+                        uiTheme: currentFormUI?.theme,
+                        uiBrandKit: currentFormUI?.brandKit,
+                        availableUiThemes: currentFormUI?.availableThemes,
                       })
                     }
                   }}
