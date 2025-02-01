@@ -27,6 +27,7 @@ import {
 import toast from "react-hot-toast"
 import { TFormVersionData } from "@/lib/types"
 import { switchToNearestFormVersion } from "@/lib/form-lib/utils"
+import useFormStore from "@/store/formStore"
 
 const VersionDropdown = ({ formId }: { formId: string }) => {
   const formVersionsData = useFormVersionStore(
@@ -38,6 +39,7 @@ const VersionDropdown = ({ formId }: { formId: string }) => {
       setSelectedFormVersion: state.setSelectedFormVersion,
     })
   )
+  const setCurrentFormUI = useFormStore((state) => state.setCurrentFormUI)
 
   const queryClient = useQueryClient()
 
@@ -59,6 +61,12 @@ const VersionDropdown = ({ formId }: { formId: string }) => {
     )
     if (selectedVersion) {
       setSelectedFormVersion(selectedVersion)
+      setCurrentFormUI({
+        layout: selectedVersion.ui_layout,
+        theme: selectedVersion.ui_theme,
+        brandKit: selectedVersion.ui_brand_kit,
+        availableThemes: selectedVersion.available_ui_themes,
+      })
     }
   }
 

@@ -78,6 +78,7 @@ export type Database = {
       }
       form_versions: {
         Row: {
+          available_ui_themes: Json
           created_at: string
           form_id: string
           form_schema_string: string
@@ -90,6 +91,7 @@ export type Database = {
           version_number: number
         }
         Insert: {
+          available_ui_themes?: Json
           created_at?: string
           form_id?: string
           form_schema_string: string
@@ -102,6 +104,7 @@ export type Database = {
           version_number: number
         }
         Update: {
+          available_ui_themes?: Json
           created_at?: string
           form_id?: string
           form_schema_string?: string

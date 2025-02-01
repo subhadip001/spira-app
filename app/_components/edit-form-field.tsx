@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { EUiLayout, THEME_PRESETS } from "@/lib/types"
 import useEditFormPageStore from "@/store/editFormPageStore"
 import useFormStore from "@/store/formStore"
 import { FormField } from "@/types/FormSchema"
@@ -18,9 +19,16 @@ const EditFormField = () => {
   const setSelectedFieldConstantId = useEditFormPageStore(
     (state) => state.setSelectedFieldConstantId
   )
-  const { currentFormSchema, setCurrentFormSchema } = useFormStore((state) => ({
+  const {
+    currentFormSchema,
+    setCurrentFormSchema,
+    currentFormUI,
+    setCurrentFormUI,
+  } = useFormStore((state) => ({
     currentFormSchema: state.currentFormSchema,
     setCurrentFormSchema: state.setCurrentFormSchema,
+    currentFormUI: state.currentFormUI,
+    setCurrentFormUI: state.setCurrentFormUI,
   }))
   const [editedField, setEditedField] = useState<FormField | null>(null)
 
@@ -106,6 +114,23 @@ const EditFormField = () => {
       ...currentFormSchema,
       fields: updatedFields,
     })
+  }
+
+  const handleFormUIChange = (
+    type: "layout" | "theme",
+    value: EUiLayout | keyof typeof THEME_PRESETS
+  ) => {
+    if (type === "layout") {
+      setCurrentFormUI({
+        ...currentFormUI,
+        layout: value as EUiLayout,
+      })
+    } else {
+      setCurrentFormUI({
+        ...currentFormUI,
+        theme: THEME_PRESETS[value as keyof typeof THEME_PRESETS],
+      })
+    }
   }
 
   if (!editedField) {
@@ -353,19 +378,56 @@ const EditFormField = () => {
               <Label className="text-gray-500" htmlFor="label">
                 Choose Layout
               </Label>
-              <div className="flex gap-4">
-                <div>All In One</div>
-                <div>One By One</div>
+              <div className="flex gap-4 mt-2">
+                <Button
+                  variant={
+                    currentFormUI?.layout === EUiLayout.DEFAULT
+                      ? "default"
+                      : "outline"
+                  }
+                  onClick={() =>
+                    handleFormUIChange("layout", EUiLayout.DEFAULT)
+                  }
+                >
+                  All In One
+                </Button>
+                <Button
+                  variant={
+                    currentFormUI?.layout === EUiLayout.ONE_BY_ONE
+                      ? "default"
+                      : "outline"
+                  }
+                  onClick={() =>
+                    handleFormUIChange("layout", EUiLayout.ONE_BY_ONE)
+                  }
+                >
+                  One By One
+                </Button>
               </div>
             </section>
             <section>
               <Label className="text-gray-500" htmlFor="label">
                 Choose Theme
               </Label>
-              <div className="flex gap-4">
-                <div>Default</div>
-                <div>Light</div>
-                <div>Dark</div>
+              <div className="flex gap-4 mt-2">
+                {currentFormUI?.availableThemes.map((theme) => (
+                  <Button
+                    key={theme.name}
+                    variant={
+                      currentFormUI?.theme.name === theme.name
+                        ? "default"
+                        : "outline"
+                    }
+                    onClick={() =>
+                      handleFormUIChange(
+                        "theme",
+                        theme.name as keyof typeof THEME_PRESETS
+                      )
+                    }
+                  >
+                    {theme.name.charAt(0) + theme.name.slice(1).toLowerCase()}
+                  </Button>
+                ))}
               </div>
             </section>
           </div>

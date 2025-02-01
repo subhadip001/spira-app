@@ -92,6 +92,7 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
         status: response.status as EFormVersionStatus,
         ui_layout: response.ui_layout as EUiLayout,
         ui_theme: response.ui_theme as TUiTheme,
+        available_ui_themes: response.available_ui_themes as TUiTheme[],
         ui_brand_kit: response.ui_brand_kit as TUiBrandKit,
       }
       setSelectedFormVersion(updatedResponse)

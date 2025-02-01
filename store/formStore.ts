@@ -1,9 +1,12 @@
+import { TUiConfig } from "@/lib/types"
 import { FormSchema } from "@/types/FormSchema"
 import { create } from "zustand"
 
 interface FormStore {
   currentFormSchema: FormSchema
   setCurrentFormSchema: (formSchema: FormSchema) => void
+  currentFormUI: TUiConfig
+  setCurrentFormUI: (formUI: TUiConfig) => void
   resetStore: () => void
 }
 
@@ -19,10 +22,12 @@ const useFormStore = create<FormStore>((set) => ({
         },
       }
     }),
-
+  currentFormUI: {} as TUiConfig,
+  setCurrentFormUI: (formUI) => set(() => ({ currentFormUI: formUI })),
   resetStore: () =>
     set(() => ({
       currentFormSchema: {} as FormSchema,
+      currentFormUI: {} as TUiConfig,
     })),
 }))
 

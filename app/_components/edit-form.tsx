@@ -30,6 +30,7 @@ import {
   AddNewFormVersionVariables,
   EFormVersionStatus,
   EUiLayout,
+  THEME_PRESETS,
   TUiBrandKit,
   TUiTheme,
 } from "@/lib/types"
@@ -83,6 +84,7 @@ const EditForm: React.FC<EditFormProps> = ({
   const [editInstruction, setEditInstruction] = useState<string>("")
 
   const currentFormSchema = useFormStore((state) => state.currentFormSchema)
+  const currentFormUI = useFormStore((state) => state.currentFormUI)
   const user = useAppStore((state) => state.user)
   const router = useRouter()
   const pathName = usePathname()
@@ -111,6 +113,7 @@ const EditForm: React.FC<EditFormProps> = ({
   const formVersionsData = useFormVersionStore(
     (state) => state.formVersionsData
   )
+
   const { data: publishedForm } = useQuery({
     queryKey: [
       QueryKeys.GetPublishedFormByFormVersionId,
@@ -213,8 +216,10 @@ const EditForm: React.FC<EditFormProps> = ({
   }
 
   const addNewFormversionMutation = useMutation({
-    mutationFn: (variables: AddNewFormVersionVariables) =>
-      addNewFormVersion(variables),
+    mutationFn: (variables: AddNewFormVersionVariables) => {
+      console.log(variables)
+      return addNewFormVersion(variables)
+    },
     onSuccess: async (data, variables) => {
       const response = await fetchLatestFormVersion(baseFormId)
       const updatedResponse = {
@@ -222,6 +227,7 @@ const EditForm: React.FC<EditFormProps> = ({
         status: response.status as EFormVersionStatus,
         ui_layout: response.ui_layout as EUiLayout,
         ui_theme: response.ui_theme as TUiTheme,
+        available_ui_themes: response.available_ui_themes as TUiTheme[],
         ui_brand_kit: response.ui_brand_kit as TUiBrandKit,
       }
       setSelectedFormVersion(updatedResponse)
@@ -252,6 +258,7 @@ const EditForm: React.FC<EditFormProps> = ({
         status: response.status as EFormVersionStatus,
         ui_layout: response.ui_layout as EUiLayout,
         ui_theme: response.ui_theme as TUiTheme,
+        available_ui_themes: response.available_ui_themes as TUiTheme[],
         ui_brand_kit: response.ui_brand_kit as TUiBrandKit,
       }
       setSelectedFormVersion(updatedResponse)
@@ -352,9 +359,8 @@ const EditForm: React.FC<EditFormProps> = ({
             <AlertDialogTrigger>
               <div className="flex items-center gap-2 border rounded-md py-2 px-3 bg-white">
                 <div>
-                  <Save className="h-4 w-4" />
+                  <Save className="h-5 w-5" />
                 </div>
-                <span className="text-sm font-medium">Save</span>
               </div>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -374,6 +380,15 @@ const EditForm: React.FC<EditFormProps> = ({
                       baseFormId: baseFormId,
                       query: selectedFormVersion?.query || "N/A",
                       version: getMaxFormVersion(formVersionsData) + 1,
+                      status: EFormVersionStatus.DRAFT,
+                      uiLayout: currentFormUI.layout,
+                      uiTheme: currentFormUI.theme,
+                      uiBrandKit: currentFormUI.brandKit,
+                      availableUiThemes: [
+                        THEME_PRESETS.DEFAULT,
+                        THEME_PRESETS.LIGHT,
+                        THEME_PRESETS.DARK,
+                      ],
                     })
                   }}
                   disabled={formVersionsData?.length === 0}
@@ -387,6 +402,9 @@ const EditForm: React.FC<EditFormProps> = ({
                       baseFormId: baseFormId,
                       query: selectedFormVersion?.query || "N/A",
                       version: selectedFormVersion?.version_number ?? 1,
+                      uiLayout: currentFormUI.layout,
+                      uiTheme: currentFormUI.theme,
+                      uiBrandKit: currentFormUI.brandKit,
                     })
                   }}
                 >
