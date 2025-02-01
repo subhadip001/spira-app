@@ -131,7 +131,7 @@ export const useFormSchemaGenerator = (baseFormId: string) => {
         status: EFormVersionStatus.DRAFT,
         uiLayout: EUiLayout.DEFAULT,
         uiTheme: THEME_PRESETS.DEFAULT,
-        uiBrandKit: currentFormUI.brandKit,
+        uiBrandKit: currentFormUI?.brandKit,
         availableUiThemes: [
           THEME_PRESETS.DEFAULT,
           THEME_PRESETS.LIGHT,
