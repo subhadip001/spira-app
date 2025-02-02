@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import ReactQueryProvider from "@/app/_components/react-query-provider"
 import { Toaster } from "react-hot-toast"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Analytics } from "@vercel/analytics/react"
 
 const ogImage =
   "https://w06x29rjhxvpmsmw.public.blob.vercel-storage.com/images/spira-image.png"
@@ -80,6 +81,7 @@ export default function RootLayout({
             <div className="flex-grow z-10">{children}</div>
             <Toaster position="top-right" />
           </ThemeProvider>
+          <Analytics />
           <div id="portal" />
         </body>
       </ReactQueryProvider>
