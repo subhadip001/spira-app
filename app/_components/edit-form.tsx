@@ -33,6 +33,7 @@ import {
   EUiLayout,
   THEME_PRESETS,
   TUiBrandKit,
+  TUiConfig,
   TUiTheme,
 } from "@/lib/types"
 import useAppStore from "@/store/appStore"
@@ -57,13 +58,14 @@ import {
   Tablet,
 } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import toast from "react-hot-toast"
 import ShortUniqueId from "short-unique-id"
 import GenerateForm from "./generate-form"
 import { Icons } from "./icons"
 import VersionDropdown from "./version-dropdown"
 import { getMaxFormVersion } from "@/lib/form-lib/utils"
+import { Label } from "@/components/ui/label"
 
 type EditFormProps = {
   baseQuery: string
@@ -84,6 +86,8 @@ const EditForm: React.FC<EditFormProps> = ({
   const [showConfetti, setShowConfetti] = useState(false)
   const [editInstruction, setEditInstruction] = useState<string>("")
   const [saveAsNewVersion, setSaveAsNewVersion] = useState(false)
+  const [isPublishAlertDialogOpen, setIsPublishAlertDialogOpen] =
+    useState(false)
 
   const currentFormSchema = useFormStore((state) => state.currentFormSchema)
   const currentFormUI = useFormStore((state) => state.currentFormUI)
@@ -129,13 +133,18 @@ const EditForm: React.FC<EditFormProps> = ({
     enabled: !!selectedFormVersion?.id,
     refetchOnWindowFocus: false,
   })
-  const handlePublish = async () => {
+
+  const publishForm = async (currentFormUI?: TUiConfig) => {
     if (!user) {
       router.push(`/login?${formId ? `formId=${formId}` : ""}`)
       return
     }
 
+    // if (selectedFormVersion?.status !== EFormVersionStatus.PUBLISHED) {
+    //   return
+    // }
     setIsPublishing(true)
+    setIsPublishAlertDialogOpen(false)
 
     const { randomUUID } = new ShortUniqueId({ length: 10 })
     const shortId = randomUUID()
@@ -167,6 +176,7 @@ const EditForm: React.FC<EditFormProps> = ({
         .from("form_versions")
         .update({
           status: EFormVersionStatus.PUBLISHED,
+          ui_layout: currentFormUI?.layout,
         })
         .eq("id", selectedFormVersion?.id)
         .select()
@@ -213,12 +223,12 @@ const EditForm: React.FC<EditFormProps> = ({
       toast.error("Error publishing form")
     } finally {
       setIsPublishing(false)
+      setIsPublishAlertDialogOpen(false)
     }
   }
 
   const addNewFormversionMutation = useMutation({
     mutationFn: (variables: AddNewFormVersionVariables) => {
-      console.log(variables)
       return addNewFormVersion(variables)
     },
     onSuccess: async (data, variables) => {
@@ -291,6 +301,14 @@ const EditForm: React.FC<EditFormProps> = ({
     )
   }
 
+  const handleFormUIChange = (key: string, value: any) => {
+    const currentUI = useFormStore.getState().currentFormUI
+    useFormStore.getState().setCurrentFormUI({
+      ...currentUI,
+      [key]: value,
+    })
+  }
+
   return (
     <section className="relative flex-grow flex flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
       <div className="flex flex-col mmd:flex-row px-3 justify-between mmd:items-center w-full rounded-md mmd:h-[7vh] gap-2 mmd:gap-5">
@@ -356,6 +374,120 @@ const EditForm: React.FC<EditFormProps> = ({
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <AlertDialog open={isPublishAlertDialogOpen}>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="default"
+                className={`flex items-center gap-2 ${
+                  selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
+                    ? "bg-green-600 hover:bg-green-700"
+                    : ""
+                }`}
+                onClick={() => {
+                  if (
+                    selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
+                  ) {
+                    publishForm()
+                  } else {
+                    setIsPublishAlertDialogOpen(true)
+                  }
+                }}
+              >
+                {selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
+                  ? "Published"
+                  : "Publish"}
+                {isPublishing ? (
+                  <Loader className="h-4 w-4 animate-spin" />
+                ) : selectedFormVersion?.status ===
+                  EFormVersionStatus.PUBLISHED ? (
+                  <ArrowUpRight className="h-4 w-4" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="max-w-3xl">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Form UI Settings</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Customize your form layout and theme before publishing
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="py-4">
+                <section>
+                  <Label className="text-gray-500" htmlFor="label">
+                    Choose Layout
+                  </Label>
+                  <div className="flex gap-4 mt-2">
+                    <Button
+                      variant={
+                        currentFormUI?.layout === EUiLayout.DEFAULT
+                          ? "default"
+                          : "outline"
+                      }
+                      onClick={() =>
+                        handleFormUIChange("layout", EUiLayout.DEFAULT)
+                      }
+                    >
+                      All In One
+                    </Button>
+                    <Button
+                      variant={
+                        currentFormUI?.layout === EUiLayout.ONE_BY_ONE
+                          ? "default"
+                          : "outline"
+                      }
+                      onClick={() =>
+                        handleFormUIChange("layout", EUiLayout.ONE_BY_ONE)
+                      }
+                    >
+                      One By One
+                    </Button>
+                  </div>
+                </section>
+                {/* <section className="mt-4">
+                  <Label className="text-gray-500" htmlFor="label">
+                    Choose Theme
+                  </Label>
+                  <div className="flex gap-4 mt-2">
+                    {currentFormUI?.availableThemes?.map((theme) => (
+                      <Button
+                        key={theme.name}
+                        variant={
+                          currentFormUI?.theme?.name === theme.name
+                            ? "default"
+                            : "outline"
+                        }
+                        onClick={() =>
+                          handleFormUIChange(
+                            "theme",
+                            theme.name as keyof typeof THEME_PRESETS
+                          )
+                        }
+                      >
+                        {theme.name.charAt(0) +
+                          theme.name.slice(1).toLowerCase()}
+                      </Button>
+                    ))}
+                  </div>
+                </section> */}
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel
+                  onClick={() => setIsPublishAlertDialogOpen(false)}
+                >
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    publishForm(currentFormUI)
+                  }}
+                >
+                  Publish
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <AlertDialog>
             <AlertDialogTrigger
               onClick={() => {
@@ -426,35 +558,6 @@ const EditForm: React.FC<EditFormProps> = ({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          <button
-            type="button"
-            className={`flex flex-grow items-center h-10 px-4 py-2 rounded-md gap-2 justify-center ${
-              selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
-                ? "bg-white text-primary border"
-                : "bg-primary text-white"
-            }`}
-            onClick={handlePublish}
-            disabled={isPublishing}
-          >
-            {isPublishing
-              ? "Publishing..."
-              : selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
-                ? "Published"
-                : "Publish"}
-            {isPublishing ? (
-              <div>
-                <Loader className="h-4 w-4 animate-spin" />
-              </div>
-            ) : selectedFormVersion?.status === EFormVersionStatus.PUBLISHED ? (
-              <div>
-                <ArrowUpRight className="h-4 w-4" />
-              </div>
-            ) : (
-              <div>
-                <MousePointerClick className="h-4 w-4" />
-              </div>
-            )}
-          </button>
         </div>
       </div>
       <div className="flex w-full justify-center items-center h-[calc(90svh-128px)]">

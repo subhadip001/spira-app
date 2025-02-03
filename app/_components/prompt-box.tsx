@@ -185,12 +185,12 @@ const PromptBox = () => {
           </Fragment>
         ))}
       </div>
-      <TemplateAndScratch
+      {/* <TemplateAndScratch
         onTemplateClick={handleTemplateClick}
         onCreateClick={handleCreateClick}
         isScratchPending={isScratchPending}
         isTemplatePending={isTemplatePending}
-      />
+      /> */}
     </div>
   )
 }
