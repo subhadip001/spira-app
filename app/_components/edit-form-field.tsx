@@ -1,5 +1,6 @@
 "use client"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,7 +10,15 @@ import { EUiLayout, THEME_PRESETS } from "@/lib/types"
 import useEditFormPageStore from "@/store/editFormPageStore"
 import useFormStore from "@/store/formStore"
 import { FormField } from "@/types/FormSchema"
-import { Edit, Paintbrush, Plus, Text, X } from "lucide-react"
+import {
+  Edit,
+  Paintbrush,
+  Palette,
+  Plus,
+  TableOfContents,
+  Text,
+  X,
+} from "lucide-react"
 import { useEffect, useState } from "react"
 
 const EditFormField = () => {
@@ -167,15 +176,16 @@ const EditFormField = () => {
         <TabsList className="w-full grid grid-cols-2">
           <TabsTrigger value="field" className="flex gap-2 items-center">
             <div>
-              <Text className="h-5 w-5" />
+              <TableOfContents className="h-5 w-5" />
             </div>
             <span>Field Content</span>
           </TabsTrigger>
           <TabsTrigger value="ui" className="flex gap-2 items-center">
             <div>
-              <Paintbrush className="h-5 w-5" />
+              <Palette className="h-5 w-5" />
             </div>
             <span>Form UI</span>
+            <Badge>New</Badge>
           </TabsTrigger>
         </TabsList>
         <TabsContent value="field">
@@ -405,7 +415,7 @@ const EditFormField = () => {
                 </Button>
               </div>
             </section>
-            <section>
+            {/* <section>
               <Label className="text-gray-500" htmlFor="label">
                 Choose Theme
               </Label>
@@ -429,7 +439,7 @@ const EditFormField = () => {
                   </Button>
                 ))}
               </div>
-            </section>
+            </section> */}
           </div>
         </TabsContent>
       </Tabs>
