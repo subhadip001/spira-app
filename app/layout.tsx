@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Analytics } from "@vercel/analytics/react"
 
 const ogImage =
-  "https://w06x29rjhxvpmsmw.public.blob.vercel-storage.com/images/spira-image.png"
+  "https://w06x29rjhxvpmsmw.public.blob.vercel-storage.com/images/new-spira-og"
 
 const title = "Spira - AI first form builder"
 const description =
