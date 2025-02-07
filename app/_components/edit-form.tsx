@@ -543,7 +543,7 @@ const EditForm: React.FC<EditFormProps> = ({
                         baseFormId: baseFormId,
                         query: selectedFormVersion?.query || "N/A",
                         version: selectedFormVersion?.version_number ?? 1,
-                        status: EFormVersionStatus.DRAFT,
+                        status: selectedFormVersion?.status,
                         uiLayout: currentFormUI?.layout,
                         uiTheme: currentFormUI?.theme,
                         uiBrandKit: currentFormUI?.brandKit,

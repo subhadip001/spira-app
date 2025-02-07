@@ -1,4 +1,5 @@
 import { aiApiHandlerStreaming, aiApiHandler } from "@/lib/ai-api-handler"
+import { models } from "@/lib/models"
 import {
   FORM_SCHEMA_EDITOR_SYSTEM_PROMPT,
   FORM_SCHEMA_EDITOR_USER_PROMPT,
@@ -31,10 +32,14 @@ export async function POST(req: Request) {
 
   try {
     if (streaming) {
-      const stream = await aiApiHandlerStreaming("groq", {
-        system_prompt: FORM_SCHEMA_EDITOR_SYSTEM_PROMPT,
-        user_question: userInstruction,
-      })
+      const stream = await aiApiHandlerStreaming(
+        "openai",
+        {
+          system_prompt: FORM_SCHEMA_EDITOR_SYSTEM_PROMPT,
+          user_question: userInstruction,
+        },
+        models.openai_models.GPT_4O_MINI
+      )
       if (!stream) {
         return new Response(
           JSON.stringify({ message: "Error processing request" }),
@@ -68,10 +73,14 @@ export async function POST(req: Request) {
       })
     }
 
-    const response = await aiApiHandler("groq", {
-      system_prompt: FORM_SCHEMA_GENERATOR_PROMPT,
-      user_question: userInstruction,
-    })
+    const response = await aiApiHandler(
+      "openai",
+      {
+        system_prompt: FORM_SCHEMA_GENERATOR_PROMPT,
+        user_question: userInstruction,
+      },
+      models.openai_models.GPT_4O_MINI
+    )
 
     return Response.json({ message: response }, { status: 200 })
   } catch (error) {
