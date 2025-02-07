@@ -22,5 +22,6 @@ export const models = {
     GPT_4: "gpt-4-turbo-preview",
     CHAT_GPT_4O: "chatgpt-4o-latest",
     GPT_4O: "gpt-4o-2024-11-20",
+    GPT_4O_MINI: "gpt-4o-mini",
   },
 }
