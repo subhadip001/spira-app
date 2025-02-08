@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   keywords,
   openGraph: {
-    images: [ogGif, ogImage],
+    images: [ogImage, ogGif],
     title,
     description,
     url: url,
