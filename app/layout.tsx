@@ -29,24 +29,7 @@ export const metadata: Metadata = {
   },
   keywords,
   openGraph: {
-    images: [
-      {
-        // Static image first for WhatsApp compatibility
-        url: ogImage,
-        width: 1200,
-        height: 630,
-        alt: "Spira Form Builder",
-        type: "image/png",
-      },
-      {
-        // GIF second for Slack
-        url: ogGif,
-        width: 800,
-        height: 600,
-        alt: "Spira Form Builder Demo",
-        type: "image/gif",
-      },
-    ],
+    images: [ogImage],
     title,
     description,
     url: url,
