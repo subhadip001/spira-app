@@ -10,6 +10,9 @@ import { Analytics } from "@vercel/analytics/react"
 const ogImage =
   "https://w06x29rjhxvpmsmw.public.blob.vercel-storage.com/images/new-spira-og"
 
+const ogGif =
+  "https://w06x29rjhxvpmsmw.public.blob.vercel-storage.com/images/spira-demo.gif"
+
 const title = "Spira - AI first form builder"
 const description =
   "Spira is an AI powered google form alternative. It helps you create forms, surveys in seconds."
@@ -26,7 +29,7 @@ export const metadata: Metadata = {
   },
   keywords,
   openGraph: {
-    images: [ogImage],
+    images: [ogGif, ogImage],
     title,
     description,
     url: url,
