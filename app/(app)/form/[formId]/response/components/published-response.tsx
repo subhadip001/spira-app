@@ -28,6 +28,8 @@ import InProgressTab from "./in-progress-tab"
 import SubmittedTab from "./submitted-tab"
 import { cn } from "@/lib/utils"
 import SummaryTab from "./summary"
+import InsightsTab from "./insights"
+import SubmissionsTab from "./submissions"
 const { randomUUID } = new ShortUniqueId({ length: 10 })
 
 type TabType = "insights" | "summary" | "submissions" | "advanced-insights"
@@ -205,7 +207,7 @@ export default function PublishedResponse() {
       key: "summary",
     },
     {
-      label: "Submissions",
+      label: `Submissions [${publishedFormResponse?.data?.length || 0}]`,
       key: "submissions",
     },
   ]
@@ -230,10 +232,9 @@ export default function PublishedResponse() {
           ))}
         </nav>
       </section>
-      <section className="flex-grow flex w-full h-0 bg-slate-100">
+      <section className="flex-grow flex w-full h-0 bg-slate-100 rounded-md">
         {activeTab === "insights" && (
-          // <InsightsTab responses={publishedFormResponse?.data || []} />
-          <div>Insights</div>
+          <InsightsTab responses={publishedFormResponse?.data || []} />
         )}
         {activeTab === "summary" && (
           <>
@@ -241,8 +242,7 @@ export default function PublishedResponse() {
           </>
         )}
         {activeTab === "submissions" && (
-          // <SubmissionsTab responses={publishedFormResponse?.data || []} />
-          <div>Submissions</div>
+          <SubmissionsTab responses={publishedFormResponse?.data || []} />
         )}
       </section>
     </div>

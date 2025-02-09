@@ -285,7 +285,7 @@ export const getPublishedFormResponseByPublishedFormId = async (
     .from("form_responses")
     .select()
     .eq("published_form_id", publishedFormId)
-    .order("created_at", { ascending: true })
+    .order("created_at", { ascending: false })
   return { data, error }
 }
 

@@ -2,6 +2,7 @@ import React from "react"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { Json } from "@/utils/supabase/database.types"
+import { TResponseData } from "@/lib/types"
 
 interface FormResponse {
   id: string
@@ -9,12 +10,6 @@ interface FormResponse {
   updated_at: string
   published_form_id: string
   response_data: any
-}
-
-interface QuestionData {
-  name: string
-  label: string
-  value: string
 }
 
 interface SummaryTabProps {
@@ -34,10 +29,7 @@ const SummaryTab = ({ responses }: SummaryTabProps) => {
     )
       return []
 
-    const responseData = firstResponse.response_data as Record<
-      string,
-      QuestionData
-    >
+    const responseData = firstResponse.response_data as TResponseData
     const questions = Object.entries(responseData).map(([id, data]) => ({
       id,
       label: data.label,
@@ -49,10 +41,7 @@ const SummaryTab = ({ responses }: SummaryTabProps) => {
     responses.forEach((response) => {
       if (!response.response_data || typeof response.response_data !== "object")
         return
-      const responseData = response.response_data as Record<
-        string,
-        QuestionData
-      >
+      const responseData = response.response_data as TResponseData
 
       Object.entries(responseData).forEach(([id, data]) => {
         const question = questions.find((q) => q.id === id)
