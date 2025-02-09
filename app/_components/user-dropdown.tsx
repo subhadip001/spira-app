@@ -22,7 +22,7 @@ type UserProfile = {
   name: string
 }
 
-const UserDropdown = () => {
+const UserDropdown = ({ size = 40 }: { size: number }) => {
   const supabase = createClient()
   const pathName = usePathname()
   const router = useRouter()
@@ -66,11 +66,14 @@ const UserDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <div className="rounded-full h-10 w-10 flex items-center justify-center border">
+        <div className="rounded-full h-fit w-fit flex items-center justify-center">
           {user?.name ? (
-            <Avvvatars size={40} value={user.name} />
+            <Avvvatars size={size} value={user.name} />
           ) : (
-            <UserRound size={16} />
+            <div
+              style={{ width: `${size}px`, height: `${size}px` }}
+              className="rounded-full bg-gray-200"
+            ></div>
           )}
         </div>
       </DropdownMenuTrigger>

@@ -39,7 +39,7 @@ export default async function ResponsePage(props: {
     redirect(`/login?${params.formId ? `formId=${params.formId}` : ""}`)
   }
   return (
-    <main className="flex flex-col gap-4 p-4 w-full">
+    <main className="flex flex-col gap-4 p-4 w-full flex-grow">
       <PublishedResponse />
     </main>
   )

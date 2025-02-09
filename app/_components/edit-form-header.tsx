@@ -34,12 +34,12 @@ const Header: React.FC<HeaderProps> = ({ formId, className }) => {
     // },
   ]
   return (
-    <div className={cn(className, "flex justify-between py-3 px-5")}>
+    <div className={cn(className, "flex justify-between py-2 px-5 border-b")}>
       <div className="cursor-pointer" onClick={() => router.push("/")}>
-        <Icons.logo />
+        <Icons.logo size={30} />
       </div>
       <div>
-        <div className="flex gap-3 items-center rounded-md">
+        <div className="flex gap-3 text-sm items-center rounded-md">
           {navigationItems.map((item, index) => (
             <div
               key={index}
@@ -56,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({ formId, className }) => {
           ))}
         </div>
       </div>
-      <UserDropdown />
+      <UserDropdown size={30} />
     </div>
   )
 }

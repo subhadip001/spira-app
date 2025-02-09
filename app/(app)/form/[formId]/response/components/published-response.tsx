@@ -26,9 +26,13 @@ import { toast } from "react-hot-toast"
 import ShortUniqueId from "short-unique-id"
 import InProgressTab from "./in-progress-tab"
 import SubmittedTab from "./submitted-tab"
+import { cn } from "@/lib/utils"
+import SummaryTab from "./summary"
+import InsightsTab from "./insights"
+import SubmissionsTab from "./submissions"
 const { randomUUID } = new ShortUniqueId({ length: 10 })
 
-type TabType = "submitted" | "in-progress" | "advanced-insights"
+type TabType = "insights" | "summary" | "submissions" | "advanced-insights"
 
 export default function PublishedResponse() {
   const selectedFormVersion =
@@ -77,7 +81,9 @@ export default function PublishedResponse() {
     return Object.values(firstResponse).map((field) => field.label)
   }, [publishedFormResponse?.data])
 
-  const [activeTab, setActiveTab] = useState<TabType>("submitted")
+  console.log(publishedFormResponse?.data)
+
+  const [activeTab, setActiveTab] = useState<TabType>("insights")
   const router = useRouter()
   const pathname = usePathname()
 
@@ -96,8 +102,8 @@ export default function PublishedResponse() {
   useEffect(() => {
     const hash = window.location.hash.replace("#", "") as TabType
     if (
-      hash === "submitted" ||
-      hash === "in-progress" ||
+      hash === "summary" ||
+      hash === "submissions" ||
       hash === "advanced-insights"
     ) {
       setActiveTab(hash)
@@ -191,61 +197,54 @@ export default function PublishedResponse() {
     }
   }
 
-  useEffect(() => {
-    if (aiChat?.aiChatMessages?.length) {
-      scrollToBottom()
-    }
-  }, [aiChat?.aiChatMessages])
+  const tabs: { label: string; key: TabType }[] = [
+    {
+      label: "Insights",
+      key: "insights",
+    },
+    {
+      label: "Summary",
+      key: "summary",
+    },
+    {
+      label: `Submissions [${publishedFormResponse?.data?.length || 0}]`,
+      key: "submissions",
+    },
+  ]
 
   return (
-    <section className="flex flex-col gap-4">
-      <Tabs
-        defaultValue="submitted"
-        value={activeTab}
-        onValueChange={(value: string) => handleTabClick(value as TabType)}
-        className="w-full flex flex-col gap-8"
-      >
-        <div className="flex justify-center">
-          <TabsList>
-            <TabsTrigger value="submitted" className="flex items-center gap-2">
-              <Sheet className="w-4 h-4" />
-              <span>Submitted</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="in-progress"
-              className="flex items-center gap-2"
+    <div className="flex flex-col gap-4 h-full">
+      <section>
+        <nav className="flex gap-2 text-sm">
+          {tabs.map((tab) => (
+            <div
+              key={tab.key}
+              className={cn(
+                "px-3 py-1 rounded-md cursor-pointer",
+                activeTab === tab.key
+                  ? "bg-blue-200 text-spirablue"
+                  : "hover:bg-gray-100"
+              )}
+              onClick={() => handleTabClick(tab.key)}
             >
-              <CircleDashed className="w-4 h-4" />
-              <span>In progress</span>
-            </TabsTrigger>
-          </TabsList>
-        </div>
-
-        <TabsContent value="submitted">
-          <SubmittedTab
-            publishedForm={publishedForm as TPublishedForm}
-            publishedFormResponse={
-              publishedFormResponse as TPublishedFormResponse
-            }
-            isPublishedFormResponseLoading={isPublishedFormResponseLoading}
-            aiChat={aiChat as TAiChat}
-            headers={headers}
-            inputValue={inputValue}
-            setInputValueAction={setInputValue}
-            handleSendMessageAction={handleSendMessage}
-            handleSampleQuestionClickAction={handleSampleQuestionClick}
-            createAiChatMessageMutationPending={
-              createAiChatMessageMutation.isPending
-            }
-            currentStreamedResponse={currentStreamedResponse}
-            isStreamStarting={isStreamStarting}
-            isStreamFinished={isStreamFinished}
-          />
-        </TabsContent>
-        <TabsContent value="in-progress">
-          <InProgressTab />
-        </TabsContent>
-      </Tabs>
-    </section>
+              <span>{tab.label}</span>
+            </div>
+          ))}
+        </nav>
+      </section>
+      <section className="flex-grow flex w-full h-0 bg-slate-100 rounded-md">
+        {activeTab === "insights" && (
+          <InsightsTab responses={publishedFormResponse?.data || []} />
+        )}
+        {activeTab === "summary" && (
+          <>
+            <SummaryTab responses={publishedFormResponse?.data || []} />
+          </>
+        )}
+        {activeTab === "submissions" && (
+          <SubmissionsTab responses={publishedFormResponse?.data || []} />
+        )}
+      </section>
+    </div>
   )
 }

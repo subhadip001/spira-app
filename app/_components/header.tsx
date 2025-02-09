@@ -14,21 +14,21 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = ({ className }) => {
   const router = useRouter()
   return (
-    <div className={cn(className, "flex justify-between py-3 px-5")}>
+    <div className={cn(className, "flex justify-between py-2 px-5")}>
       <div className="cursor-pointer" onClick={() => router.push("/")}>
-        <Icons.logo />
+        <Icons.logo size={30} />
       </div>
       <div className="flex gap-4 items-center">
         <CustomButton
           handleClick={() => router.push("/dashboard")}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 py-1 text-sm"
         >
           Go to Dashboard
           <div>
             <ArrowRight className="w-4 h-4" />
           </div>
         </CustomButton>
-        <UserDropdown />
+        <UserDropdown size={30} />
       </div>
     </div>
   )
