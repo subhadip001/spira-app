@@ -70,7 +70,10 @@ const UserDropdown = ({ size = 40 }: { size: number }) => {
           {user?.name ? (
             <Avvvatars size={size} value={user.name} />
           ) : (
-            <UserRound size={16} />
+            <div
+              style={{ width: `${size}px`, height: `${size}px` }}
+              className="rounded-full bg-gray-200"
+            ></div>
           )}
         </div>
       </DropdownMenuTrigger>

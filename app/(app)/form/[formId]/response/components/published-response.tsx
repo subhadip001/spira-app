@@ -83,7 +83,7 @@ export default function PublishedResponse() {
 
   console.log(publishedFormResponse?.data)
 
-  const [activeTab, setActiveTab] = useState<TabType>("summary")
+  const [activeTab, setActiveTab] = useState<TabType>("insights")
   const router = useRouter()
   const pathname = usePathname()
 

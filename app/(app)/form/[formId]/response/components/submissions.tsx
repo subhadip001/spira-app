@@ -70,7 +70,7 @@ const SubmissionsTab = ({ responses }: SubmissionsTabProps) => {
     <div className="space-y-6 p-6 w-full overflow-y-auto">
       <span className="text-3xl font-[200]">Submissions</span>
       <div className="w-full overflow-x-auto">
-        <table className="w-full border-collapse">
+        <table className="w-full border-collapse bg-white">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="bg-gray-50">
