@@ -145,7 +145,7 @@ const EditFormField = () => {
   if (!editedField) {
     return (
       <section
-        className={`min-w-[30%] max-w-[30%] bg-[#ffff] border ml-3 rounded-md flex flex-col transition-all duration-300 overflow-hidden`}
+        className={`min-w-[30%] hidden max-w-[30%] bg-[#ffff] border ml-3 rounded-md lg:flex flex-col transition-all duration-300 overflow-hidden`}
       >
         <div className="flex justify-between items-center py-2 px-3">
           <div className="flex items-center gap-2">
@@ -169,8 +169,8 @@ const EditFormField = () => {
 
   return (
     <section
-      className={`min-w-[30%] max-w-[30%] bg-[#ffff] border ml-3 rounded-md
-       flex flex-col transition-all duration-300 overflow-hidden`}
+      className={`min-w-[30%] hidden max-w-[30%] bg-[#ffff] border ml-3 rounded-md
+       lg:flex flex-col transition-all duration-300 overflow-hidden`}
     >
       <Tabs defaultValue="field" className="w-full p-2">
         <TabsList className="w-full grid grid-cols-2">

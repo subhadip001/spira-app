@@ -35,7 +35,7 @@ export default async function Home() {
         <main className="flex flex-grow w-full">
           <div className="m-auto w-[80%] md:w-[60%] px-3 py-2 flex gap-5 flex-col">
             <div className="flex justify-center">
-              <AnimatedBadge> Happy New Year 2025 🎉 </AnimatedBadge>
+              <AnimatedBadge> Celebrating 500+ Users 🎉 </AnimatedBadge>
             </div>
             <div className="flex flex-col gap-5 font-bricolage_grotesque">
               <IntroSection />
