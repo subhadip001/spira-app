@@ -47,6 +47,7 @@ import {
   ArrowUpRight,
   Check,
   Copy,
+  Edit,
   Eye,
   Loader,
   Monitor,
@@ -66,6 +67,19 @@ import { Icons } from "./icons"
 import VersionDropdown from "./version-dropdown"
 import { getMaxFormVersion } from "@/lib/form-lib/utils"
 import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import EditFormField from "./edit-form-field"
+import EditFormFieldMobile from "./edit-form-field-mobile"
 
 type EditFormProps = {
   baseQuery: string
@@ -96,6 +110,8 @@ const EditForm: React.FC<EditFormProps> = ({
   const pathName = usePathname()
   const formId = pathName.split("/")[2]
   const queryClient = useQueryClient()
+
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false)
 
   const selectedFieldConstantId = useEditFormPageStore(
     (state) => state.selectedFieldConstantId
@@ -309,6 +325,68 @@ const EditForm: React.FC<EditFormProps> = ({
     })
   }
 
+  const MobileToolbar = ({ className }: { className?: string }) => {
+    return (
+      <div
+        className={cn(
+          "w-[80%] mx-auto lg:hidden flex flex-wrap justify-center items-center bg-white py-2 px-3 rounded-md gap-2 shadow-sm border",
+          className
+        )}
+      >
+        <Drawer open={isEditDrawerOpen} onOpenChange={setIsEditDrawerOpen}>
+          <DrawerTrigger asChild>
+            <Button variant="outline">Edit Manually</Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle className="flex items-center gap-2">
+                <div>
+                  <Edit className="h-5 w-5" />
+                </div>
+                <span className="text-lg font-semibold">
+                  Edit Selected Field
+                </span>
+              </DrawerTitle>
+              <DrawerDescription>
+                Edit the form fields and settings manually.
+              </DrawerDescription>
+            </DrawerHeader>
+            <div>
+              <EditFormFieldMobile />
+            </div>
+          </DrawerContent>
+        </Drawer>
+
+        <div className="flex-grow">
+          <div className="w-full flex gap-2 items-center border px-3 py-2 rounded-md bg-white">
+            <div>
+              <Icons.logo className="w-6 h-6" />
+            </div>
+            <input
+              placeholder="Ask spira to modify the form"
+              name="edit-form-using-spira"
+              type="text"
+              className="outline-none flex-grow text-sm bg-transparent"
+              onChange={(e) => setEditInstruction(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleEditFormUsingSpira()
+                }
+              }}
+              value={editInstruction}
+            />
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={handleEditFormUsingSpira}
+            >
+              <Send className="h-4 w-4" />
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <section className="relative flex-grow flex flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
       <div className="flex flex-col mmd:flex-row px-3 justify-between mmd:items-center w-full rounded-md mmd:h-[7vh] gap-2 mmd:gap-5">
@@ -322,130 +400,204 @@ const EditForm: React.FC<EditFormProps> = ({
             </span>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-5 items-center">
-          <div className="flex items-center gap-2 justify-between">
-            <VersionDropdown formId={formId} />
+        <div className="flex items-center gap-2 justify-between">
+          <div className="flex flex-col sm:flex-row gap-5 items-center">
+            <div className="flex items-center gap-2 justify-between">
+              <VersionDropdown formId={formId} />
 
-            <div className="bg-white h-full border rounded-md flex gap-2 p-1">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div
-                      className={`p-2 cursor-pointer rounded border border-gray-200 ${
-                        isViewAsPublished ? "bg-gray-200" : ""
-                      }`}
-                      onClick={() => setIsViewAsPublished(!isViewAsPublished)}
-                    >
-                      <div>
-                        <Eye className="h-4 w-4" />
+              <div className="bg-white h-full border rounded-md flex gap-2 p-1">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={`p-2 cursor-pointer rounded border border-gray-200 ${
+                          isViewAsPublished ? "bg-gray-200" : ""
+                        }`}
+                        onClick={() => setIsViewAsPublished(!isViewAsPublished)}
+                      >
+                        <div>
+                          <Eye className="h-4 w-4" />
+                        </div>
                       </div>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>Published Preview</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                    </TooltipTrigger>
+                    <TooltipContent>Published Preview</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </div>
+            <div className="bg-white h-full border rounded-md hidden lg:flex gap-2 p-1">
+              <div
+                className={`p-2 cursor-pointer ${
+                  selectedViewport === "desktop" ? "bg-gray-200" : ""
+                } rounded`}
+                onClick={() => setSelectedViewport("desktop")}
+              >
+                <Monitor className="h-4 w-4" />
+              </div>
+              <div
+                className={`p-2 cursor-pointer ${
+                  selectedViewport === "tablet" ? "bg-gray-200" : ""
+                } rounded`}
+                onClick={() => setSelectedViewport("tablet")}
+              >
+                <Tablet className="h-4 w-4" />
+              </div>
+              <div
+                className={`p-2 cursor-pointer ${
+                  selectedViewport === "phone" ? "bg-gray-200" : ""
+                } rounded`}
+                onClick={() => setSelectedViewport("phone")}
+              >
+                <Smartphone className="h-4 w-4" />
+              </div>
             </div>
           </div>
-          <div className="bg-white h-full border rounded-md hidden lg:flex gap-2 p-1">
-            <div
-              className={`p-2 cursor-pointer ${
-                selectedViewport === "desktop" ? "bg-gray-200" : ""
-              } rounded`}
-              onClick={() => setSelectedViewport("desktop")}
-            >
-              <Monitor className="h-4 w-4" />
-            </div>
-            <div
-              className={`p-2 cursor-pointer ${
-                selectedViewport === "tablet" ? "bg-gray-200" : ""
-              } rounded`}
-              onClick={() => setSelectedViewport("tablet")}
-            >
-              <Tablet className="h-4 w-4" />
-            </div>
-            <div
-              className={`p-2 cursor-pointer ${
-                selectedViewport === "phone" ? "bg-gray-200" : ""
-              } rounded`}
-              onClick={() => setSelectedViewport("phone")}
-            >
-              <Smartphone className="h-4 w-4" />
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <AlertDialog open={isPublishAlertDialogOpen}>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="default"
-                className={`flex items-center gap-2 ${
-                  selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
-                    ? "bg-green-600 hover:bg-green-700"
-                    : ""
-                }`}
+          <div className="flex items-center gap-2">
+            <AlertDialog>
+              <AlertDialogTrigger
                 onClick={() => {
-                  if (
-                    selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
-                  ) {
-                    publishForm()
-                  } else {
-                    setIsPublishAlertDialogOpen(true)
-                  }
+                  setSaveAsNewVersion(false)
                 }}
               >
-                {selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
-                  ? "Published"
-                  : "Publish"}
-                {isPublishing ? (
-                  <Loader className="h-4 w-4 animate-spin" />
-                ) : selectedFormVersion?.status ===
-                  EFormVersionStatus.PUBLISHED ? (
-                  <ArrowUpRight className="h-4 w-4" />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="max-w-3xl">
-              <AlertDialogHeader>
-                <AlertDialogTitle>Form UI Settings</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Customize your form layout and theme before publishing
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <div className="py-4">
-                <section>
-                  <Label className="text-gray-500" htmlFor="label">
-                    Choose Layout
-                  </Label>
-                  <div className="flex gap-4 mt-2">
-                    <Button
-                      variant={
-                        currentFormUI?.layout === EUiLayout.DEFAULT
-                          ? "default"
-                          : "outline"
-                      }
-                      onClick={() =>
-                        handleFormUIChange("layout", EUiLayout.DEFAULT)
-                      }
-                    >
-                      All In One
-                    </Button>
-                    <Button
-                      variant={
-                        currentFormUI?.layout === EUiLayout.ONE_BY_ONE
-                          ? "default"
-                          : "outline"
-                      }
-                      onClick={() =>
-                        handleFormUIChange("layout", EUiLayout.ONE_BY_ONE)
-                      }
-                    >
-                      One By One
-                    </Button>
+                <div className="flex items-center gap-2 border rounded-md py-2 px-3 bg-white">
+                  <div>
+                    <Save className="h-5 w-5" />
                   </div>
-                </section>
-                {/* <section className="mt-4">
+                </div>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Save changes to the form?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    You can save the changes to the form as a new version or
+                    overwrite the current version.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="flex items-center space-x-2 py-4">
+                  <Switch
+                    id="save-as-new"
+                    checked={saveAsNewVersion}
+                    onCheckedChange={setSaveAsNewVersion}
+                  />
+                  <label
+                    htmlFor="save-as-new"
+                    className="text-sm text-muted-foreground"
+                  >
+                    Save as new version
+                  </label>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      if (saveAsNewVersion) {
+                        addNewFormversionMutation.mutate({
+                          formSchemaString: JSON.stringify(currentFormSchema),
+                          baseFormId: baseFormId,
+                          query: selectedFormVersion?.query || "N/A",
+                          version: getMaxFormVersion(formVersionsData) + 1,
+                          status: EFormVersionStatus.DRAFT,
+                          uiLayout: currentFormUI?.layout,
+                          uiTheme: currentFormUI?.theme,
+                          uiBrandKit: currentFormUI?.brandKit,
+                          availableUiThemes: currentFormUI?.availableThemes,
+                        })
+                      } else {
+                        updateFormVersionMutation.mutate({
+                          formSchemaString: JSON.stringify(currentFormSchema),
+                          baseFormId: baseFormId,
+                          query: selectedFormVersion?.query || "N/A",
+                          version: selectedFormVersion?.version_number ?? 1,
+                          status: selectedFormVersion?.status,
+                          uiLayout: currentFormUI?.layout,
+                          uiTheme: currentFormUI?.theme,
+                          uiBrandKit: currentFormUI?.brandKit,
+                          availableUiThemes: currentFormUI?.availableThemes,
+                        })
+                      }
+                    }}
+                    disabled={
+                      saveAsNewVersion && formVersionsData?.length === 0
+                    }
+                  >
+                    {saveAsNewVersion ? "Save as New Version" : "Save"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <AlertDialog open={isPublishAlertDialogOpen}>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="default"
+                  className={`flex items-center gap-2 ${
+                    selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
+                      ? "bg-green-600 hover:bg-green-700"
+                      : ""
+                  }`}
+                  onClick={() => {
+                    if (
+                      selectedFormVersion?.status ===
+                      EFormVersionStatus.PUBLISHED
+                    ) {
+                      publishForm()
+                    } else {
+                      setIsPublishAlertDialogOpen(true)
+                    }
+                  }}
+                >
+                  {selectedFormVersion?.status === EFormVersionStatus.PUBLISHED
+                    ? "Published"
+                    : "Publish"}
+                  {isPublishing ? (
+                    <Loader className="h-4 w-4 animate-spin" />
+                  ) : selectedFormVersion?.status ===
+                    EFormVersionStatus.PUBLISHED ? (
+                    <ArrowUpRight className="h-4 w-4" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="max-w-3xl">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Form UI Settings</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Customize your form layout and theme before publishing
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="py-4">
+                  <section>
+                    <Label className="text-gray-500" htmlFor="label">
+                      Choose Layout
+                    </Label>
+                    <div className="flex gap-4 mt-2">
+                      <Button
+                        variant={
+                          currentFormUI?.layout === EUiLayout.DEFAULT
+                            ? "default"
+                            : "outline"
+                        }
+                        onClick={() =>
+                          handleFormUIChange("layout", EUiLayout.DEFAULT)
+                        }
+                      >
+                        All In One
+                      </Button>
+                      <Button
+                        variant={
+                          currentFormUI?.layout === EUiLayout.ONE_BY_ONE
+                            ? "default"
+                            : "outline"
+                        }
+                        onClick={() =>
+                          handleFormUIChange("layout", EUiLayout.ONE_BY_ONE)
+                        }
+                      >
+                        One By One
+                      </Button>
+                    </div>
+                  </section>
+                  {/* <section className="mt-4">
                   <Label className="text-gray-500" htmlFor="label">
                     Choose Theme
                   </Label>
@@ -471,93 +623,24 @@ const EditForm: React.FC<EditFormProps> = ({
                     ))}
                   </div>
                 </section> */}
-              </div>
-              <AlertDialogFooter>
-                <AlertDialogCancel
-                  onClick={() => setIsPublishAlertDialogOpen(false)}
-                >
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => {
-                    publishForm(currentFormUI)
-                  }}
-                >
-                  Publish
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-          <AlertDialog>
-            <AlertDialogTrigger
-              onClick={() => {
-                setSaveAsNewVersion(false)
-              }}
-            >
-              <div className="flex items-center gap-2 border rounded-md py-2 px-3 bg-white">
-                <div>
-                  <Save className="h-5 w-5" />
                 </div>
-              </div>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Save changes to the form?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  You can save the changes to the form as a new version or
-                  overwrite the current version.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <div className="flex items-center space-x-2 py-4">
-                <Switch
-                  id="save-as-new"
-                  checked={saveAsNewVersion}
-                  onCheckedChange={setSaveAsNewVersion}
-                />
-                <label
-                  htmlFor="save-as-new"
-                  className="text-sm text-muted-foreground"
-                >
-                  Save as new version
-                </label>
-              </div>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => {
-                    if (saveAsNewVersion) {
-                      addNewFormversionMutation.mutate({
-                        formSchemaString: JSON.stringify(currentFormSchema),
-                        baseFormId: baseFormId,
-                        query: selectedFormVersion?.query || "N/A",
-                        version: getMaxFormVersion(formVersionsData) + 1,
-                        status: EFormVersionStatus.DRAFT,
-                        uiLayout: currentFormUI?.layout,
-                        uiTheme: currentFormUI?.theme,
-                        uiBrandKit: currentFormUI?.brandKit,
-                        availableUiThemes: currentFormUI?.availableThemes,
-                      })
-                    } else {
-                      updateFormVersionMutation.mutate({
-                        formSchemaString: JSON.stringify(currentFormSchema),
-                        baseFormId: baseFormId,
-                        query: selectedFormVersion?.query || "N/A",
-                        version: selectedFormVersion?.version_number ?? 1,
-                        status: selectedFormVersion?.status,
-                        uiLayout: currentFormUI?.layout,
-                        uiTheme: currentFormUI?.theme,
-                        uiBrandKit: currentFormUI?.brandKit,
-                        availableUiThemes: currentFormUI?.availableThemes,
-                      })
-                    }
-                  }}
-                  disabled={saveAsNewVersion && formVersionsData?.length === 0}
-                >
-                  {saveAsNewVersion ? "Save as New Version" : "Save"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                <AlertDialogFooter>
+                  <AlertDialogCancel
+                    onClick={() => setIsPublishAlertDialogOpen(false)}
+                  >
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      publishForm(currentFormUI)
+                    }}
+                  >
+                    Publish
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
       </div>
       <div className="flex w-full justify-center items-center h-[calc(90svh-128px)]">
@@ -573,7 +656,7 @@ const EditForm: React.FC<EditFormProps> = ({
           currentStreamedEditFormSchema={currentStreamedFormSchema}
         />
       </div>
-      <div className="flex w-full px-3">
+      <div className="hidden lg:flex w-full px-3">
         <div className="w-full flex gap-2 items-center border px-3 py-2 rounded-md bg-white">
           <div>
             <Icons.logo className="w-6 h-6" />
@@ -598,6 +681,9 @@ const EditForm: React.FC<EditFormProps> = ({
             <Send className="h-4 w-4" />
           </div>
         </div>
+      </div>
+      <div className="absolute bottom-8 w-full">
+        <MobileToolbar />
       </div>
       <AlertDialog
         open={!!publishedShortId}
