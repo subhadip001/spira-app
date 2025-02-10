@@ -347,9 +347,7 @@ const EditForm: React.FC<EditFormProps> = ({
                   Edit Selected Field
                 </span>
               </DrawerTitle>
-              <DrawerDescription>
-                Edit the form fields and settings manually.
-              </DrawerDescription>
+              <DrawerDescription></DrawerDescription>
             </DrawerHeader>
             <div>
               <EditFormFieldMobile />
