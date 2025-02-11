@@ -1,5 +1,9 @@
 import { TFormValues } from "@/types/form"
-import { TFormVersionData } from "../types"
+import {
+  TFormVersionData,
+  TPublishedFormResponse,
+  TResponseData,
+} from "../types"
 
 export const fileSizeConverter = (bytes: number): string => {
   const megabytes = bytes / (1024 * 1024)
@@ -116,4 +120,29 @@ export const switchToNearestFormVersion = (
   }
 
   return 1
+}
+
+export const exportToCsv = (
+  publishedFormResponse: TPublishedFormResponse,
+  headers: string[]
+) => {
+  if (!publishedFormResponse?.data) return
+
+  const csvContent = [
+    headers.join(","),
+    ...publishedFormResponse.data.map((response) =>
+      Object.values(response.response_data as TResponseData)
+        .map((field) => `"${field.value}"`)
+        .join(",")
+    ),
+  ].join("\n")
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+  const link = document.createElement("a")
+  const url = URL.createObjectURL(blob)
+  link.setAttribute("href", url)
+  link.setAttribute("download", "form_responses.csv")
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }

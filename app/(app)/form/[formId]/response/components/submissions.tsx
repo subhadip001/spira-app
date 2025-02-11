@@ -5,22 +5,26 @@ import {
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table"
-import { TResponseData } from "@/lib/types"
-
-interface FormResponse {
-  id: string
-  created_at: string
-  updated_at: string
-  published_form_id: string
-  response_data: any
-}
+import {
+  FormResponse,
+  TPublishedFormResponse,
+  TResponseData,
+} from "@/lib/types"
+import { Download } from "lucide-react"
+import { exportToCsv } from "@/lib/form-lib/utils"
 
 interface SubmissionsTabProps {
-  responses: FormResponse[]
+  publishedFormResponse: TPublishedFormResponse
+  headers: string[]
 }
 
-const SubmissionsTab = ({ responses }: SubmissionsTabProps) => {
+const SubmissionsTab = ({
+  publishedFormResponse,
+  headers,
+}: SubmissionsTabProps) => {
   const columnHelper = createColumnHelper<any>()
+
+  const responses = publishedFormResponse?.data || []
 
   const columns = useMemo(() => {
     if (responses.length === 0) return []
@@ -69,6 +73,19 @@ const SubmissionsTab = ({ responses }: SubmissionsTabProps) => {
   return (
     <div className="space-y-6 p-6 w-full overflow-y-auto">
       <span className="text-3xl font-[200]">Submissions</span>
+      <section className="flex items-center gap-2 justify-end">
+        <div
+          onClick={() => {
+            exportToCsv(publishedFormResponse, headers)
+          }}
+          className="flex items-center gap-2 px-2 py-1 bg-white rounded-md cursor-pointer"
+        >
+          <div>
+            <Download className="w-4 h-4" />
+          </div>
+          <span>Download CSV</span>
+        </div>
+      </section>
       <div className="w-full overflow-x-auto">
         <table className="w-full border-collapse bg-white">
           <thead>

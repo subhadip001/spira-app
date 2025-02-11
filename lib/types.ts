@@ -229,3 +229,11 @@ export type TUserOnboarding = {
   usecase: EUseCase | undefined
   user_id: string
 }
+
+export type FormResponse = {
+  id: string
+  created_at: string
+  updated_at: string
+  published_form_id: string
+  response_data: any
+}

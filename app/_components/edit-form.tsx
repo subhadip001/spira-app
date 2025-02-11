@@ -59,7 +59,7 @@ import {
   Tablet,
 } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import toast from "react-hot-toast"
 import ShortUniqueId from "short-unique-id"
 import GenerateForm from "./generate-form"
@@ -325,14 +325,9 @@ const EditForm: React.FC<EditFormProps> = ({
     })
   }
 
-  const MobileToolbar = ({ className }: { className?: string }) => {
-    return (
-      <div
-        className={cn(
-          "w-[80%] mx-auto lg:hidden flex flex-wrap justify-center items-center bg-white py-2 px-3 rounded-md gap-2 shadow-sm border",
-          className
-        )}
-      >
+  const MobileToolbar = useCallback(
+    ({ className }: { className?: string }) => {
+      return (
         <Drawer open={isEditDrawerOpen} onOpenChange={setIsEditDrawerOpen}>
           <DrawerTrigger asChild>
             <Button variant="outline">Edit Manually</Button>
@@ -354,36 +349,10 @@ const EditForm: React.FC<EditFormProps> = ({
             </div>
           </DrawerContent>
         </Drawer>
-
-        <div className="flex-grow">
-          <div className="w-full flex gap-2 items-center border px-3 py-2 rounded-md bg-white">
-            <div>
-              <Icons.logo className="w-6 h-6" />
-            </div>
-            <input
-              placeholder="Ask spira to modify the form"
-              name="edit-form-using-spira"
-              type="text"
-              className="outline-none flex-grow text-sm bg-transparent"
-              onChange={(e) => setEditInstruction(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleEditFormUsingSpira()
-                }
-              }}
-              value={editInstruction}
-            />
-            <div
-              className="flex items-center cursor-pointer"
-              onClick={handleEditFormUsingSpira}
-            >
-              <Send className="h-4 w-4" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
+      )
+    },
+    [isEditDrawerOpen]
+  )
 
   return (
     <section className="relative flex-grow flex flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
@@ -680,8 +649,42 @@ const EditForm: React.FC<EditFormProps> = ({
           </div>
         </div>
       </div>
-      <div className="absolute bottom-8 w-full">
-        <MobileToolbar />
+      <div className="absolute bottom-4 w-full">
+        <div
+          className={cn(
+            "w-[80%] mx-auto lg:hidden flex flex-wrap justify-center items-center bg-white py-2 px-3 rounded-md gap-2 shadow-sm border"
+          )}
+        >
+          <MobileToolbar />
+          <div>
+            <div className="flex-grow">
+              <div className="w-full flex gap-2 items-center border px-3 py-2 rounded-md bg-white">
+                <div>
+                  <Icons.logo className="w-6 h-6" />
+                </div>
+                <input
+                  placeholder="Ask spira to modify the form"
+                  name="edit-form-using-spira"
+                  type="text"
+                  className="outline-none flex-grow text-sm bg-transparent"
+                  onChange={(e) => setEditInstruction(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleEditFormUsingSpira()
+                    }
+                  }}
+                  value={editInstruction}
+                />
+                <div
+                  className="flex items-center cursor-pointer"
+                  onClick={handleEditFormUsingSpira}
+                >
+                  <Send className="h-4 w-4" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <AlertDialog
         open={!!publishedShortId}
