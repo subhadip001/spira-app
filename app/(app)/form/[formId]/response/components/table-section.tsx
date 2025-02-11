@@ -14,6 +14,7 @@ import {
 } from "@glideapps/glide-data-grid"
 import "@glideapps/glide-data-grid/dist/index.css"
 import { useCallback, useMemo } from "react"
+import { exportToCsv } from "@/lib/form-lib/utils"
 
 type TableSectionProps = {
   aiChat: TAiChat
@@ -26,28 +27,6 @@ export default function TableSection({
   publishedFormResponse,
   headers,
 }: TableSectionProps) {
-  const exportToCsv = () => {
-    if (!publishedFormResponse?.data) return
-
-    const csvContent = [
-      headers.join(","),
-      ...publishedFormResponse.data.map((response) =>
-        Object.values(response.response_data as TResponseData)
-          .map((field) => `"${field.value}"`)
-          .join(",")
-      ),
-    ].join("\n")
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-    const link = document.createElement("a")
-    const url = URL.createObjectURL(blob)
-    link.setAttribute("href", url)
-    link.setAttribute("download", "form_responses.csv")
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
-
   // Transform data for the grid
   const rows = publishedFormResponse?.data?.length || 0
   const columns = useMemo<GridColumn[]>(
@@ -111,7 +90,7 @@ export default function TableSection({
         <Button
           variant="outline"
           size="sm"
-          onClick={exportToCsv}
+          onClick={() => exportToCsv(publishedFormResponse, headers)}
           className="flex items-center gap-2 m-1"
           title="Export to CSV"
         >

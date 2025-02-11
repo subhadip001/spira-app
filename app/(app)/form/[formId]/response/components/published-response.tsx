@@ -242,7 +242,12 @@ export default function PublishedResponse() {
           </>
         )}
         {activeTab === "submissions" && (
-          <SubmissionsTab responses={publishedFormResponse?.data || []} />
+          <SubmissionsTab
+            publishedFormResponse={
+              publishedFormResponse as TPublishedFormResponse
+            }
+            headers={headers}
+          />
         )}
       </section>
     </div>
