@@ -6,6 +6,7 @@ import ReactQueryProvider from "@/app/_components/react-query-provider"
 import { Toaster } from "react-hot-toast"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Analytics } from "@vercel/analytics/react"
+import WhatsAppButton from "./_components/whatsapp-button"
 
 const ogImage =
   "https://w06x29rjhxvpmsmw.public.blob.vercel-storage.com/images/new-spira-og"
@@ -86,6 +87,10 @@ export default function RootLayout({
           </ThemeProvider>
           <Analytics />
           <div id="portal" />
+          <WhatsAppButton
+            phoneNumber="916207466460"
+            message="Hey Spira ! Can we have a chat ?"
+          />
         </body>
       </ReactQueryProvider>
     </html>
