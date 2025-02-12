@@ -330,7 +330,12 @@ const EditForm: React.FC<EditFormProps> = ({
       return (
         <Drawer open={isEditDrawerOpen} onOpenChange={setIsEditDrawerOpen}>
           <DrawerTrigger asChild>
-            <Button variant="outline">Edit Manually</Button>
+            <Button
+              className="bg-blue-200 text-spirablue hover:bg-blue-300 hover:text-spirablue"
+              variant="outline"
+            >
+              Edit Manually
+            </Button>
           </DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
@@ -649,10 +654,10 @@ const EditForm: React.FC<EditFormProps> = ({
           </div>
         </div>
       </div>
-      <div className="absolute bottom-4 w-full">
+      <div className="absolute bottom-4 w-full ">
         <div
           className={cn(
-            "w-[80%] mx-auto lg:hidden flex flex-wrap justify-center items-center bg-white py-2 px-3 rounded-md gap-2 shadow-sm border"
+            "w-fit mx-auto bg-white border-blue-200 shadow-2xl lg:hidden flex flex-wrap justify-center items-center py-2 px-3 rounded-md gap-2 border"
           )}
         >
           <MobileToolbar />
