@@ -11,7 +11,7 @@ const FloatingBrand = ({ text, className }: FloatingBrandProps) => {
   return (
     <div
       className={cn(
-        "fixed bottom-4 cursor-pointer right-8 z-50 bg-blue-100 px-3 py-2 rounded-md",
+        "fixed bottom-4 cursor-pointer right-4 z-50 bg-blue-100 px-3 py-2 rounded-md",
         className
       )}
       onClick={() => {
