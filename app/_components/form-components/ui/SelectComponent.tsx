@@ -15,7 +15,7 @@ import { LabelComponent } from "./LabelComponent"
 type SelectComponentProps = {
   field: FormField
   value: string
-  onChange: (value: string) => void
+  onChange: (value: string, label?: string) => void
   classname?: string
   triggerClassName?: string
 }
@@ -41,7 +41,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
           {field.options?.map((option, index) => (
             <SelectItem
               key={index}
-              value={option?.value ? option.value : `-${index}-`}
+              value={option?.value ? option.label : `-${index}-`}
             >
               {option?.label}
             </SelectItem>

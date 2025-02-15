@@ -12,6 +12,7 @@ interface RadioFieldProps {
 }
 
 const RadioField: React.FC<RadioFieldProps> = ({ field, value, onChange }) => {
+  console.log(value)
   return (
     <div className="flex flex-col gap-4">
       <LabelComponent field={field} />
@@ -23,7 +24,7 @@ const RadioField: React.FC<RadioFieldProps> = ({ field, value, onChange }) => {
           <div key={option.value + index} className="relative">
             <RadioGroupItem
               id={`${field.name}-${option.value}`}
-              value={option.value}
+              value={option.label}
               className="peer sr-only "
             />
             <Label
@@ -31,7 +32,7 @@ const RadioField: React.FC<RadioFieldProps> = ({ field, value, onChange }) => {
               className={`flex items-center justify-between p-4 rounded-lg border-2 border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-all`}
             >
               <span className="text-sm">{option.label}</span>
-              {value === option.value && <CircleCheck className="w-4 h-4" />}
+              {value === option.label && <CircleCheck className="w-4 h-4" />}
             </Label>
           </div>
         ))}
