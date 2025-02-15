@@ -40,9 +40,9 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
           <div key={index} className="relative">
             <Checkbox
               id={`${field.name}-${option.value}`}
-              checked={value?.split(",").includes(option.value)}
+              checked={value?.split(",").includes(option.label)}
               onCheckedChange={(checked) =>
-                handleChange(option.value, checked as boolean)
+                handleChange(option.label, checked as boolean)
               }
               className="peer sr-only"
             />
@@ -52,7 +52,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
             >
               <span className="text-sm">{option.label}</span>
 
-              {value?.split(",").includes(option.value) && (
+              {value?.split(",").includes(option.label) && (
                 <SquareCheck className="w-4 h-4" />
               )}
             </Label>

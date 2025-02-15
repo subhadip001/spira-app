@@ -17,6 +17,7 @@ interface TypeformLayoutProps {
   backgroundColor: string
   className?: string
   formValues: Record<string, string>
+  isFormSubmitting: boolean
 }
 
 const TypeformLayout: React.FC<TypeformLayoutProps> = ({
@@ -27,6 +28,7 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
   backgroundColor,
   className,
   formValues,
+  isFormSubmitting,
 }) => {
   const [currentStep, setCurrentStep] = useState(-1) // -1 represents the intro screen
   const [validationError, setValidationError] = useState<string | null>(null)
@@ -50,7 +52,9 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
     return true
   }
 
-  const handleNext = () => {
+  const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
     if (currentStep === -1) {
       setCurrentStep(0)
       return
@@ -162,13 +166,13 @@ const TypeformLayout: React.FC<TypeformLayoutProps> = ({
               {currentStep === totalQuestions - 1 ? (
                 <Button
                   type="submit"
-                  disabled={form.formState.isSubmitting || !!validationError}
+                  disabled={isFormSubmitting || !!validationError}
                   className=""
-                  onClick={() => {
+                  onClick={(e) => {
                     if (!validateCurrentField()) return
                   }}
                 >
-                  {form.formState.isSubmitting ? (
+                  {isFormSubmitting ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : null}
                   Submit

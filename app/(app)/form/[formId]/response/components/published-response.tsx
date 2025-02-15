@@ -30,9 +30,10 @@ import { cn } from "@/lib/utils"
 import SummaryTab from "./summary"
 import InsightsTab from "./insights"
 import SubmissionsTab from "./submissions"
+import AiInsights from "./ai-insights"
 const { randomUUID } = new ShortUniqueId({ length: 10 })
 
-type TabType = "insights" | "summary" | "submissions" | "advanced-insights"
+type TabType = "insights" | "summary" | "submissions" | "ai-insights"
 
 export default function PublishedResponse() {
   const selectedFormVersion =
@@ -104,7 +105,7 @@ export default function PublishedResponse() {
     if (
       hash === "summary" ||
       hash === "submissions" ||
-      hash === "advanced-insights"
+      hash === "ai-insights"
     ) {
       setActiveTab(hash)
     }
@@ -199,6 +200,10 @@ export default function PublishedResponse() {
 
   const tabs: { label: string; key: TabType }[] = [
     {
+      label: "AI Insights",
+      key: "ai-insights",
+    },
+    {
       label: "Insights",
       key: "insights",
     },
@@ -233,6 +238,13 @@ export default function PublishedResponse() {
         </nav>
       </section>
       <section className="flex-grow flex w-full h-0 bg-slate-100 rounded-md">
+        {activeTab === "ai-insights" && (
+          <AiInsights
+            publishedFormResponse={
+              publishedFormResponse as TPublishedFormResponse
+            }
+          />
+        )}
         {activeTab === "insights" && (
           <InsightsTab responses={publishedFormResponse?.data || []} />
         )}

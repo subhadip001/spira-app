@@ -145,6 +145,7 @@ const TypeformPage: React.FC<TypeformPageProps> = ({
           backgroundColor="#ffffff"
           className={className}
           formValues={formValues}
+          isFormSubmitting={createNewResponseForPublishedFormMutation.isPending}
         />
       </form>
     </Form>

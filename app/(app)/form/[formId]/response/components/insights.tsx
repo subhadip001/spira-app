@@ -76,10 +76,6 @@ const InsightsTab = ({ responses }: InsightsTabProps) => {
           See where people abandon your form—the first step to improving your
           questions so you get more responses
         </p>
-        {/* <div className="text-sm text-orange-600 mt-4">
-          Available on these plans: Business, Enterprise, Growth Pro, Growth
-          Custom
-        </div> */}
       </div>
     </div>
   )
