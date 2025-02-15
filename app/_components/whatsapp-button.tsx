@@ -23,7 +23,7 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
 
   return (
     <div
-      className="absolute w-10 bg-green-500 text-white items-center justify-center cursor-pointer aspect-square flex rounded-full right-4 bottom-4 z-50"
+      className="absolute w-10 bg-green-500 text-white items-center justify-center cursor-pointer aspect-square flex rounded-full right-4 bottom-16 z-50"
       onClick={handleWhatsAppClick}
       role="button"
       aria-label="Chat on WhatsApp"
