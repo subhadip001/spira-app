@@ -82,8 +82,6 @@ export default function PublishedResponse() {
     return Object.values(firstResponse).map((field) => field.label)
   }, [publishedFormResponse?.data])
 
-  console.log(publishedFormResponse?.data)
-
   const [activeTab, setActiveTab] = useState<TabType>("insights")
   const router = useRouter()
   const pathname = usePathname()
