@@ -1,8 +1,7 @@
-import React from "react"
-import { Card } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
-import { Json } from "@/utils/supabase/database.types"
+"use client"
+
 import { TResponseData } from "@/lib/types"
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
 
 interface FormResponse {
   id: string
@@ -33,6 +32,7 @@ const SummaryTab = ({ responses }: SummaryTabProps) => {
     const questions = Object.entries(responseData).map(([id, data]) => ({
       id,
       label: data.label,
+      type: data.type,
       name: data.name,
       responses: new Map<string, number>(),
     }))
@@ -71,6 +71,7 @@ const SummaryTab = ({ responses }: SummaryTabProps) => {
         id: question.id,
         title: question.label,
         name: question.name,
+        type: question.type,
         totalResponses,
         choices: responseEntries.map(([value, count]) => ({
           text: value,
@@ -109,27 +110,70 @@ const SummaryTab = ({ responses }: SummaryTabProps) => {
               </p>
 
               {/* Response Distribution */}
-              <div className="space-y-3">
-                {question.choices.map((choice, index) => (
-                  <div key={index} className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>{choice.text}</span>
-                      <div className="flex gap-4">
-                        <span>{choice.responses} resp.</span>
-                        <span className="w-12 text-right">
-                          {choice.percentage}%
-                        </span>
+              {question.type === "select" || question.type === "radio" ? (
+                <div className="h-[300px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={question.choices}
+                        dataKey="responses"
+                        nameKey="text"
+                        cx="50%"
+                        cy="50%"
+                        fill="#009AC9"
+                        outerRadius={100}
+                        label={({ text, percentage }) =>
+                          `${text} (${percentage}%)`
+                        }
+                      >
+                        {question.choices.map((entry, index) => (
+                          <Cell
+                            key={index}
+                            fill={`hsl(200, ${100 - index * 15}%, ${60 + index * 8}%)`}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      {/* <Legend /> */}
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : question.type === "checkbox" || question.type === "range" ? (
+                <div className="space-y-3">
+                  {question.choices.map((choice, index) => (
+                    <div key={index} className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span>{choice.text}</span>
+                        <div className="flex gap-4">
+                          <span>{choice.responses} resp.</span>
+                          <span className="w-12 text-right">
+                            {choice.percentage}%
+                          </span>
+                        </div>
+                      </div>
+                      <div className="h-5 rounded-sm bg-gray-100 overflow-hidden">
+                        <div
+                          className="h-full bg-[#009AC9]"
+                          style={{ width: `${choice.percentage}%` }}
+                        />
                       </div>
                     </div>
-                    <div className="h-5 rounded-sm bg-gray-100 overflow-hidden">
-                      <div
-                        className="h-full bg-[#009AC9]"
-                        style={{ width: `${choice.percentage}%` }}
-                      />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {question.choices.map((choice, index) => (
+                    <div key={index} className="space-y-1 border-b py-2">
+                      <div className="flex justify-between text-sm">
+                        <span>{choice.text}</span>
+                        <div className="flex gap-4">
+                          <span>{choice.responses} resp.</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
         ))}

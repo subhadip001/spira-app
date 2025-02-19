@@ -4,7 +4,7 @@ import { convertFormResponseArrayToObject } from "@/lib/form-lib/utils"
 import { validateForm } from "@/lib/form-lib/validation"
 import { createNewResponseForPublishedForm } from "@/lib/queries"
 import { TFormData, TFormErrors, TFormValues } from "@/types/form"
-import { FormSchema } from "@/types/FormSchema"
+import { FormField as TFormField, FormSchema } from "@/types/FormSchema"
 import { useMutation } from "@tanstack/react-query"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -60,6 +60,7 @@ const TypeformPage: React.FC<TypeformPageProps> = ({
     const newformResponse: TFormValues = initialSchema.fields.map((field) => ({
       formFieldId: field.serialId,
       formFieldName: field.name,
+      formFieldType: field.type,
       formFieldLabel: field.label,
       formFieldValue: formValues[field.name] || "",
     }))
@@ -84,7 +85,7 @@ const TypeformPage: React.FC<TypeformPageProps> = ({
     createNewResponseForPublishedFormMutation.mutate(newformResponse)
   }
 
-  const handleFieldChange = (field: any, value: string) => {
+  const handleFieldChange = (field: TFormField, value: string) => {
     setFormValues((prev) => ({
       ...prev,
       [field.name]: value,
@@ -100,6 +101,7 @@ const TypeformPage: React.FC<TypeformPageProps> = ({
       newFormResponse.push({
         formFieldId: field.serialId,
         formFieldName: field.name,
+        formFieldType: field.type,
         formFieldLabel: field.label,
         formFieldValue: value,
       })

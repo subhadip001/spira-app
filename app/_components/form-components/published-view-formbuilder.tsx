@@ -11,7 +11,7 @@ import { validateForm } from "@/lib/form-lib/validation"
 import { createNewResponseForPublishedForm } from "@/lib/queries"
 import { cn } from "@/lib/utils"
 import { TFormData, TFormErrors, TFormValues } from "@/types/form"
-import { FormSchema } from "@/types/FormSchema"
+import { FormField as TFormField, FormSchema } from "@/types/FormSchema"
 import { useMutation } from "@tanstack/react-query"
 import { Loader2 } from "lucide-react"
 import React, { Fragment, useState } from "react"
@@ -205,6 +205,7 @@ const DefaultViewFormBuilder: React.FC<PublishedViewFormBuilderProps> = ({
     const newformResponse: TFormValues = initialSchema.fields.map((field) => ({
       formFieldId: field.serialId,
       formFieldName: field.name,
+      formFieldType: field.type,
       formFieldLabel: field.label,
       formFieldValue: data[field.name] || "",
     }))
@@ -225,7 +226,7 @@ const DefaultViewFormBuilder: React.FC<PublishedViewFormBuilderProps> = ({
     }
   }
 
-  const handleFieldChange = (field: any, value: string) => {
+  const handleFieldChange = (field: TFormField, value: string) => {
     const newFormResponse = [...formResponse.values]
     const fieldIndex = newFormResponse.findIndex(
       (f) => f.formFieldId === field.serialId
@@ -236,6 +237,7 @@ const DefaultViewFormBuilder: React.FC<PublishedViewFormBuilderProps> = ({
       newFormResponse.push({
         formFieldId: field.serialId,
         formFieldName: field.name,
+        formFieldType: field.type,
         formFieldLabel: field.label,
         formFieldValue: value,
       })

@@ -9,7 +9,7 @@ import {
 import { validateForm } from "@/lib/form-lib/validation"
 import { cn } from "@/lib/utils"
 import { TFormData, TFormErrors, TFormValues } from "@/types/form"
-import { FormSchema } from "@/types/FormSchema"
+import { FormField as TFormField, FormSchema } from "@/types/FormSchema"
 import { ArrowRight, Loader2 } from "lucide-react"
 import React, { Fragment, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -74,6 +74,7 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
     const newformResponse: TFormValues = initialSchema.fields.map((field) => ({
       formFieldId: field.serialId,
       formFieldName: field.name,
+      formFieldType: field.type,
       formFieldLabel: field.label,
       formFieldValue: data[field.name] || "",
     }))
@@ -94,7 +95,7 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
     }
   }
 
-  const handleFieldChange = (field: any, value: string) => {
+  const handleFieldChange = (field: TFormField, value: string) => {
     const newFormResponse = [...formResponse.values]
     const fieldIndex = newFormResponse.findIndex(
       (f) => f.formFieldId === field.serialId
@@ -105,6 +106,7 @@ const PublishedFormBuilder: React.FC<FormBuilderProps> = ({
       newFormResponse.push({
         formFieldId: field.serialId,
         formFieldName: field.name,
+        formFieldType: field.type,
         formFieldLabel: field.label,
         formFieldValue: value,
       })

@@ -162,6 +162,7 @@ export type TResponseData = {
   [key: string]: {
     name: string
     label: string
+    type: string
     value: string
   }
 }

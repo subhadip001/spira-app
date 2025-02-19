@@ -94,6 +94,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     const newFormData: TFormValues = initialSchema.fields.map((field) => ({
       formFieldId: field.constantId,
       formFieldName: field.name,
+      formFieldType: field.type,
       formFieldLabel: field.label,
       formFieldValue: data[field.name] || "",
     }))
@@ -415,6 +416,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
                                     newFormData.push({
                                       formFieldId: field.constantId,
                                       formFieldName: field.name,
+                                      formFieldType: field.type,
                                       formFieldLabel: field.label,
                                       formFieldValue: value,
                                     })

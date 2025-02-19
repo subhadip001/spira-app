@@ -2,6 +2,7 @@ export type TFormValues = {
   formFieldId: number
   formFieldName: string
   formFieldLabel: string
+  formFieldType: string
   formFieldValue: string
 }[]
 export type TFormErrors = {

@@ -53,6 +53,7 @@ type FormResponseForStorage = {
     [key: string]: {
       label: string
       value: string
+      type: string
       name: string
     }
   }
@@ -67,6 +68,7 @@ export function convertFormResponseArrayToObject(
         acc[field.formFieldId] = {
           label: field.formFieldLabel,
           value: field.formFieldValue,
+          type: field.formFieldType,
           name: field.formFieldName,
         }
         return acc
