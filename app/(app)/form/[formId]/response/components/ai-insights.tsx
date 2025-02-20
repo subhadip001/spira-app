@@ -1,26 +1,54 @@
 import { TPublishedFormResponse } from "@/lib/types"
-import React from "react"
+import React, { useState } from "react"
 
 type AiInsightsProps = {
   publishedFormResponse: TPublishedFormResponse
 }
 const AiInsights: React.FC<AiInsightsProps> = () => {
+  const [message, setMessage] = useState("")
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Handle message submission here
+    setMessage("")
+  }
+
   return (
-    <div className="flex items-center justify-center w-full">
-      <div className="mt-8 bg-white rounded-md p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium">
-            AI Insights on your Form Response
-          </h3>
-          <button className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors">
-            Coming Soon!
-          </button>
+    <div className="flex flex-col gap-4 p-6 w-full overflow-y-auto">
+      <span className="text-3xl font-[200]">Smart Insights</span>
+      <div className="flex flex-col gap-4 h-full">
+        {/* Chat Messages Area */}
+        <div className="flex-grow bg-white rounded-md p-6 overflow-y-auto min-h-[400px]">
+          <div className="flex flex-col gap-4">
+            {/* System Message */}
+            <div className="bg-gray-100 rounded-lg p-4 max-w-[80%]">
+              <p className="text-sm text-gray-700">
+                Hello! I can help you analyze your form responses and provide
+                insights. What would you like to know?
+              </p>
+            </div>
+            {/* Messages will be dynamically rendered here */}
+          </div>
         </div>
-        <p className="text-gray-500 text-sm">
-          Get AI-powered insights about your form responses - understand
-          patterns, sentiment analysis, and key takeaways to make better
-          decisions
-        </p>
+
+        {/* Chat Input */}
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Ask about your form responses..."
+            className="flex-grow p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            className="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          >
+            Send
+          </button>
+        </form>
+
+        {/* Visualization Section - Empty for now, will be populated dynamically */}
       </div>
     </div>
   )
