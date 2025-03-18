@@ -36,15 +36,17 @@ const AiInsights: React.FC<AiInsightsProps> = () => {
           <input
             type="text"
             value={message}
+            disabled
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Ask about your form responses..."
             className="flex-grow p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             type="submit"
+            disabled
             className="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
           >
-            Send
+            Coming Soon
           </button>
         </form>
 

@@ -299,18 +299,50 @@ const EditFormField = () => {
                     </div>
                   </div>
                 ))}
-                <Button
-                  variant="outline"
-                  className="my-2 flex items-center gap-2"
-                  onClick={addOption}
-                >
-                  <div>
-                    <Plus className="h-4 w-4" />
-                  </div>
-                  Add Option
-                </Button>
+                <div className="flex">
+                  <Button
+                    variant="outline"
+                    className="my-2 flex items-center gap-2"
+                    onClick={addOption}
+                  >
+                    <div>
+                      <Plus className="h-4 w-4" />
+                    </div>
+                    Add Option
+                  </Button>
+                  {(editedField.type === "checkbox" ||
+                    editedField.type === "radio") &&
+                    !editedField.options?.some(
+                      (option) => option.label === "Other"
+                    ) && (
+                      <Button
+                        variant="outline"
+                        className="my-2 ml-2 flex items-center gap-2"
+                        onClick={() => {
+                          if (editedField && editedField.options) {
+                            const newOptions = [
+                              ...(editedField.options || []),
+                              { label: "Other", value: "other" },
+                            ]
+                            const updatedField = {
+                              ...editedField,
+                              options: newOptions,
+                            }
+                            setEditedField(updatedField)
+                            saveChanges(updatedField)
+                          }
+                        }}
+                      >
+                        <div>
+                          <Text className="h-4 w-4" />
+                        </div>
+                        Add `Other`
+                      </Button>
+                    )}
+                </div>
               </div>
             ) : null}
+
             {editedField.type === "range" && (
               <>
                 <div>
