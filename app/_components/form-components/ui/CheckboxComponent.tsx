@@ -2,8 +2,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { FormField, FormFieldOption } from "@/types/FormSchema"
 import { SquareCheck } from "lucide-react"
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { LabelComponent } from "./LabelComponent"
+import { Input } from "@/components/ui/input"
 
 interface CheckboxFieldProps {
   field: FormField
@@ -16,14 +17,53 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   value,
   onChange,
 }) => {
+  // Extract the "Other" value from the current value if it exists
+  const extractOtherValue = () => {
+    const otherEntry = currentValues.find((v) => v.startsWith("Other: "))
+    return otherEntry ? otherEntry.substring(7) : ""
+  }
+
+  const currentValues = value ? value?.split(",").filter(Boolean) : []
+
+  // Check if "Other" is selected
+  const isOtherSelected =
+    currentValues.includes("Other") ||
+    currentValues.includes("other") ||
+    currentValues.some((v) => v.startsWith("Other: "))
+
+  // Initialize otherValue from the current value if it exists
+  const [otherValue, setOtherValue] = useState<string>(extractOtherValue())
+
+  // Update the parent value only when the input loses focus or on Enter key
+  const handleOtherInputBlur = () => {
+    if (isOtherSelected && otherValue) {
+      const valuesWithoutOther = currentValues.filter(
+        (v) => v !== "Other" && v !== "other" && !v.startsWith("Other: ")
+      )
+      // Store the custom value as "Other: {custom value}"
+      onChange([...valuesWithoutOther, `Other: ${otherValue}`].join(","))
+    }
+  }
+
+  // Handle key press events for the Other input
+  const handleOtherKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      handleOtherInputBlur()
+    }
+  }
+
   const handleChange = (optionValue: string, checked: boolean) => {
-    const currentValues = value ? value?.split(",").filter(Boolean) : []
     let newValues: string[]
 
     if (checked) {
       newValues = [...currentValues, optionValue]
     } else {
       newValues = currentValues.filter((v) => v !== optionValue)
+      // If unchecking "Other", clear the other input value
+      if (optionValue === "Other" || optionValue === "other") {
+        setOtherValue("")
+      }
     }
 
     onChange(newValues?.join(","))
@@ -56,6 +96,21 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
                 <SquareCheck className="w-4 h-4" />
               )}
             </Label>
+
+            {/* Show input field when "Other" option is selected */}
+            {option.label.toLowerCase() === "other" &&
+              option.value === "other" &&
+              (value?.split(",").includes("Other") ||
+                value.split(",").includes("other")) && (
+                <Input
+                  className="mt-2"
+                  placeholder="Please specify"
+                  value={otherValue}
+                  onChange={(e) => setOtherValue(e.target.value)}
+                  onBlur={handleOtherInputBlur}
+                  onKeyDown={handleOtherKeyDown}
+                />
+              )}
           </div>
         ))}
       </div>

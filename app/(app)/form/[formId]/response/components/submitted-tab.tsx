@@ -86,21 +86,9 @@ export default function SubmittedTab({
         <div
           className={cn(
             "flex flex-col min-h-[calc(100vh-12rem)]",
-            "grid grid-cols-2 gap-6"
+            "grid grid-cols-1 gap-6"
           )}
         >
-          <TableSection
-            aiChat={aiChat as TAiChat}
-            publishedFormResponse={{
-              data:
-                publishedFormResponse?.data?.map((response: any) => ({
-                  ...response,
-                  response_data: response.response_data as TResponseData,
-                })) || null,
-              error: publishedFormResponse?.error || null,
-            }}
-            headers={headers}
-          />
           <ChatSection
             aiChat={aiChat as TAiChat}
             handleSendMessageAction={handleSendMessageAction}
