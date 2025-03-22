@@ -184,7 +184,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       type,
       label: `New ${type} Field`,
       description: `Edit description of this field`,
-      name: `new_${type.toLowerCase()}_field_${newConstantId}`,
+      name: `new_${type?.toLowerCase()}_field_${newConstantId}`,
       placeholder: `Edit placeholder of this field`,
       required: false,
     }

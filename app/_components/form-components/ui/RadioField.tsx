@@ -72,8 +72,8 @@ const RadioField: React.FC<RadioFieldProps> = ({ field, value, onChange }) => {
             </Label>
 
             {/* Show input field when "Other" option is selected */}
-            {option.label.toLowerCase() === "other" &&
-              value.toLowerCase() === "other" && (
+            {option.label?.toLowerCase() === "other" &&
+              value?.toLowerCase() === "other" && (
                 <Input
                   className="mt-2"
                   placeholder="Please specify"
