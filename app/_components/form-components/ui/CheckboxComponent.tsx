@@ -98,7 +98,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
             </Label>
 
             {/* Show input field when "Other" option is selected */}
-            {option.label.toLowerCase() === "other" &&
+            {option.label?.toLowerCase() === "other" &&
               option.value === "other" &&
               (value?.split(",").includes("Other") ||
                 value.split(",").includes("other")) && (
