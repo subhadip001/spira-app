@@ -504,3 +504,11 @@ export const getOnboardingByUserId = async (userId: string) => {
     .eq("user_id", userId)
   return { data, error }
 }
+
+////////
+
+export const fetchIpDetails = async () => {
+  const response = await fetch("http://ip-api.com/json/")
+  const data = await response.json()
+  return data
+}

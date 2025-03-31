@@ -4,10 +4,13 @@ import Header from "./_components/header"
 import IntroSection from "./_components/intro-section"
 import PromptBox from "./_components/prompt-box"
 import { RecentForms } from "./_components/recent-forms"
+import { fetchIpDetails } from "@/lib/queries"
 
 export default async function Home() {
   const supabase = await createClient()
   const { data: user, error: userError } = await supabase.auth.getUser()
+  const ipData = await fetchIpDetails()
+  console.log(ipData)
   return (
     <>
       <div className="min-h-screen flex flex-col z-10 relative">

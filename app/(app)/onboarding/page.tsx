@@ -1,6 +1,7 @@
 import React from "react"
 import OnboardingForm from "./components/OnboardingForm"
 import { createClient } from "@/utils/supabase/server"
+import { fetchIpDetails } from "@/lib/queries"
 
 export function generateMetadata({}: {}) {
   return {
