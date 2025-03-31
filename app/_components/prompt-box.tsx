@@ -2,19 +2,26 @@
 import ShineBorder from "@/components/magicui/shine-border"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { generateTypeSuggestion } from "@/lib/queries"
+import { fetchIpDetails, generateTypeSuggestion } from "@/lib/queries"
 import { TQueryData } from "@/lib/types"
-import { quickStartQueries } from "@/lib/utils"
 import useEditFormPageStore from "@/store/editFormPageStore"
 import useFormVersionStore from "@/store/formVersions"
 import { ArrowRight, ArrowUpRight, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { Fragment, useEffect, useRef, useState, useTransition } from "react"
+import {
+  Fragment,
+  use,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react"
 import { v4 as uuidv4 } from "uuid"
 import { addFormQueryToDb } from "../_actions/formAction"
 import AnimatedPlaceholderInput from "./animated-placeholder-input"
 import TemplateAndScratch from "./template-and-scratch"
 import { toast } from "react-hot-toast"
+import { useQuery } from "@tanstack/react-query"
 
 const PromptBox = () => {
   const router = useRouter()
@@ -68,6 +75,30 @@ const PromptBox = () => {
       }
     }
   }, [query])
+
+  const { data: ipDetails, isLoading } = useQuery({
+    queryKey: ["ipDetails"],
+    queryFn: fetchIpDetails,
+  })
+
+  const quickStartQueries = [
+    {
+      id: 1,
+      query: "User feedback survey",
+    },
+    {
+      id: 2,
+      query: "A job application form",
+    },
+    {
+      id: 3,
+      query: "Form for e-bike market research",
+    },
+    {
+      id: 4,
+      query: `Make a quiz about ${ipDetails?.country ?? "AI"}`,
+    },
+  ]
 
   const handleSubmit = async (formData: FormData) => {
     const data = Object.fromEntries(formData.entries()) as TQueryData
