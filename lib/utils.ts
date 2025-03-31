@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const quickStartQueries = [
+const quickStartQueries = [
   {
     id: 1,
     query: "User feedback survey",
