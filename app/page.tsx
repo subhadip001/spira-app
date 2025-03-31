@@ -4,10 +4,12 @@ import Header from "./_components/header"
 import IntroSection from "./_components/intro-section"
 import PromptBox from "./_components/prompt-box"
 import { RecentForms } from "./_components/recent-forms"
+import { fetchIpDetails } from "@/lib/queries"
 
 export default async function Home() {
   const supabase = await createClient()
   const { data: user, error: userError } = await supabase.auth.getUser()
+  const ipData = await fetchIpDetails()
   return (
     <>
       <div className="min-h-screen flex flex-col z-10 relative">
@@ -31,7 +33,7 @@ export default async function Home() {
         <main className="flex flex-grow w-full">
           <div className="m-auto w-[80%] md:w-[60%] px-3 py-2 flex gap-5 flex-col">
             <div className="flex justify-center">
-              <ShiningBadge> Celebrating 500+ Users 🎉 </ShiningBadge>
+              <ShiningBadge>{ipData.country}</ShiningBadge>
             </div>
             <div className="flex flex-col gap-5 font-bricolage_grotesque">
               <IntroSection />

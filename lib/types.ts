@@ -238,3 +238,20 @@ export type FormResponse = {
   published_form_id: string
   response_data: any
 }
+
+export type TIpDetails = {
+  status: string
+  country: string
+  countryCode: string
+  region: string
+  regionName: string
+  city: string
+  zip: string
+  lat: number
+  lon: number
+  timezone: string
+  isp: string
+  org: string
+  as: string
+  query: string
+}

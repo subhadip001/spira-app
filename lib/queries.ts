@@ -8,6 +8,7 @@ import {
   EReferrer,
   EUseCase,
   TAiChatMessage,
+  TIpDetails,
   TQueryData,
 } from "./types"
 
@@ -503,4 +504,12 @@ export const getOnboardingByUserId = async (userId: string) => {
     .select()
     .eq("user_id", userId)
   return { data, error }
+}
+
+////////
+
+export const fetchIpDetails = async (): Promise<TIpDetails> => {
+  const response = await fetch("http://ip-api.com/json/")
+  const data = await response.json()
+  return data as TIpDetails
 }
