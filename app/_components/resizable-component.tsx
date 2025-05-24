@@ -1,14 +1,14 @@
-"use client";
-import React, { useState, useCallback, useEffect, MouseEvent } from "react";
-import { useMediaQuery } from "react-responsive";
+"use client"
+import React, { useState, useCallback, useEffect, MouseEvent } from "react"
+import { useMediaQuery } from "react-responsive"
 
 type HorizontalResizableComponentProps = {
-  children: React.ReactNode;
-  minWidth?: number;
-  maxWidth?: number;
-  initialWidth: number;
-  className?: string;
-};
+  children: React.ReactNode
+  minWidth?: number
+  maxWidth?: number
+  initialWidth: number
+  className?: string
+}
 
 const HorizontalResizableComponent: React.FC<
   HorizontalResizableComponentProps
@@ -19,72 +19,72 @@ const HorizontalResizableComponent: React.FC<
   initialWidth,
   className = "",
 }) => {
-  const [width, setWidth] = useState<number>(initialWidth);
-  const [isResizing, setIsResizing] = useState<boolean>(false);
-  const [startX, setStartX] = useState<number>(0);
-  const [startWidth, setStartWidth] = useState<number>(initialWidth);
+  const [width, setWidth] = useState<number>(initialWidth)
+  const [isResizing, setIsResizing] = useState<boolean>(false)
+  const [startX, setStartX] = useState<number>(0)
+  const [startWidth, setStartWidth] = useState<number>(initialWidth)
   const [resizeOrigin, setResizeOrigin] = useState<"left" | "right" | null>(
     null
-  );
-  const isSmallScreen = useMediaQuery({ query: "(max-width: 920px)" });
+  )
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 920px)" })
 
   useEffect(() => {
-    setWidth(initialWidth);
-  }, [initialWidth]);
+    setWidth(initialWidth)
+  }, [initialWidth])
 
   const startResize = useCallback(
     (origin: "left" | "right") => (e: React.MouseEvent) => {
-      e.preventDefault();
-      setIsResizing(true);
-      setStartX(e.clientX);
-      setStartWidth(width);
-      setResizeOrigin(origin);
+      e.preventDefault()
+      setIsResizing(true)
+      setStartX(e.clientX)
+      setStartWidth(width)
+      setResizeOrigin(origin)
     },
     [width]
-  );
+  )
 
   const stopResize = useCallback(() => {
-    setIsResizing(false);
-    setResizeOrigin(null);
-  }, []);
+    setIsResizing(false)
+    setResizeOrigin(null)
+  }, [])
 
   const resize = useCallback(
     (e: MouseEvent) => {
-      if (!isResizing || !resizeOrigin) return;
+      if (!isResizing || !resizeOrigin) return
 
-      const diff = e.clientX - startX;
-      let newWidth: number;
+      const diff = e.clientX - startX
+      let newWidth: number
 
       if (resizeOrigin === "right") {
-        newWidth = startWidth + diff * 2;
+        newWidth = startWidth + diff * 2
       } else {
-        newWidth = startWidth - diff * 2;
+        newWidth = startWidth - diff * 2
       }
 
-      newWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
-      setWidth(newWidth);
+      newWidth = Math.max(minWidth, Math.min(newWidth, maxWidth))
+      setWidth(newWidth)
     },
     [isResizing, startX, startWidth, minWidth, maxWidth, resizeOrigin]
-  );
+  )
 
   useEffect(() => {
     if (isResizing) {
       const handleMouseMove = (e: globalThis.MouseEvent) =>
-        resize(e as unknown as MouseEvent);
-      const handleMouseUp = () => stopResize();
+        resize(e as unknown as MouseEvent)
+      const handleMouseUp = () => stopResize()
 
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("mousemove", handleMouseMove)
+      window.addEventListener("mouseup", handleMouseUp)
 
       return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      };
+        window.removeEventListener("mousemove", handleMouseMove)
+        window.removeEventListener("mouseup", handleMouseUp)
+      }
     }
-  }, [isResizing, resize, stopResize]);
+  }, [isResizing, resize, stopResize])
 
   if (isSmallScreen) {
-    return children as JSX.Element;
+    return children as React.ReactElement
   }
 
   return (
@@ -108,7 +108,7 @@ const HorizontalResizableComponent: React.FC<
         onMouseDown={startResize("right")}
       />
     </div>
-  );
-};
+  )
+}
 
-export default HorizontalResizableComponent;
+export default HorizontalResizableComponent
