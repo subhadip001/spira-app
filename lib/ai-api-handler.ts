@@ -1,6 +1,7 @@
 import {
   createAnthropicResponse,
   createAnthropicResponseStreaming,
+  createGeminiChatCompletionStreaming,
   createGroqChatCompletion,
   createGroqChatCompletionStreaming,
   createOpenAIChatCompletion,
@@ -68,6 +69,13 @@ const aiApiHandlerStreaming = async (
         prompt.user_question
       )
       return openaiResponse
+    case "gemini":
+      const geminiResponse = await createGeminiChatCompletionStreaming(
+        prompt.system_prompt,
+        prompt.user_question,
+        model
+      )
+      return geminiResponse
     default:
       return "Invalid model"
   }

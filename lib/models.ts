@@ -23,5 +23,20 @@ export const models = {
     CHAT_GPT_4O: "chatgpt-4o-latest",
     GPT_4O: "gpt-4o-2024-11-20",
     GPT_4O_MINI: "gpt-4o-mini",
+    GPT_4_1: "gpt-4.1-2025-04-14",
+  },
+  gemini_models: {
+    GEMMA_3N_E4B_IT: "gemma-3n-e4b-it",
+    GEMMA_3_27B_IT: "gemma-3-27b-it",
+    GEMINI_2_0_FLASH: "gemini-2.0-flash",
+    GEMINI_2_5_FLASH_04_17: "gemini-2.5-flash-preview-04-17",
+    GEMINI_2_5_FLASH_05_02: "gemini-2.5-flash-preview-05-02",
+    GEMINI_2_5_PRO_05_06: "gemini-2.5-pro-preview-05-06",
+  },
+  cerebras_models: {
+    LLAMA_3_1_8B: "llama3.1-8b",
+    LLAMA_3_3_70B: "llama-3.3-70b",
+    LLAMA_4_SCOUT_17B_16E_INSTRUCT: "llama-4-scout-17b-16e-instruct",
+    QWEN_3_32B: "qwen-3-32b",
   },
 }

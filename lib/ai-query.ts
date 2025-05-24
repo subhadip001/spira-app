@@ -2,6 +2,7 @@ import Groq from "groq-sdk"
 import { models } from "./models"
 import { Anthropic } from "@anthropic-ai/sdk"
 import OpenAI from "openai"
+import { GoogleGenAI } from "@google/genai"
 
 export const createGroqChatCompletionStreaming = async (
   system_prompt: string,
@@ -144,5 +145,68 @@ export async function createOpenAIChatCompletionStreaming(
     max_tokens: 4000,
     temperature: 0.2,
   })
+  return response
+}
+
+export async function createGeminiChatCompletion(
+  system_prompt: string,
+  user_question: string,
+  model = models.gemini_models.GEMINI_2_0_FLASH
+) {
+  const API_KEY = process.env.GEMINI_API_KEY
+  if (!API_KEY) {
+    throw new Error("GEMINI_API_KEY environment variable is not set")
+  }
+
+  const genai = new GoogleGenAI({ apiKey: API_KEY })
+
+  try {
+    const response = await genai.models.generateContent({
+      model: model,
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: system_prompt }, { text: user_question }],
+        },
+      ],
+      config: {
+        temperature: 0.3,
+        maxOutputTokens: 4000,
+      },
+    })
+
+    return response.text || ""
+  } catch (error) {
+    console.error("Error:", error)
+    return ""
+  }
+}
+
+export async function createGeminiChatCompletionStreaming(
+  system_prompt: string,
+  user_question: string,
+  model = models.gemini_models.GEMINI_2_0_FLASH
+) {
+  const API_KEY = process.env.GEMINI_API_KEY
+  if (!API_KEY) {
+    throw new Error("GEMINI_API_KEY environment variable is not set")
+  }
+
+  const genai = new GoogleGenAI({ apiKey: API_KEY })
+
+  const response = await genai.models.generateContentStream({
+    model: model,
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: system_prompt }, { text: user_question }],
+      },
+    ],
+    config: {
+      temperature: 0.2,
+      maxOutputTokens: 4000,
+    },
+  })
+
   return response
 }
