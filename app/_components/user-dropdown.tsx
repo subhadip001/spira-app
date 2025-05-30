@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
-import { UserRound } from "lucide-react"
 import { toast } from "react-hot-toast"
 import {
   DropdownMenu,
@@ -28,6 +27,7 @@ const UserDropdown = ({ size = 40 }: { size: number }) => {
   const router = useRouter()
   const [user, setUser] = useState<UserProfile | null>(null)
   const setAppStoreUser = useAppStore((state) => state.setUser)
+  const resetAppStore = useAppStore((state) => state.resetStore)
   const formId = pathName.split("/")[2]
 
   const { data: userProfileData, isSuccess } = useQuery({
@@ -52,6 +52,8 @@ const UserDropdown = ({ size = 40 }: { size: number }) => {
       await supabase.auth.signOut({ scope: "local" })
       setUser(null)
       setAppStoreUser(null)
+      resetAppStore()
+      localStorage.clear()
       toast.success("Logged out successfully")
       if (pathName !== "/" || !pathName.startsWith("/form")) {
         router.push("/")

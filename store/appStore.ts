@@ -1,19 +1,19 @@
-import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { create } from "zustand"
+import { createJSONStorage, persist } from "zustand/middleware"
 
 type User = {
-  id: string;
-  email: string;
-  name: string;
-};
+  id: string
+  email: string
+  name: string
+}
 
 type AppStore = {
-  isDarkMode: boolean;
-  setIsDarkMode: (isDarkMode: boolean) => void;
-  user: User | null;
-  setUser: (user: User | null) => void;
-  resetStore: () => void;
-};
+  isDarkMode: boolean
+  setIsDarkMode: (isDarkMode: boolean) => void
+  user: User | null
+  setUser: (user: User | null) => void
+  resetStore: () => void
+}
 
 const useAppStore = create<AppStore>()(
   persist(
@@ -42,6 +42,6 @@ const useAppStore = create<AppStore>()(
       storage: createJSONStorage(() => localStorage),
     }
   )
-);
+)
 
-export default useAppStore;
+export default useAppStore
