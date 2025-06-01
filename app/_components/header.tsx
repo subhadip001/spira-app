@@ -14,7 +14,7 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = ({ className }) => {
   const router = useRouter()
   return (
-    <div className={cn(className, "flex justify-between py-2 px-5")}>
+    <div className={cn(className, "flex justify-between py-2 px-5 z-10")}>
       <div className="cursor-pointer" onClick={() => router.push("/")}>
         <Icons.logo size={30} />
       </div>
