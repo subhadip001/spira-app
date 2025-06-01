@@ -36,7 +36,7 @@ export default async function Home() {
             <IntroSection />
             <PromptBox />
           </div>
-          <div className="mt-auto">
+          <div className="mt-auto z-10">
             {user.user && (
               <RecentForms user={user?.user} userError={userError as Error} />
             )}
