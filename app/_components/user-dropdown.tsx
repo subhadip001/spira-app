@@ -49,11 +49,11 @@ const UserDropdown = ({ size = 40 }: { size: number }) => {
 
   const logOut = async () => {
     try {
-      await supabase.auth.signOut({ scope: "local" })
+      localStorage.clear()
       setUser(null)
       setAppStoreUser(null)
       resetAppStore()
-      localStorage.clear()
+      await supabase.auth.signOut({ scope: "local" })
       toast.success("Logged out successfully")
       if (pathName !== "/" || !pathName.startsWith("/form")) {
         router.push("/")
@@ -96,12 +96,24 @@ const UserDropdown = ({ size = 40 }: { size: number }) => {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             {/* <DropdownMenuItem>Settings</DropdownMenuItem> */}
-            <DropdownMenuItem>Help</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                window.open("mailto:subhadip@heyspira.com", "_blank")
+              }
+            >
+              Help
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={logOut}>Logout</DropdownMenuItem>
           </>
         ) : (
           <>
-            <DropdownMenuItem>Help</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                window.open("mailto:subhadip@heyspira.com", "_blank")
+              }
+            >
+              Help
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
                 router.push(`/login?${formId ? `formId=${formId}` : ""}`)

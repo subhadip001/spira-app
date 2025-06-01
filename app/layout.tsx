@@ -66,20 +66,6 @@ export default function RootLayout({
           content="upgrade-insecure-requests"
         />
         <link rel="icon" href="/favicon.ico" />
-        <script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=G-5ZVXD6T51E`}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-5ZVXD6T51E');
-            `,
-          }}
-        />
       </head>
       <ReactQueryProvider>
         <body
@@ -94,10 +80,6 @@ export default function RootLayout({
           </ThemeProvider>
           <Analytics />
           <div id="portal" />
-          <WhatsAppButton
-            phoneNumber="916207466460"
-            message="Hey Spira ! Can we have a chat ?"
-          />
         </body>
       </ReactQueryProvider>
     </html>
