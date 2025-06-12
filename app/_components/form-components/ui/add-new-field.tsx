@@ -22,7 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { DialogClose } from "@radix-ui/react-dialog"
+import { DialogClose } from "@/components/ui/dialog"
 
 interface AddFieldSelectorProps {
   onAddField: (type: FieldType) => void
