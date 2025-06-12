@@ -64,7 +64,6 @@ import toast from "react-hot-toast"
 import ShortUniqueId from "short-unique-id"
 import GenerateForm from "./generate-form"
 import { Icons } from "./icons"
-import VersionDropdown from "./version-dropdown"
 import { getMaxFormVersion } from "@/lib/form-lib/utils"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
@@ -99,7 +98,6 @@ const EditForm: React.FC<EditFormProps> = ({
   const [isPublishing, setIsPublishing] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
   const [editInstruction, setEditInstruction] = useState<string>("")
-  const [saveAsNewVersion, setSaveAsNewVersion] = useState(false)
   const [isPublishAlertDialogOpen, setIsPublishAlertDialogOpen] =
     useState(false)
 
@@ -359,6 +357,20 @@ const EditForm: React.FC<EditFormProps> = ({
     [isEditDrawerOpen]
   )
 
+  const handleSaveForm = () => {
+    updateFormVersionMutation.mutate({
+      formSchemaString: JSON.stringify(currentFormSchema),
+      baseFormId: baseFormId,
+      query: selectedFormVersion?.query || "N/A",
+      version: selectedFormVersion?.version_number ?? 1,
+      status: selectedFormVersion?.status,
+      uiLayout: currentFormUI?.layout,
+      uiTheme: currentFormUI?.theme,
+      uiBrandKit: currentFormUI?.brandKit,
+      availableUiThemes: currentFormUI?.availableThemes,
+    })
+  }
+
   return (
     <section className="relative flex-grow flex flex-col items-center gap-2 h-[calc(100svh-64px)] py-2 px-3 bg-[#f6f6f6df] rounded-md min-w-0">
       <div className="flex flex-col mmd:flex-row px-3 justify-between mmd:items-center w-full rounded-md mmd:h-[7vh] gap-2 mmd:gap-5">
@@ -375,8 +387,6 @@ const EditForm: React.FC<EditFormProps> = ({
         <div className="flex items-center gap-2 justify-between">
           <div className="flex flex-col sm:flex-row gap-5 items-center">
             <div className="flex items-center gap-2 justify-between">
-              <VersionDropdown formId={formId} />
-
               <div className="bg-white h-full border rounded-md flex gap-2 p-1">
                 <TooltipProvider>
                   <Tooltip>
@@ -425,78 +435,22 @@ const EditForm: React.FC<EditFormProps> = ({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <AlertDialog>
-              <AlertDialogTrigger
-                onClick={() => {
-                  setSaveAsNewVersion(false)
-                }}
-              >
-                <div className="flex items-center gap-2 border rounded-md py-2 px-3 bg-white">
-                  <div>
-                    <Save className="h-5 w-5" />
-                  </div>
+            <Button
+              onClick={handleSaveForm}
+              variant="outline"
+              size="icon"
+              type="button"
+              className="flex items-center gap-2 border rounded-md py-2 px-3 bg-white"
+            >
+              {updateFormVersionMutation.isPending ? (
+                <Loader className="h-5 w-5 animate-spin" />
+              ) : (
+                <div>
+                  <Save className="h-5 w-5" />
                 </div>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Save changes to the form?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    You can save the changes to the form as a new version or
-                    overwrite the current version.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <div className="flex items-center space-x-2 py-4">
-                  <Switch
-                    id="save-as-new"
-                    checked={saveAsNewVersion}
-                    onCheckedChange={setSaveAsNewVersion}
-                  />
-                  <label
-                    htmlFor="save-as-new"
-                    className="text-sm text-muted-foreground"
-                  >
-                    Save as new version
-                  </label>
-                </div>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => {
-                      if (saveAsNewVersion) {
-                        addNewFormversionMutation.mutate({
-                          formSchemaString: JSON.stringify(currentFormSchema),
-                          baseFormId: baseFormId,
-                          query: selectedFormVersion?.query || "N/A",
-                          version: getMaxFormVersion(formVersionsData) + 1,
-                          status: EFormVersionStatus.DRAFT,
-                          uiLayout: currentFormUI?.layout,
-                          uiTheme: currentFormUI?.theme,
-                          uiBrandKit: currentFormUI?.brandKit,
-                          availableUiThemes: currentFormUI?.availableThemes,
-                        })
-                      } else {
-                        updateFormVersionMutation.mutate({
-                          formSchemaString: JSON.stringify(currentFormSchema),
-                          baseFormId: baseFormId,
-                          query: selectedFormVersion?.query || "N/A",
-                          version: selectedFormVersion?.version_number ?? 1,
-                          status: selectedFormVersion?.status,
-                          uiLayout: currentFormUI?.layout,
-                          uiTheme: currentFormUI?.theme,
-                          uiBrandKit: currentFormUI?.brandKit,
-                          availableUiThemes: currentFormUI?.availableThemes,
-                        })
-                      }
-                    }}
-                    disabled={
-                      saveAsNewVersion && formVersionsData?.length === 0
-                    }
-                  >
-                    {saveAsNewVersion ? "Save as New Version" : "Save"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+              )}
+            </Button>
+
             <AlertDialog open={isPublishAlertDialogOpen}>
               <AlertDialogTrigger asChild>
                 <Button

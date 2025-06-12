@@ -1,22 +1,27 @@
 "use client"
-import { fetchFormVersions, fetchBaseForm, QueryKeys } from "@/lib/queries"
+import { fetchBaseForm, fetchFormVersions, QueryKeys } from "@/lib/queries"
+import {
+  EUiLayout,
+  TFormVersionData,
+  TUiBrandKit,
+  TUiConfig,
+  TUiTheme,
+} from "@/lib/types"
+import useFormStore from "@/store/formStore"
 import useFormVersionStore from "@/store/formVersions"
 import { useQuery } from "@tanstack/react-query"
+import { useParams } from "next/navigation"
 import React, { useEffect } from "react"
 import EditForm from "./edit-form"
 import EditFormField from "./edit-form-field"
-import { TFormVersionData } from "@/lib/types"
-import { useParams } from "next/navigation"
 
 const FormPage: React.FC = () => {
   const params = useParams()
   const baseFormId = params.formId as string
-  const setFormVersionsData = useFormVersionStore(
-    (state) => state.setFormVersionsData
-  )
   const setSelectedFormVersion = useFormVersionStore(
     (state) => state.setSelectedFormVersion
   )
+  const setFormUI = useFormStore((state) => state.setCurrentFormUI)
 
   const { data: baseFormData, isLoading: isLoadingBaseForm } = useQuery({
     queryKey: [QueryKeys.GetBaseForm, baseFormId],
@@ -34,10 +39,20 @@ const FormPage: React.FC = () => {
 
   useEffect(() => {
     if (formVersions && formVersions?.length > 0) {
-      console.log("formVersions", formVersions)
-      setFormVersionsData(formVersions as TFormVersionData[])
+      setSelectedFormVersion(
+        formVersions[formVersions.length - 1] as TFormVersionData
+      )
+      const formUiConfig: TUiConfig = {
+        layout: formVersions[formVersions.length - 1]?.ui_layout as EUiLayout,
+        theme: formVersions[formVersions.length - 1]?.ui_theme as TUiTheme,
+        availableThemes: formVersions[formVersions.length - 1]
+          ?.available_ui_themes as TUiTheme[],
+        brandKit: formVersions[formVersions.length - 1]
+          ?.ui_brand_kit as TUiBrandKit,
+      }
+      setFormUI(formUiConfig)
     }
-  }, [formVersions, setFormVersionsData])
+  }, [formVersions, setSelectedFormVersion, setFormUI])
 
   if (isLoadingBaseForm || isLoadingVersions) {
     return (

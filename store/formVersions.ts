@@ -19,9 +19,6 @@ const useFormVersionStore = create<FormVersionStore>()((set) => ({
   setFormVersionsData: (formData) => set({ formVersionsData: formData }),
   setSelectedFormVersion: (form) => {
     set({ selectedFormVersion: form })
-    if (typeof window !== "undefined") {
-      localStorage.setItem("selected-form-version", JSON.stringify(form))
-    }
   },
   resetStore: () => set(initialState),
 }))
